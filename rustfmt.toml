@@ -1,0 +1,17 @@
+# fn_params_layout = "Vertical"
+# force_multiline_blocks = true
+# group_imports = "StdExternalCrate"
+# imports_granularity = "Crate"
+# imports_layout = "Vertical"
+# overflow_delimited_expr = true
+# reorder_impl_items = true
+# wrap_comments = false
+#
+# max_width = 120
+# use_small_heuristics = "Max"
+
+
+# fn_call_width = 10
+# attr_fn_like_width = 20
+# chain_width = 20
+# struct_lit_single_line = false

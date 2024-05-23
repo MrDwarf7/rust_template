@@ -1,0 +1,39 @@
+[package]
+name = "rust_template"
+version = "0.1.0"
+edition = "2021"
+
+# For running the main server as a watch call
+# cargo watch -q -c -w src/ -x run
+
+
+[dependencies]
+log = "0.4.21"
+thiserror = "1.0.61"
+
+#itertools = "0.13.0"
+# chrono = "0.4.9"
+# tokio = { version = "1.9.0", features = ["full"] }
+
+
+[profile.dev.package."*"]
+opt-level = 3
+codegen-units = 1
+
+
+[profile.dev]
+opt-level = 1
+codegen-units = 256
+incremental = true
+
+
+[profile.release]
+opt-level = 3
+codegen-units = 1
+debug = "none"
+# strip = "symbols" # Leave off @ w
+debug-assertions = false
+incremental = true
+
+lto = "fat"
+# panic = "unwind"
