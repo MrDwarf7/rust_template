@@ -1,3 +1,5 @@
+# cargo-features = ["codegen-backend"] 
+# The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
 name = "rust_template"
 version = "0.1.0"
@@ -35,10 +37,14 @@ thiserror = "1.0.61"
 # itertools = "0.13.0"
 
 
+
 [profile.dev.package."*"]
 opt-level = 3
 codegen-units = 1
 
+
+# [profile.dev]
+# codegen-backend = "cranelift"
 
 [profile.dev]
 opt-level = 1
@@ -50,9 +56,8 @@ incremental = true
 opt-level = 3
 codegen-units = 1
 debug = "none"
-# strip = "symbols" # Leave off @ w
 debug-assertions = false
 incremental = true
-
-lto = "fat"
+# strip = "symbols" # Leave off @ w
+# lto = "fat" ## Can't use with cranelift yet
 # panic = "unwind"
