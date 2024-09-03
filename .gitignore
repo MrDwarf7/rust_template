@@ -6,8 +6,9 @@ target/
 
 #data/*
 #!data
-#
-#data/*.csv
+data/*.csv
+data/*.xlsx
+data/*.xlsm
 #
 #scratch/
 
