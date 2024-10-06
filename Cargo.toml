@@ -1,3 +1,4 @@
+cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
 # cargo-features = ["codegen-backend"] 
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
@@ -50,7 +51,7 @@ codegen-units = 1
 opt-level = 1
 codegen-units = 256
 incremental = true
-
+#rustflags = ["-Zthreads=16" ]
 
 [profile.release]
 opt-level = 3
@@ -58,6 +59,9 @@ codegen-units = 1
 debug = "none"
 debug-assertions = false
 incremental = true
+trim-paths = "all"
+#rustflags = ["-Zthreads=16" ]
+
 # strip = "symbols" # Leave off @ w
 # lto = "fat" ## Can't use with cranelift yet
 # panic = "unwind"
