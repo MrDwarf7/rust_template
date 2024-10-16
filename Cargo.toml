@@ -1,4 +1,4 @@
-cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
+# cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
 # cargo-features = ["codegen-backend"] 
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
@@ -11,9 +11,12 @@ edition = "2021"
 
 
 [dependencies]
+eyre = "0.6.12"
 # Base dependencies/Commons
 log = "0.4.21"
-thiserror = "1.0.61"
+
+
+# thiserror = "1.0.61"
 # reqwest = { version = "0.12.4", features = ["cookies", "json", "multipart", "stream"] }
 # tokio = { version = "1.9.0", features = ["full", "tracing"] }
 # tokio-util = { version = "0.7.11", features = ["codec"] }
@@ -59,7 +62,7 @@ codegen-units = 1
 debug = "none"
 debug-assertions = false
 incremental = true
-trim-paths = "all"
+# trim-paths = "all"
 #rustflags = ["-Zthreads=16" ]
 
 # strip = "symbols" # Leave off @ w
