@@ -13,7 +13,7 @@ edition = "2021"
 [dependencies]
 eyre = "0.6.12"
 # Base dependencies/Commons
-log = "0.4.21"
+log = "0.4.22"
 
 
 # thiserror = "1.0.61"
