@@ -1,0 +1,46 @@
+# If inside a workspace
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+CARGO_MAKE_TIME_SUMMARY = true
+
+# Core bare. min
+[tasks.format]
+command = "cargo"
+args = ["fmt", "--", "--emit=files"]
+
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+dependencies = ["format"]
+
+[tasks.build_release]
+command = "cargo"
+args = ["build", "--release"]
+dependencies = ["format"]
+# Core bare. min
+
+# Tests
+[tasks.test]
+command = "cargo"
+args = ["test"]
+
+[tasks.test_all]
+command = "cargo"
+args = ["test", "--all"]
+
+## Full sweeps
+
+[tasks.b]
+run_task = { name = ["format", "build"], parallel = true }
+
+[tasks.br]
+run_task = { name = ["format", "build_release"], parallel = true }
+
+[tasks.a]
+run_task = { name = ["build", "test", "build_release", "test_all"], parallel = true }
+# , fork = true, cleanup = "clean" 
+# , parallel = true, fork = true, cleanup = "clean"
