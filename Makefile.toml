@@ -32,8 +32,15 @@ args = ["test"]
 command = "cargo"
 args = ["test", "--all"]
 
-## Full sweeps
+[tasks.run]
+command = "cargo"
+args = ["run"]
 
+[tasks.run_release]
+command = "cargo"
+args = ["run", "--release"]
+
+## Full sweeps
 [tasks.b]
 run_task = { name = ["format", "build"], parallel = true }
 
@@ -42,5 +49,16 @@ run_task = { name = ["format", "build_release"], parallel = true }
 
 [tasks.a]
 run_task = { name = ["build", "test", "build_release", "test_all"], parallel = true }
+
+[tasks.r]
+run_task = { name = ["run"], parallel = false }
+
+[tasks.rr]
+run_task = { name = ["run_release"], parallel = false }
+
+[tasks.reset]
+run_task = { name = ["clean", "a"], parallel = false }
+dependencies = ["clean"]
+
 # , fork = true, cleanup = "clean" 
 # , parallel = true, fork = true, cleanup = "clean"
