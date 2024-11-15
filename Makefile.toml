@@ -64,7 +64,14 @@ run_task = { name = ["format", "build"], parallel = true }
 run_task = { name = ["format", "build_release"], parallel = true }
 
 [tasks.a]
-run_task = { name = ["build_workspace", "build", "test","build_release_workspace", "build_release", "test_all"], parallel = true }
+run_task = { name = [
+    "build_workspace",
+    "build",
+    "test",
+    "build_release_workspace",
+    "build_release",
+    "test_all",
+], parallel = true }
 
 [tasks.r]
 run_task = { name = ["run"], parallel = false }
@@ -80,7 +87,6 @@ run_task = { name = ["build_release_workspace"], parallel = true }
 
 [tasks.reset]
 run_task = { name = ["clean", "a"], parallel = false }
-dependencies = ["clean"]
 
 # , fork = true, cleanup = "clean" 
 # , parallel = true, fork = true, cleanup = "clean"
