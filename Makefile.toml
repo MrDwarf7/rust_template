@@ -56,6 +56,16 @@ dependencies = ["format"]
 command = "cargo"
 args = ["test", "--workspace"]
 
+# -----------------------------------------------------------------------------
+[tasks.watch]
+command = "cargo"
+args = ["watch", "-q", "-c", "-w", "src/", "-x", "run"]
+
+[tasks.watch_release]
+command = "cargo"
+args = ["watch", "-q", "-c", "-w", "src/", "-x", "run --release"]
+# -----------------------------------------------------------------------------
+
 ## Full sweeps
 [tasks.b]
 run_task = { name = ["format", "build"], parallel = true }
