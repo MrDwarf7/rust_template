@@ -11,36 +11,39 @@ edition = "2021"
 
 
 [dependencies]
-eyre = "0.6.12"
+# eyre = "*"
+# dotenvy = "*"
+# futures = "*"
+
 # Base dependencies/Commons
-log = "0.4.22"
-thiserror = "2.0.3"
-
-
-# thiserror = "1.0.61"
-# reqwest = { version = "0.12.4", features = ["cookies", "json", "multipart", "stream"] }
-# tokio = { version = "1.9.0", features = ["full", "tracing"] }
-# tokio-util = { version = "0.7.11", features = ["codec"] }
-# futures = "0.3.30"
-# serde = { version = "1.0.203", features = ["derive"] }
-# serde_json = "1.0.117"
-# toml = "0.8.14"
+# reqwest = { version = "*", features = ["cookies", "json", "multipart", "stream"] }
+# uuid = { version = "*", features = ["v4"] }
+# serde = { version = "*", features = ["derive"] }
+# serde_json = "*"
+thiserror = "*"
+# tokio = { version = "*", features = ["full", "tracing"] }
 
 # Logging and tracing
-# tracing = "0.1.40"
-# tracing-subscriber = { version = "0.3.18", features = ["ansi", "env-filter", "std"] }
+# tracing = "*"
+# tracing-subscriber = { version = "*", features = [
+#     "ansi",
+#     "chrono",
+#     "env-filter",
+#     "serde",
+#     "std",
+# ] }
 
-# Helpers
-# async-trait = "0.1.80"
-# dotenv_codegen = "0.15.0"
-# dotenv = "0.15.0"
-# static-toml = "1.2.0"
 
-# Utilities - Try and remove/code out
-# walkdir = "2.5.0"
-# chrono = "0.4.9"
-# itertools = "0.13.0"
+# Extra stuff
+# tokio-util = { version = "*", features = ["codec"] }
+# toml = "*"
 
+# Utilities
+# async-trait = "*"
+# static-toml = "*"
+# walkdir = "*"
+# chrono = "*"
+# itertools = "*"
 
 
 [profile.dev.package."*"]
