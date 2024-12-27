@@ -7,6 +7,7 @@ pub use crate::error::Error;
 pub type Result<T> = std::result::Result<T, Error>;
 
 // Wrapper struct
+#[allow(dead_code)]
 pub struct W<T>(pub T);
 
 pub type TracingSubscriber = tracing_subscriber::fmt::SubscriberBuilder<
