@@ -1,3 +1,5 @@
+cargo-features = [ "codegen-backend" ]
+
 [workspace]
 members = ["crates/*"]
 resolver = "2"
@@ -17,6 +19,7 @@ codegen-units = 1
 opt-level = 1
 codegen-units = 256
 incremental = true
+codegen-backend = "cranelift"
 
 [profile.release]
 opt-level = 3
