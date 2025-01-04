@@ -51,10 +51,6 @@ thiserror = "*"
 opt-level = 3
 codegen-units = 1
 
-
-# [profile.dev]
-# codegen-backend = "cranelift"
-
 [profile.dev]
 opt-level = 1
 codegen-units = 256
