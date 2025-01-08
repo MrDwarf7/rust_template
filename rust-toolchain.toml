@@ -1,3 +1,11 @@
 [toolchain]
 channel = "nightly"
-components = [ "rustfmt", "rust-analyzer", "clippy", "cargo", "llvm-tools", "rustc-codegen-cranelift" ]
+components = [ 
+    "rustfmt",
+    "rust-analyzer",
+    "clippy",
+    "cargo",
+    "llvm-tools",
+    "rustc-codegen-cranelift" ,
+    "miri",
+]
