@@ -9,6 +9,9 @@ target/
 data/*.csv
 data/*.xlsx
 data/*.xlsm
+_*_dist/
+
+
 #
 #scratch/
 
