@@ -89,6 +89,10 @@ args = ["test", "--workspace"]
 
 # DIST STUFF
 # -----------------------------------------------------------------------------
+[tasks.clear_dist_if_exist]
+command = "rm"
+args = ["-rf", "${DIST_FOLDER}/", "-ErrorAction", "SilentlyContinue"]
+
 [tasks.create_dist]
 command = "mkdir"
 args = ["-p", "${DIST_FOLDER}/"]
