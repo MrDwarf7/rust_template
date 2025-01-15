@@ -82,9 +82,9 @@ alias b := build
 # Usage: just run
 
 # ---------------------------------------------------------------------------------
-run:
+run *args='':
     @echo "🚀 Running the project in debug mode..."
-    {{ runner_command }} run
+    {{ runner_command }} run {{ args }}
 
 alias r := run
 
