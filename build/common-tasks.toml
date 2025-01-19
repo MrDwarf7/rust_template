@@ -1,0 +1,91 @@
+[env]
+CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
+CARGO_MAKE_TIME_SUMMARY = true
+BREAKER = "----------------------------------------"
+
+ROOT = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}"
+
+#PROFILE = "${CARGO_MAKE_CARGO_PROFILE}"
+PROFILE = "release"
+VERSION = "${CARGO_MAKE_PROJECT_VERSION}"
+# Name of the output binary
+BIN_NAME = "${CARGO_MAKE_PROJECT_NAME}"
+# The formatted name of the output binary we want
+OUTPUT_BIN_NAME = "${BIN_NAME}_${VERSION}"
+# The folder where the binary will be copied to -- /_output_bin_name_dist
+DIST_FOLDER = "${ROOT}/_${OUTPUT_BIN_NAME}_dist"
+# the FULL path from root WITH EXE - root / target /current_profile / the_bin_name.EXE
+FOLDER_BIN_EXE = "${ROOT}/target/${PROFILE}/${BIN_NAME}.exe"
+
+[tasks.print_all]
+command = "@duckscript"
+script = '''@duckscript
+echo "ROOT: ${ROOT}"
+echo "PROFILE: ${PROFILE}"
+echo "VERSION: ${VERSION}"
+echo "BIN_NAME: ${BIN_NAME}"
+echo "OUTPUT_BIN_NAME: ${OUTPUT_BIN_NAME}"
+echo "DIST_FOLDER: ${DIST_FOLDER}"
+echo "FOLDER_BIN_EXE: ${FOLDER_BIN_EXE}"
+echo "BREAKER: ${BREAKER}"
+'''
+
+# START Core bare. min
+[tasks.format]
+command = "cargo"
+args = ["fmt", "--", "--emit=files"]
+
+[tasks.clean]
+command = "cargo"
+args = ["clean"]
+
+[tasks.build]
+command = "cargo"
+args = ["build"]
+dependencies = ["format"]
+
+[tasks.build_release]
+command = "cargo"
+args = ["build", "--release"]
+dependencies = ["format"]
+
+[tasks.docs]
+command = "cargo"
+args = ["doc", "--no-deps"]
+# END Core bare. min
+
+# START Tests
+[tasks.test]
+command = "cargo"
+args = ["test"]
+
+[tasks.test_all]
+command = "cargo"
+args = ["test", "--all"]
+# END Tests
+
+# START Function outputs
+[tasks.run]
+command = "cargo"
+args = ["run"]
+
+[tasks.run_release]
+command = "cargo"
+args = ["run", "--release"]
+# END Function outputs
+
+# START Workspaces
+[tasks.build_workspace]
+command = "cargo"
+args = ["build", "--workspace"]
+dependencies = ["format"]
+
+[tasks.build_release_workspace]
+command = "cargo"
+args = ["build", "--release", "--workspace"]
+dependencies = ["format"]
+
+[tasks.test_workspace]
+command = "cargo"
+args = ["test", "--workspace"]
+# END Workspaces

@@ -1,151 +1,10 @@
-# If inside a workspace
-[env]
-CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
-CARGO_MAKE_TIME_SUMMARY = true
-BREAKER = "----------------------------------------"
-
-ROOT = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}"
-
-#PROFILE = "${CARGO_MAKE_CARGO_PROFILE}"
-PROFILE = "release"
-VERSION = "${CARGO_MAKE_PROJECT_VERSION}"
-# Name of the output binary
-BIN_NAME = "${CARGO_MAKE_PROJECT_NAME}"
-# The formatted name of the output binary we want
-OUTPUT_BIN_NAME = "${BIN_NAME}_${VERSION}"
-# The folder where the binary will be copied to -- /_output_bin_name_dist
-DIST_FOLDER = "${ROOT}/_${OUTPUT_BIN_NAME}_dist"
-# the FULL path from root WITH EXE - root / target /current_profile / the_bin_name.EXE
-FOLDER_BIN_EXE = "${ROOT}/target/${PROFILE}/${BIN_NAME}.exe"
-# All the above vars
-ENV_VARS = { script = [
-    "echo ${BREAKER}\n",
-    "echo PROFILE: ${PROFILE}\n",
-    "echo VERSION: ${VERSION}\n",
-    "echo BIN_NAME: ${BIN_NAME}\n",
-    "echo OUTPUT_BIN_NAME: ${OUTPUT_BIN_NAME}\n",
-    "echo ROOT: ${ROOT}\n",
-    "echo DIST_FOLDER: ${DIST_FOLDER}\n",
-    "echo FOLDER_BIN_EXE: ${FOLDER_BIN_EXE}\n",
-    "echo ${BREAKER}\n",
-], multi_line = true }
-
-[tasks.print_all]
-command = "echo"
-args = [ "${ENV_VARS}" ]
-
-# Core bare. min
-[tasks.format]
-command = "cargo"
-args = ["fmt", "--", "--emit=files"]
-
-[tasks.clean]
-command = "cargo"
-args = ["clean"]
-
-[tasks.build]
-command = "cargo"
-args = ["build"]
-dependencies = ["format"]
-
-[tasks.build_release]
-command = "cargo"
-args = ["build", "--release"]
-dependencies = ["format"]
-# Core bare. min
-
-# Tests
-[tasks.test]
-command = "cargo"
-args = ["test"]
-
-[tasks.test_all]
-command = "cargo"
-args = ["test", "--all"]
-
-[tasks.run]
-command = "cargo"
-args = ["run"]
-
-[tasks.run_release]
-command = "cargo"
-args = ["run", "--release"]
-
-#### Workspace specific(s)
-
-[tasks.build_workspace]
-command = "cargo"
-args = ["build", "--workspace"]
-dependencies = ["format"]
-
-[tasks.build_release_workspace]
-command = "cargo"
-args = ["build", "--release", "--workspace"]
-dependencies = ["format"]
-
-[tasks.test_workspace]
-command = "cargo"
-args = ["test", "--workspace"]
-
-# DIST STUFF
-# -----------------------------------------------------------------------------
-[tasks.clear_dist_if_exist]
-command = "rm"
-args = ["-rf", "${DIST_FOLDER}/", "-ErrorAction", "SilentlyContinue"]
-
-[tasks.create_dist]
-command = "mkdir"
-args = ["-p", "${DIST_FOLDER}/"]
-
-[tasks.create_showcase_dist]
-command = "mkdir"
-args = ["-p", "${DIST_FOLDER}/showcase/"]
-dependencies = ["create_dist"]
-
-[tasks.copy_release_to_dist]
-command = "cp"
-args = ["${FOLDER_BIN_EXE}", "${DIST_FOLDER}/${OUTPUT_BIN_NAME}.exe"]
-dependencies = ["create_dist", "build_release"]
-
-[tasks.copy_readme_to_dist]
-command = "cp"
-args = ["${ROOT}/README.md", "${DIST_FOLDER}/"]
-dependencies = ["create_dist"]
-
-
-[tasks.build_releae_dist]
-dependencies = [
-    "build_release_workspace",
-    "test_workspace",
-    "build",
-    "test_all",
-    "print_all",
-    "create_showcase_dist",
-    "copy_release_to_dist",
-    "copy_readme_to_dist",
-    "create_dist",
+extend = [
+    { path = "./build/common-tasks.toml" },
+    { path = "./build/dist-tasks.toml" },
+    { path = "./build/watch-tasks.toml", optional = true }
 ]
 
-# -----------------------------------------------------------------------------
-# DIST STUFF
-
-#[tasks.expand]
-#command = "echo"
-#args = [
-#    "ver: ${VERSION}",
-#]
-
-# -----------------------------------------------------------------------------
-[tasks.watch]
-command = "cargo"
-args = ["watch", "-q", "-c", "-w", "src/", "-x", "run"]
-
-[tasks.watch_release]
-command = "cargo"
-args = ["watch", "-q", "-c", "-w", "src/", "-x", "run --release"]
-# -----------------------------------------------------------------------------
-
-## Full sweeps
+## START Full sweeps/aliases
 [tasks.b]
 run_task = { name = ["format", "build"], parallel = true }
 
@@ -174,11 +33,13 @@ run_task = { name = ["build_workspace"], parallel = true }
 [tasks.brw]
 run_task = { name = ["build_release_workspace"], parallel = true }
 
+[tasks.cl]
+run_task = { name = ["clean"], parallel = false }
+
 [tasks.dist]
 env.PROFILE = "release"
-run_task = { name = [
-    "build_releae_dist"
-], parallel = true }
+run_task = { name = ["build_release_dist"], parallel = false }
 
 [tasks.reset]
 run_task = { name = ["clean", "a"], parallel = false }
+# END Full sweeps/aliases

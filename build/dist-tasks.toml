@@ -1,0 +1,38 @@
+[tasks.clear_dist_if_exist]
+command = "rm"
+windows.args = ["-Force", "-Recurse", "${DIST_FOLDER}/", "-ErrorAction", "SilentlyContinue"]
+linux.args = ["-rf", "${DIST_FOLDER}/"]
+
+[tasks.create_dist]
+command = "mkdir"
+args = ["-p", "${DIST_FOLDER}/"]
+
+[tasks.create_showcase_dist]
+command = "mkdir"
+args = ["-p", "${DIST_FOLDER}/showcase/"]
+dependencies = ["create_dist"]
+
+[tasks.copy_readme_to_dist]
+command = "cp"
+args = ["${ROOT}/README.md", "${DIST_FOLDER}/"]
+dependencies = ["create_dist"]
+
+[tasks.copy_release_to_dist]
+command = "cp"
+windows.args = ["${FOLDER_BIN_EXE}", "${DIST_FOLDER}/${OUTPUT_BIN_NAME}.exe"]
+linux.args = ["${FOLDER_BIN_EXE}", "${DIST_FOLDER}/${OUTPUT_BIN_NAME}"]
+dependencies = ["create_dist", "build_release"]
+
+[tasks.build_release_dist]
+dependencies = [
+    "build_release_workspace",
+    "build",
+    "test_workspace",
+    "test_all",
+    #    "create_dist",
+    #    "create_showcase_dist",
+    #    "copy_readme_to_dist",
+    #    "copy_release_to_dist",
+    #    "print_all",
+    #    "docs",
+]
