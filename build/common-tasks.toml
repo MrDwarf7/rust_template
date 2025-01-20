@@ -17,10 +17,22 @@ DIST_FOLDER = "${ROOT}/_${OUTPUT_BIN_NAME}_dist"
 # the FULL path from root WITH EXE - root / target /current_profile / the_bin_name.EXE
 FOLDER_BIN_EXE = "${ROOT}/target/${PROFILE}/${BIN_NAME}.exe"
 
+VARS = { script = ['''
+echo ""ROOT: ${ROOT}
+echo "PROFILE: ${PROFILE}"
+echo "VERSION: ${VERSION}"
+echo "BIN_NAME: ${BIN_NAME}"
+echo "OUTPUT_BIN_NAME: ${OUTPUT_BIN_NAME}"
+echo "DIST_FOLDER: ${DIST_FOLDER}"
+echo "FOLDER_BIN_EXE: ${FOLDER_BIN_EXE}"
+echo "BREAKER: ${BREAKER}"
+'''], multi_line = true }
+
 [tasks.print_all]
-command = "@duckscript"
-script = '''@duckscript
-echo "ROOT: ${ROOT}"
+script_runner = "@duckscript"
+script = '''
+echo "BREAKER: ${BREAKER}"
+echo ""ROOT: ${ROOT}
 echo "PROFILE: ${PROFILE}"
 echo "VERSION: ${VERSION}"
 echo "BIN_NAME: ${BIN_NAME}"
@@ -57,11 +69,11 @@ args = ["doc", "--no-deps"]
 # START Tests
 [tasks.test]
 command = "cargo"
-args = ["test"]
+args = ["test", "--", "--nocapture"]
 
 [tasks.test_all]
 command = "cargo"
-args = ["test", "--all"]
+args = ["test", "--all", "--", "--nocapture"]
 # END Tests
 
 # START Function outputs
