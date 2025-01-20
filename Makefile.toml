@@ -6,10 +6,10 @@ extend = [
 
 ## START Full sweeps/aliases
 [tasks.b]
-run_task = { name = ["format", "build"], parallel = true }
+run_task = { name = ["format", "build"], parallel = false }
 
 [tasks.br]
-run_task = { name = ["format", "build_release"], parallel = true }
+run_task = { name = ["format", "build_release"], parallel = false }
 
 [tasks.a]
 run_task = { name = [
@@ -19,7 +19,7 @@ run_task = { name = [
     "build_release_workspace",
     "build_release",
     "test_all",
-], parallel = true }
+], parallel = false }
 
 [tasks.r]
 run_task = { name = ["run"], parallel = false }
@@ -28,13 +28,19 @@ run_task = { name = ["run"], parallel = false }
 run_task = { name = ["run_release"], parallel = false }
 
 [tasks.bw]
-run_task = { name = ["build_workspace"], parallel = true }
+run_task = { name = ["build_workspace"], parallel = false }
 
 [tasks.brw]
-run_task = { name = ["build_release_workspace"], parallel = true }
+run_task = { name = ["build_release_workspace"], parallel = false }
 
 [tasks.cl]
 run_task = { name = ["clean"], parallel = false }
+
+[tasks.f]
+run_task = { name = ["format"], parallel = false }
+
+[tasks.envs]
+run_task = { name = "print_all", parallel = false }
 
 [tasks.dist]
 env.PROFILE = "release"
