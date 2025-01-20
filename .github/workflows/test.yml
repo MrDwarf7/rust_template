@@ -1,0 +1,46 @@
+name: "Test"
+on:
+  push:
+    branches:
+      - master
+      - main
+      - develop
+env:
+  SCCACHE_GHA_ENABLED: true
+  CARGO_INCREMENTAL: 0
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  PROJECT_NAME: "NAME_HERE"
+jobs:
+  test:
+    name: "Test - test"
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            gcc: gcc-x86-64-linux-gnu
+            rust: nightly
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            rust: nightly
+    runs-on: ${{ matrix.os }}
+    env:
+      RUSTC_WRAPPER: sccache
+      RUST_BACKTRACE: 1
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@master
+      - name: "Cache Cargo dependencies"
+        uses: Swatinem/rust-cache@v2
+      - name: "Setup sccache"
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+      - name: "Setup Rust toolchain"
+        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+      - name: "Run Cargo test"
+        run: cargo test --all --target ${{ matrix.target }}
+

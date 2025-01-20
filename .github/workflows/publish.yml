@@ -1,0 +1,31 @@
+name: "Publish"
+on:
+  release:
+    types: [published]
+env:
+  preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
+  PROJECT_NAME: "NAME_HERE"
+jobs:
+  publish:
+    name: "Publish - publish"
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          merge-multiple: true
+      - name: "Echo Tag Ref(s)"
+        run: |
+          echo "Tag name for GITHUB_REF_NAME: $GITHUB_REF_NAME"
+          echo "Tag name from github.ref_name ${{ github.ref_name }}"
+      - uses: svenstaro/upload-release-action@master
+        if: env.preview == 'false'
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ env.PROJECT_NAME }}-*.zip
+          file_glob: true
+          overwrite: true
+

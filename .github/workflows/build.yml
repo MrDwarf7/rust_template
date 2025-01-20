@@ -1,0 +1,86 @@
+name: "Build - Check & Clippy"
+on:
+  push:
+    branches:
+      - master
+      - main
+env:
+  preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
+  on_schedule: "false"
+  SCCACHE_GHA_ENABLED: true
+  CARGO_INCREMENTAL: 0
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  PROJECT_NAME: "NAME_HERE"
+jobs:
+  check:
+    name: "Build - check"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            gcc: gcc-x86-64-linux-gnu
+            rust: nightly
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            rust: nightly
+    runs-on: ${{ matrix.os }}
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@master
+      - name: "Cache Cargo dependencies"
+        uses: Swatinem/rust-cache@v2
+      - name: "Setup sccache"
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+      - name: "Setup Rust toolchain"
+        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+      - name: "Run Cargo fmt"
+        run: cargo fmt --all -- --check
+      - name: "Run Cargo check"
+        run: cargo check
+      - name: "Run Clippy with pedantic"
+        run: cargo clippy --all-targets --all-features -- -W clippy::pedantic
+      - name: "Build project"
+        run: cargo build --release --all
+  clippy:
+    name: "Build - clippy"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            gcc: gcc-x86-64-linux-gnu
+            rust: nightly
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            rust: nightly
+    runs-on: ${{ matrix.os }}
+    env:
+      RUSTC_WRAPPER: sccache
+    if: "!contains(github.event.head_commit.message, 'skip ci')"
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@master
+      - name: "Cache Cargo dependencies"
+        uses: Swatinem/rust-cache@v2
+      - name: "Setup sccache"
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+      - name: "Setup Rust toolchain"
+        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+      - name: "Run Cargo fmt"
+        run: cargo fmt --all -- --check
+      - name: "Run Clippy with pedantic"
+        run: cargo clippy --all-targets --all-features -- -W clippy::pedantic
+      - name: "Build project"
+        run: cargo build --release --all
+

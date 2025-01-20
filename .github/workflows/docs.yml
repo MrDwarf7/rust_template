@@ -1,0 +1,145 @@
+name: "Doc-check & Generation"
+on:
+  push:
+    branches:
+      - master
+      - main
+env:
+  SCCACHE_GHA_ENABLED: true
+  CARGO_INCREMENTAL: 0
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  PROJECT_NAME: "NAME_HERE"
+jobs:
+  docs:
+    name: "Docs - docs"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            gcc: gcc-x86-64-linux-gnu
+            rust: nightly
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            rust: nightly
+    runs-on: ${{ matrix.os }}
+    env:
+      RUSTC_WRAPPER: sccache
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v4
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+      - name: "Cache Cargo dependencies"
+        uses: Swatinem/rust-cache@v2
+      - name: "Setup Rust toolchain"
+        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+      - name: "Setup sccache"
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: "Run Cargo Doc checks"
+        run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+  package-docs-unix:
+    name: "Docs - package-docs-unix"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            gcc: gcc-x86-64-linux-gnu
+            rust: nightly
+    runs-on: ${{ matrix.os }}
+    env:
+      RUSTC_WRAPPER: sccache
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@v4
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+      - name: "Cache Cargo dependencies"
+        uses: Swatinem/rust-cache@v2
+      - name: "Setup Rust toolchain"
+        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+      - name: "Cache Cargo dependencies"
+        uses: Swatinem/rust-cache@v2
+        with:
+          cache-all-crates: true
+      - name: "Setup sccache"
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: "Run Cargo Doc generation"
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+        run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
+      - name: "Ensure Zip Installed on Unix"
+        run: |
+          if ! command -v zip &> /dev/null
+          then
+              sudo apt-get install zip
+          fi
+          zip --version
+      - name: "Package Docs Unix"
+        env:
+          TARGET_NAME: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs
+          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+        shell: bash
+        run: |
+          mkdir -p "$TARGET_NAME"
+          cp -r "target/${{ matrix.target }}/doc" "$TARGET_NAME"
+          zip -r "$TARGET_NAME.zip" "target/${{ matrix.target }}/doc"
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+  package-docs-windows:
+    name: "Docs - package-docs-windows"
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            rust: nightly
+    runs-on: ${{ matrix.os }}
+    env:
+      RUSTC_WRAPPER: sccache
+      CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
+    steps:
+      - name: "Checkout sources"
+        uses: actions/checkout@master
+      - name: "Cache Cargo dependencies"
+        uses: Swatinem/rust-cache@v2
+      - name: "Setup sccache"
+        uses: mozilla-actions/sccache-action@v0.0.6
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+      - name: "Setup Rust toolchain"
+        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+      - name: "Run Cargo Doc generation"
+        env:
+          RUSTDOCFLAGS: "-D warnings"
+        run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
+      - name: "Package Docs Windows"
+        env:
+          TARGET_NAME: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs
+          PROJECT_NAME: ${{ env.PROJECT_NAME }}
+        shell: powershell
+        run: |
+          New-Item -ItemType Directory -Path ${env:TARGET_NAME}
+          Copy-Item -Path ".\target\${{ matrix.target }}\doc" -Destination ${env:TARGET_NAME}
+          Compress-Archive -Path ${env:TARGET_NAME} -DestinationPath ${env:TARGET_NAME}
+      - name: "Upload artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+          if-no-files-found: 'error'
+          compression-level: '9'
+          overwrite: 'true'
+
