@@ -4,7 +4,7 @@ on:
     types: [published]
 env:
   preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
-  PROJECT_NAME: "NAME_HERE"
+  PROJECT_NAME: REPLACE_NAME_HERE
 jobs:
   publish:
     name: "Publish - publish"

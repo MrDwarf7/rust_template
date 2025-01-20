@@ -11,7 +11,7 @@ env:
   CARGO_INCREMENTAL: 0
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  PROJECT_NAME: "NAME_HERE"
+  PROJECT_NAME: REPLACE_NAME_HERE
 jobs:
   format-lint:
     name: "Formatting - format-lint"
