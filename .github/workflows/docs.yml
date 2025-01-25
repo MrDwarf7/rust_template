@@ -10,6 +10,7 @@ env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
   PROJECT_NAME: REPLACE_NAME_HERE
+  DOCS_BODY: "${{ github.event.release.body }}"
 jobs:
   docs:
     name: "Docs - docs"
@@ -35,6 +36,8 @@ jobs:
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-all-crates: true
       - name: "Setup Rust toolchain"
         run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
       - name: "Setup sccache"
@@ -83,20 +86,14 @@ jobs:
               sudo apt-get install zip
           fi
           zip --version
-      - name: "Package Docs Unix"
-        env:
-          TARGET_NAME: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs
-          PROJECT_NAME: ${{ env.PROJECT_NAME }}
-        shell: bash
-        run: |
-          mkdir -p "$TARGET_NAME"
-          cp -r "target/${{ matrix.target }}/doc" "$TARGET_NAME"
-          zip -r "$TARGET_NAME.zip" "target/${{ matrix.target }}/doc"
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
-          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+          path: target/${{ matrix.target }}/doc/
+          if-no-files-found: 'error'
+          compression-level: '9'
+          overwrite: 'true'
   package-docs-windows:
     name: "Docs - package-docs-windows"
     strategy:
@@ -125,21 +122,58 @@ jobs:
         env:
           RUSTDOCFLAGS: "-D warnings"
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
-      - name: "Package Docs Windows"
-        env:
-          TARGET_NAME: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs
-          PROJECT_NAME: ${{ env.PROJECT_NAME }}
-        shell: powershell
-        run: |
-          New-Item -ItemType Directory -Path ${env:TARGET_NAME}
-          Copy-Item -Path ".\target\${{ matrix.target }}\doc" -Destination ${env:TARGET_NAME}
-          Compress-Archive -Path ${env:TARGET_NAME} -DestinationPath ${env:TARGET_NAME}
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
-          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+          path: target\${{ matrix.target }}\doc\
           if-no-files-found: 'error'
           compression-level: '9'
           overwrite: 'true'
-
+  publish-docs:
+    name: "Docs - publish-docs"
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    needs: [package-docs-unix, package-docs-windows]
+    steps:
+      - run: |
+          echo 'DOCS_BODY<<EOF' >> $GITHUB_ENV
+          echo "From commit: ${GITHUB_SHA:0:8}" >> $GITHUB_ENV
+          echo "Generated on: $(date -u +"%Y-%m-%d %H:%M") UTC" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: "Checkout sources"
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        id: artifact-download-step
+        with:
+          merge-multiple: true
+      - name: "Update tag for docs"
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag --force docs && git push --force origin tag docs
+      - name: "Get directory structure"
+        shell: bash
+        run: |
+          sudo apt update
+          echo $PWD
+          echo "tree from single dot"
+          tree -afh .
+          echo \n\n
+          echo "tree from github workspace call"
+          tree -afh ${{ github.workspace }}
+      - name: "Docs - draft"
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "docs"
+          # repository: ${{ github.repository }}
+          fail_on_unmatched_files: true
+          draft: true
+          files: |
+            ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+          name: "[${{ github.ref_name }} Docs]"
+          body: ${{ env.DOCS_BODY }}
+          target_commitish: ${{ github.sha }}
+          generate_release_notes: false
+  #          body_path: ${{ github.workspace }}-CHANGELOG.txt ## For adding changelog content

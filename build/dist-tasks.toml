@@ -79,7 +79,7 @@ windows.args = [
     "-Command",
     "Compress-Archive",
     "-Path",
-    "${DIST_FOLDER}",
+    "${DIST_FOLDER}\\*",
     "-DestinationPath",
     "${DIST_FOLDER}.zip",
 ]
@@ -99,7 +99,7 @@ windows.args = [
     "${DIST_FOLDER}/"
 ]
 
-# Lets any streaming tasks finish
+# Lets any streaming (archiving) tasks finish writing to disk
 [tasks.sleep]
 linux.command = "sleep"
 linux.args = ["1"]
