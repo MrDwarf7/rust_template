@@ -21,6 +21,13 @@ run_task = { name = [
     "test_all",
 ], parallel = false }
 
+
+[tasks.t]
+run_task = { name = ["test"], parallel = false }
+
+[tasks.ta]
+run_task = { name = ["test_all"], parallel = false }
+
 [tasks.r]
 run_task = { name = ["run"], parallel = false }
 
@@ -49,3 +56,4 @@ run_task = { name = ["build_release_dist"], parallel = false }
 [tasks.reset]
 run_task = { name = ["clean", "a"], parallel = false }
 # END Full sweeps/aliases
+
