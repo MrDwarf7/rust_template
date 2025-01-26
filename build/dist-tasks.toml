@@ -25,14 +25,32 @@ ignore_errors = true # REQUIRED as - if the dir doesn't exist, SilenlyContinue d
 [tasks.create_dist]
 linux.command = "mkdir"
 linux.args = ["-p", "${DIST_FOLDER}/"]
-windows.command = "mkdir"
-windows.args = ["${DIST_FOLDER}/"]
+windows.command = "pwsh.exe"
+windows.args = [
+    "-Command",
+    "New-Item",
+    "-ItemType",
+    "Directory",
+    "-Path",
+    "${DIST_FOLDER}/",
+    "-ErrorAction",
+    "SilentlyContinue"
+]
 
 [tasks.create_showcase_dist]
 linux.command = "mkdir"
 linux.args = ["-p", "${DIST_FOLDER}/showcase/"]
-windows.command = "mkdir"
-windows.args = ["${DIST_FOLDER}/showcase/"]
+windows.command = "pwsh.exe"
+windows.args = [
+    "-Command",
+    "New-Item",
+    "-ItemType",
+    "Directory",
+    "-Path",
+    "${DIST_FOLDER}/showcase/",
+    "-ErrorAction",
+    "SilentlyContinue"
+]
 dependencies = ["create_dist"]
 
 [tasks.copy_readme_to_dist]
@@ -135,3 +153,5 @@ dependencies = [
     "sleep",
     "move_compressed_to_dist",
 ]
+
+
