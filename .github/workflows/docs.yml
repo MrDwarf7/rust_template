@@ -135,7 +135,7 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    needs: [ package-docs-unix, package-docs-windows ]
+    needs: [package-docs-unix, package-docs-windows]
     steps:
       - run: |
           echo 'DOCS_BODY<<EOF' >> $GITHUB_ENV

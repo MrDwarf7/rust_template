@@ -1,14 +1,14 @@
 #!/bin/bash
 set -euo pipefail
 
-export ARTIFACT_NAME="csv_parser_rs-$1"
+export ARTIFACT_NAME="REPLACE_NAME_HERE-$1"
 
 # Build for the target
 cargo build --release --locked --target "$1"
 
 mkdir -p "$ARTIFACT_NAME"
 # Create the artifact
-cp "target/$1/release/csv_parser_rs" "$ARTIFACT_NAME"
+cp "target/$1/release/REPLACE_NAME_HERE" "$ARTIFACT_NAME"
 cp "README.md" "LICENSE-APACHE" "LICENSE-MIT" "$ARTIFACT_NAME"
 
 # Zip the artifact
@@ -19,4 +19,3 @@ fi
 cd $ARTIFACT_NAME
 zip -r "../$ARTIFACT_NAME.zip" *
 cd ..
-
