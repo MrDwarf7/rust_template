@@ -1,7 +1,4 @@
 name: "Publish"
-on:
-  release:
-    types: [published]
 env:
   preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
   PROJECT_NAME: REPLACE_NAME_HERE
@@ -14,6 +11,7 @@ jobs:
           - os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
+      - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           merge-multiple: true
@@ -28,4 +26,3 @@ jobs:
           file: ${{ env.PROJECT_NAME }}-*.zip
           file_glob: true
           overwrite: true
-

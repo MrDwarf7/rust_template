@@ -135,7 +135,7 @@ jobs:
     permissions:
       contents: write
     runs-on: ubuntu-latest
-    needs: [package-docs-unix, package-docs-windows]
+    needs: [ package-docs-unix, package-docs-windows ]
     steps:
       - run: |
           echo 'DOCS_BODY<<EOF' >> $GITHUB_ENV
@@ -171,7 +171,7 @@ jobs:
           fail_on_unmatched_files: true
           draft: true
           files: |
-            ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
+            ${{ env.PROJECT_NAME }}.zip
           name: "[${{ github.ref_name }} Docs]"
           body: ${{ env.DOCS_BODY }}
           target_commitish: ${{ github.sha }}

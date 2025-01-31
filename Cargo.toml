@@ -5,7 +5,7 @@ cargo-features = [ "codegen-backend" ]
 [package]
 name = "rust_template"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 # For running the main server as a watch call
 # cargo watch -q -c -w src/ -x run
