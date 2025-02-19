@@ -55,6 +55,6 @@ run_task = { name = ["build_release_dist"], parallel = false }
 
 [tasks.reset]
 run_task = { name = ["a"], parallel = false }
-dependencies = "clean"
+dependencies = ["clean"]
 # END Full sweeps/aliases
 
