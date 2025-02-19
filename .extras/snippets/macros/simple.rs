@@ -42,24 +42,31 @@ macro_rules! some {
     };
 }
 
-/// Allows you to pull the version from your Cargo.toml at compile time as
-/// `MAJOR.MINOR.PATCH_PKGVERSION_PRE`
+/// Allows you to pull the name from your Cargo.toml at compile time.
+///
+/// <div class="warning">
+///
+/// **NOTE:** This macro extracts the name from an environment variable `CARGO_PKG_NAME`.
+/// When the crate name is set to something different from the package name,
+/// use environment variables `CARGO_CRATE_NAME` or `CARGO_BIN_NAME`.
+/// See [the Cargo Book](https://doc.rust-lang.org/cargo/reference/environment-variables.html)
+/// for more information.
+///
+/// </div>
 ///
 /// # Examples
 ///
 /// ```no_run
 /// #
-/// #
-/// #
-/// let m = crate_version!();
-/// assert_eq!(m, "0.1.0");
+/// let m =  crate_name!();
+/// assert_eq!(m, "rust_template");
 ///
 /// ```
 #[cfg(feature = "cargo")]
 #[macro_export]
-macro_rules! crate_version {
+macro_rules! crate_name {
     () => {
-        env!("CARGO_PKG_VERSION")
+        env!("CARGO_PKG_NAME")
     };
 }
 
@@ -101,6 +108,27 @@ macro_rules! crate_authors {
     };
 }
 
+/// Allows you to pull the version from your Cargo.toml at compile time as
+/// `MAJOR.MINOR.PATCH_PKGVERSION_PRE`
+///
+/// # Examples
+///
+/// ```no_run
+/// #
+/// #
+/// #
+/// let m = crate_version!();
+/// assert_eq!(m, "0.1.0");
+///
+/// ```
+#[cfg(feature = "cargo")]
+#[macro_export]
+macro_rules! crate_version {
+    () => {
+        env!("CARGO_PKG_VERSION")
+    };
+}
+
 /// Allows you to pull the description from your Cargo.toml at compile time.
 ///
 /// # Examples
@@ -118,63 +146,5 @@ macro_rules! crate_authors {
 macro_rules! crate_description {
     () => {
         env!("CARGO_PKG_DESCRIPTION")
-    };
-}
-
-/// Allows you to pull the name from your Cargo.toml at compile time.
-///
-/// <div class="warning">
-///
-/// **NOTE:** This macro extracts the name from an environment variable `CARGO_PKG_NAME`.
-/// When the crate name is set to something different from the package name,
-/// use environment variables `CARGO_CRATE_NAME` or `CARGO_BIN_NAME`.
-/// See [the Cargo Book](https://doc.rust-lang.org/cargo/reference/environment-variables.html)
-/// for more information.
-///
-/// </div>
-///
-/// # Examples
-///
-/// ```no_run
-/// #
-/// let m =  crate_name!();
-/// assert_eq!(m, "rust_template");
-///
-/// ```
-#[cfg(feature = "cargo")]
-#[macro_export]
-macro_rules! crate_name {
-    () => {
-        env!("CARGO_PKG_NAME")
-    };
-}
-
-/// Allows you to pull the name from your Cargo.toml at compile time.
-///
-/// <div class="warning">
-///
-/// **NOTE:** This macro extracts the name from an environment variable `CARGO_PKG_NAME`.
-/// When the crate name is set to something different from the package name,
-/// use environment variables `CARGO_CRATE_NAME` or `CARGO_BIN_NAME`.
-/// See [the Cargo Book](https://doc.rust-lang.org/cargo/reference/environment-variables.html)
-/// for more information.
-///
-/// </div>
-///
-/// # Examples
-///
-/// ```no_run
-/// #
-/// # // Where the name of your crate would be "my_crate"
-/// #
-/// let m = crate_name!();
-/// assert_eq!(m, "my_crate");
-///             
-/// ```
-#[cfg(feature = "cargo")]
-#[macro_export]
-macro_rules! crate_name {
-    () => {
-        env!("CARGO_PKG_NAME")
     };
 }
