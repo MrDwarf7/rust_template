@@ -35,18 +35,27 @@ pub struct Cli {
     /// The least verbose as 0 (Error -> Error Only)
     /// Most verbose as 4 (Trace -> Trace Everything)
     /// If not provided, the default value is "INFO".
-    #[arg(value_enum, name = "verbosity", short = 'v', long = "verbosity", help = "The verbosity level of the logger.", required = false, default_value = "INFO", value_hint = clap::ValueHint::Other)]
-    pub verbosity_level: Option<VerbosityLevel>,
+    #[arg(value_enum, name = "level_verbosity", short = 'l', long = "level_verbosity", help = "The verbosity level of the logger.", required = false, default_value = "INFO", value_hint = clap::ValueHint::Other)]
+    pub level_verbosity: Option<VerbosityLevel>,
+
+    /// Other version flag
+    #[arg(short = 'v', long = "version", help = "Prints version information")]
+    pub version: bool,
 }
 
 impl Cli {
     pub fn new() -> Self {
-        Self::parse()
+        let s = Self::parse();
+        if s.version {
+            println!("{} {}", crate::crate_name!(), crate::crate_version!());
+            std::process::exit(0);
+        }
+        s
     }
 
     #[inline]
     pub fn verbosity_level(&self) -> VerbosityLevel {
-        self.verbosity_level.unwrap_or(VerbosityLevel::Info)
+        self.level_verbosity.unwrap_or(VerbosityLevel::Info)
     }
 }
 
