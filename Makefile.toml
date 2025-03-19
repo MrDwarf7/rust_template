@@ -54,6 +54,7 @@ env.PROFILE = "release"
 run_task = { name = ["build_release_dist"], parallel = false }
 
 [tasks.reset]
-run_task = { name = ["clean", "a"], parallel = false }
+run_task = { name = ["a"], parallel = false }
+dependencies = ["clean"]
 # END Full sweeps/aliases
 
