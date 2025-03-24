@@ -4,16 +4,18 @@ debug/
 target/
 *config.to*
 
-#data/*
+
 #!data
 data/*.csv
 data/*.xlsx
 data/*.xlsm
+data/*
+!data/.gitkeep
 _*_dist/
 
-
 #
-#scratch/
+scratch/*
+!scratch/.gitkeep
 
 env*
 *env
