@@ -43,6 +43,9 @@ run_task = { name = ["build_release_workspace"], parallel = false }
 [tasks.cl]
 run_task = { name = ["clean"], parallel = false }
 
+[tasks.c]
+run_task = { name = ["clean"], parallel = false }
+
 [tasks.f]
 run_task = { name = ["format"], parallel = false }
 

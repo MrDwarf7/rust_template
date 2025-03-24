@@ -1,20 +1,42 @@
-cargo-features = [ "codegen-backend" ]
+cargo-features = [ "codegen-backend", "profile-rustflags", "trim-paths" ]
 # cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
-# cargo-features = ["codegen-backend"] 
+# cargo-features = ["codegen-backend"]
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
 name = "rust_template"
+authors = ["MrDwarf7", "Blake B. <github.com/MrDwarf7>"]
 version = "0.1.0"
 edition = "2024"
-
+description = "It does cool stuff!"
+license = "MIT"
+license-file = "LICENSE"
+readme = "README.md"
 # For running the main server as a watch call
 # cargo watch -q -c -w src/ -x run
+
+
+# [package.metadata.winresource]
+# OriginalFilename = "csv_parser_rs.exe"
+# FileDescription = "A CLI tool to parse a CSV file and filter out rows based on a set of criteria."
+# LegalCopyright = "Copyright © 2025 by Blake B. @github.com/MrDwarf7"
+# #CompanyName = "https://github.com/MrDwarf7"
+#
+# [target.'cfg(windows)'.build-dependencies]
+# windres = "0.2"
+#
+# [build-dependencies]
+# winresource = "0.1.19"
+# windres = "0.2.2"
+# winapi = { version = "0.3.9" }
 
 
 [dependencies]
 # eyre = "*"
 # dotenvy = "*"
 # futures = "*"
+#
+# clap = "*"
+# anstyle = "*"
 
 # Base dependencies/Commons
 # reqwest = { version = "*", features = ["cookies", "json", "multipart", "stream"] }
@@ -38,6 +60,7 @@ thiserror = "*"
 # Extra stuff
 # tokio-util = { version = "*", features = ["codec"] }
 # toml = "*"
+# dirs = "*" # Useful to get XDG spec dirs
 
 # Utilities
 # async-trait = "*"
@@ -55,7 +78,7 @@ codegen-units = 1
 opt-level = 1
 codegen-units = 256
 incremental = true
-#rustflags = ["-Zthreads=16" ]
+rustflags = ["-Zthreads=16" ]
 
 codegen-backend = "cranelift"
 
@@ -64,10 +87,11 @@ opt-level = 3
 codegen-units = 1
 debug = "none"
 debug-assertions = false
-incremental = true
-# trim-paths = "all"
-#rustflags = ["-Zthreads=16" ]
+# incremental = true
 
-# strip = "symbols" # Leave off @ w
+# trim-paths = "all"
+rustflags = ["-Zthreads=16" ]
+
+strip = "symbols" # Leave off @ w
 # lto = "fat" ## Can't use with cranelift yet
-# panic = "unwind"
+panic = "unwind"
