@@ -8,7 +8,7 @@ authors = ["MrDwarf7", "Blake B. <github.com/MrDwarf7>"]
 version = "0.1.0"
 edition = "2024"
 description = "It does cool stuff!"
-license = "MIT"
+# license = "MIT"
 license-file = "LICENSE"
 readme = "README.md"
 # For running the main server as a watch call
