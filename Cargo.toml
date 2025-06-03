@@ -1,11 +1,11 @@
-cargo-features = [ "codegen-backend", "profile-rustflags", "trim-paths" ]
+cargo-features = ["codegen-backend", "profile-rustflags", "trim-paths"]
 # cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
 # cargo-features = ["codegen-backend"]
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
 name = "rust_template"
-authors = ["MrDwarf7", "Blake B. <github.com/MrDwarf7>"]
 version = "0.1.0"
+authors = ["MrDwarf7", "Blake B. <github.com/MrDwarf7>"]
 edition = "2024"
 description = "It does cool stuff!"
 # license = "MIT"
@@ -13,6 +13,9 @@ license-file = "LICENSE"
 readme = "README.md"
 # For running the main server as a watch call
 # cargo watch -q -c -w src/ -x run
+
+######################################################################################################################################################
+######################################################################################################################################################
 
 
 # [package.metadata.winresource]
@@ -28,6 +31,9 @@ readme = "README.md"
 # winresource = "0.1.19"
 # windres = "0.2.2"
 # winapi = { version = "0.3.9" }
+
+######################################################################################################################################################
+######################################################################################################################################################
 
 
 [dependencies]
@@ -69,29 +75,64 @@ thiserror = "*"
 # chrono = "*"
 # itertools = "*"
 
+######################################################################################################################################################
+######################################################################################################################################################
 
-[profile.dev.package."*"]
-opt-level = 3
-codegen-units = 1
+
+## See `./.cargo_options.toml` for options & brief details & directions
 
 [profile.dev]
 opt-level = 1
 codegen-units = 256
 incremental = true
-rustflags = ["-Zthreads=16" ]
-
+rustflags = ["-Zthreads=16"]
 codegen-backend = "cranelift"
+debug = "line-tables-only"
+debug-assertions = true
+overflow-checks = true
+strip = "none"                # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
+panic = "abort"               # "unwind" | "abort"
+lto = "thin"                  # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+trim-paths = "none"
+tune-cpu = "native"
+
+######################################################################################################################################################
 
 [profile.release]
 opt-level = 3
 codegen-units = 1
+incremental = false
+rustflags = ["-Zthreads=16"]
+codegen-backend = "cranelift"          # May break deps.
 debug = "none"
 debug-assertions = false
-# incremental = true
-
-# trim-paths = "all"
-rustflags = ["-Zthreads=16" ]
-
-strip = "symbols" # Leave off @ w
-# lto = "fat" ## Can't use with cranelift yet
+overflow-checks = false                # debatable
+strip = "symbols"                      # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
 panic = "unwind"
+lto = "fat"                            # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+trim-paths = ["diagnostics", "object"]
+tune-cpu = "native"
+
+
+[profile.dev.package."*"]
+inherits = "release"
+codegen-backend = "cranelift" #### May break deps. for external crates
+
+[profile.release.package."*"]
+inherits = "release"
+codegen-backend = "cranelift" #### May break deps. for external crates??????
+
+######################################################################################################################################################
+######################################################################################################################################################
+
+# Lint levels / priorities/priority
+# 0 = forbid
+# 1 = deny
+# 2 = warn
+# 3 = allow
+[lints.rust]
+unsafe_code = { level = "forbid", priority = 0 }
+# unsafe_code = "forbid"
+
+[lints.clippy]
+enum_glob_use = { level = "warn", priority = 2 }
