@@ -1,0 +1,96 @@
+# https://doc.rust-lang.org/cargo/reference/profiles.html
+
+# https://doc.rust-lang.org/cargo/reference/profiles.html#opt-level
+# opt-level = {
+# 0 = none
+# 1 = basic
+# 2 = some
+# 3 = all
+# "s" = size
+# "z" = size + turn off lopp vectorization / loop unrolling
+# }
+
+# https://doc.rust-lang.org/cargo/reference/profiles.html#debug
+# debug = {
+# 0 | false | "none" = no debug info (default for release)
+# "line-directives-only" = line info only, line-tables-only is preferred for most cases
+# "line-tables-only" = very minimal, no variable or function param info
+# 1 | "limited" = slightly more than "line-tables-only"
+# 2 | true | "full" = full debug info (default for dev)
+# }
+
+# https://doc.rust-lang.org/cargo/reference/profiles.html#lto
+# lto = {
+# false = performs "thin local LTO", basically "thin" LTO on local crate across codegen units, NO LTO IS PERFORMED if codegen-units == 1
+# true | "fat" = performs "fat" LTO, attempts opts across all crates in dep. graph
+# "thin" = performs "thin" LTO, similar to "fat", less time + similar performance
+# "off" = entirely disables LTO
+# }
+
+
+# https://doc.rust-lang.org/cargo/reference/profiles.html#rpath
+# See also: https://doc.rust-lang.org/rustc/codegen-options/index.html#rpath
+#
+# rpath designates the run-time search path hard-coded in an executable file or library.
+# Dynamic linking loaders use the rpath to find required libraries.
+#
+# Default is false
+#
+# rpath = {
+# true
+# false
+# }
+
+# https://doc.rust-lang.org/rustc/codegen-options/index.html#split-debuginfo
+# split-debuginfo = {
+# "off" = default for platforms with ELF bins, and windows-gnu. DWARF debug info found in artifact sec. of exec
+# "packed" = default for windows-msvc & macos. "Packed" means debug info packed into sep. file from main exec
+# "unpacked" = debug info found in sep. files for each comp unit (obj file)
+# }
+
+# https://doc.rust-lang.org/rustc/codegen-options/index.html#target-cpu
+# target-cpu = {
+# "native" = use the processor of the host machine (ie: the machine running the compiler)
+# "generic" = LLVM targets with min. features for modern turning
+# }
+
+
+# https://doc.rust-lang.org/rustc/codegen-options/index.html#tune-cpu
+#
+# Same options as `target-cpu`
+#
+# tune-cpu = {
+# "none" = Default, LLVM translates AS the target-cpu value
+# "native" =
+# "generic" =
+# }
+
+# https://doc.rust-lang.org/cargo/reference/unstable.html?highlight=trim-paths#profile-trim-paths-option
+#
+# Takes a single option, or
+#   any variation of the options pre-pended with a `*` below
+#
+# trim-paths = {
+#   [
+#       "none" | false = Default(dev), disable path sanitization,,
+#       * "macro" = sanitize paths in expansion of std::file() macro. embeded panic messages come from this!!!!!
+#       * "diagnostics" = paths in printed compiler diagnostics,
+#       * "object" = paths in compiled exec. or libs,
+#       "all" | true  = sanitize paths in all possible locations
+#   ]
+# }
+
+######################################################################################################################################################
+######################################################################################################################################################
+
+
+# [lints.rust] & [lints.clippy] ## These differ slightly
+# Lint levels / priorities/priority
+# level = {
+# 0 = forbid
+# 1 = deny
+# 2 = warn
+# 3 = allow
+# }
+
+
