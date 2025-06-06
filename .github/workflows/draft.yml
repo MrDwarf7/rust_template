@@ -41,8 +41,8 @@ jobs:
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
         run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
-      - name: "Make script executable # Test if works when already within GH Actions"
-        run: chmod +x build/build.sh
+      # - name: "Make script executable # Test if works when already within GH Actions"
+      #   run: chmod +x build/build.sh
       - name: "Build"
         shell: bash
         run: |
