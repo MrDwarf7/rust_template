@@ -46,6 +46,7 @@ echo "BREAKER: ${BREAKER}"
 [tasks.format]
 command = "cargo"
 args = ["fmt", "--", "--emit=files"]
+dependencies = ["_taplo_format"]
 
 [tasks.clean]
 command = "cargo"
@@ -84,6 +85,11 @@ args = ["run"]
 [tasks.run_release]
 command = "cargo"
 args = ["run", "--release"]
+
+[tasks.run_as_project]
+command = "cargo"
+args = ["run", " --bin", "${PROJECT_NAME}"]
+
 # END Function outputs
 
 # START Workspaces
@@ -101,3 +107,27 @@ dependencies = ["format"]
 command = "cargo"
 args = ["test", "--workspace"]
 # END Workspaces
+
+[tasks.sleep]
+linux.command = "sleep"
+linux.args = ["${SLEEP_TIME}"]
+windows.command = "pwsh.exe"
+windows.args = ["-Command", "Start-Sleep", "-Seconds", "${SLEEP_TIME}"]
+
+## START Misc tasks
+
+# START Taplo (TOML Formmater) tasks
+[tasks.taplo_lint]
+command = "taplo"
+args = ["lint"]
+
+[tasks._taplo_format]
+command = "taplo"
+args = ["format"]
+
+[tasks._taplo_format_force]
+command = "taplo"
+args = ["format", "--force"]
+# END Taplo (TOML Formmater) tasks
+
+## END Misc tasks
