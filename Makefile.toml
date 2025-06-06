@@ -10,11 +10,9 @@ env.SLEEP_TIME = "15"
 
 ## START Full sweeps/aliases
 [tasks.b]
-# run_task = { name = ["format", "build"], parallel = false }
 run_task = { name = ["build"], parallel = false }
 
 [tasks.br]
-# run_task = { name = ["format", "build_release"], parallel = false }
 run_task = { name = ["build_release"], parallel = false }
 
 [tasks.a]
