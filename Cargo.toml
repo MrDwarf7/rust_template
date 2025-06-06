@@ -2,14 +2,14 @@ cargo-features = ["codegen-backend", "profile-rustflags", "trim-paths"]
 # cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
-name = "rust_template"
-version = "0.1.0"
-authors = ["MrDwarf7", "Blake B. <github.com/MrDwarf7>"]
-edition = "2024"
+name        = "rust_template"
+version     = "0.1.0"
+authors     = ["MrDwarf7", "Blake B. <github.com/MrDwarf7>"]
+edition     = "2024"
 description = "It does cool stuff!"
 # license = "MIT"
 license-file = "LICENSE"
-readme = "README.md"
+readme       = "README.md"
 # For running the main server as a watch call
 # cargo watch -q -c -w src/ -x run
 
@@ -81,44 +81,44 @@ thiserror = "*"
 ## See `./.cargo_options.toml` for options & brief details & directions
 
 [profile.dev]
-opt-level = 1
-codegen-units = 256
-incremental = true
-rustflags = ["-Zthreads=16"]
-codegen-backend = "cranelift"
-debug = "line-tables-only"
+opt-level        = 1
+codegen-units    = 256
+incremental      = true
+rustflags        = ["-Zthreads=16"]
+codegen-backend  = "cranelift"
+debug            = "line-tables-only"
 debug-assertions = true
-overflow-checks = true
-strip = "none"                # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
-panic = "abort"               # "unwind" | "abort"
-lto = "thin"                  # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths = "none"
-tune-cpu = "native"
+overflow-checks  = true
+strip            = "none"             # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
+panic            = "abort"            # "unwind" | "abort"
+lto              = "thin"             # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+trim-paths       = "none"
+tune-cpu         = "native"
 
 ######################################################################################################################################################
 
 [profile.release]
-opt-level = 3
-codegen-units = 1
-incremental = false
-rustflags = ["-Zthreads=16"]
-codegen-backend = "cranelift"          # May break deps.
-debug = "none"
+opt-level        = 3
+codegen-units    = 1
+incremental      = false
+rustflags        = ["-Zthreads=16"]
+codegen-backend  = "cranelift"               # May break deps.
+debug            = "none"
 debug-assertions = false
-overflow-checks = false                # debatable
-strip = "symbols"                      # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
-panic = "unwind"
-lto = "fat"                            # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths = ["diagnostics", "object"]
-tune-cpu = "native"
+overflow-checks  = false                     # debatable
+strip            = "symbols"                 # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
+panic            = "unwind"
+lto              = "fat"                     # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+trim-paths       = ["diagnostics", "object"]
+tune-cpu         = "native"
 
 
 [profile.dev.package."*"]
-inherits = "release"
+inherits        = "release"
 codegen-backend = "cranelift" #### May break deps. for external crates
 
 [profile.release.package."*"]
-inherits = "release"
+inherits        = "release"
 codegen-backend = "cranelift" #### May break deps. for external crates??????
 
 ######################################################################################################################################################

@@ -21,25 +21,25 @@ need_stdout = false
 
 [jobs.clippy-all]
 command = [
-    "cargo",
-    "clippy",
-    "--all-targets",
-    "--color",
-    "always",
-    "--",
-    "-W",
-    "clippy::pedantic",
+  "cargo",
+  "clippy",
+  "--all-targets",
+  "--color",
+  "always",
+  "--",
+  "-W",
+  "clippy::pedantic",
 ]
 need_stdout = false
 
 [jobs.check-win]
 command = [
-    "cargo",
-    "check",
-    "--target",
-    "x86_64-pc-windows-gnu",
-    "--color",
-    "always",
+  "cargo",
+  "check",
+  "--target",
+  "x86_64-pc-windows-gnu",
+  "--color",
+  "always",
 ]
 need_stdout = false
 
@@ -49,26 +49,26 @@ need_stdout = false
 # - the tests of a package: bacon test -- -- -p config
 [jobs.test]
 command = [
-    "cargo",
-    "test",
-    "--color",
-    "always",
-    "--",
-    "--color",
-    "always",  # see https://github.com/Canop/bacon/issues/124
+  "cargo",
+  "test",
+  "--color",
+  "always",
+  "--",
+  "--color",
+  "always",  # see https://github.com/Canop/bacon/issues/124
 ]
 need_stdout = true
 
 [jobs.test-all]
 command = [
-    "cargo",
-    "test",
-    "--all-targets",
-    "--color",
-    "always",
-    "--",
-    "--color",
-    "always",
+  "cargo",
+  "test",
+  "--all-targets",
+  "--color",
+  "always",
+  "--",
+  "--color",
+  "always",
 ]
 need_stdout = true
 
@@ -102,11 +102,11 @@ need_stdout = false
 # of waiting for program's end.
 [jobs.run]
 command = [
-    "cargo",
-    "run",
-    "--color",
-    "always",
-    # put launch parameters for your program behind a `--` separator
+  "cargo",
+  "run",
+  "--color",
+  "always",
+  # put launch parameters for your program behind a `--` separator
 ]
 need_stdout = true
 allow_warnings = true
