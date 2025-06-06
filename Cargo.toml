@@ -91,7 +91,7 @@ debug-assertions = true
 overflow-checks  = true
 strip            = "none"             # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
 panic            = "abort"            # "unwind" | "abort"
-lto              = "thin"             # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+lto              = "off"              # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
 trim-paths       = "none"
 tune-cpu         = "native"
 
@@ -108,7 +108,7 @@ debug-assertions = false
 overflow-checks  = false                     # debatable
 strip            = "symbols"                 # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
 panic            = "unwind"
-lto              = "fat"                     # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+lto              = "off"                     # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
 trim-paths       = ["diagnostics", "object"]
 tune-cpu         = "native"
 
