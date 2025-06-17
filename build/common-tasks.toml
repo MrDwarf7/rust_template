@@ -54,58 +54,59 @@ args = ["clean"]
 
 [tasks.build]
 command = "cargo"
-args = ["build"]
+args = ["build", "${@}"]
 dependencies = ["format"]
 
 [tasks.build_release]
 command = "cargo"
-args = ["build", "--release"]
+args = ["build", "--release", "${@}"]
 dependencies = ["format"]
 
 [tasks.docs]
 command = "cargo"
-args = ["doc", "--no-deps"]
+args = ["doc", "--no-deps", "${@}"]
 # END Core bare. min
 
 # START Tests
 [tasks.test]
 command = "cargo"
-args = ["test", "--", "--nocapture"]
+args = ["test", "${@}", "--", "--nocapture"]
 
 [tasks.test_all]
 command = "cargo"
-args = ["test", "--all", "--", "--nocapture"]
+args = ["test", "--all", "${@}", "--", "--nocapture"]
 # END Tests
 
 # START Function outputs
 [tasks.run]
 command = "cargo"
-args = ["run"]
+# We also capture anything after the main command
+args = ["run", "${@}"]
 
 [tasks.run_release]
 command = "cargo"
-args = ["run", "--release"]
+args = ["run", "--release", "${@}"]
 
 [tasks.run_as_project]
 command = "cargo"
-args = ["run", " --bin", "${PROJECT_NAME}"]
+args = ["run", " --bin", "${PROJECT_NAME}", "${@}"]
 
 # END Function outputs
 
 # START Workspaces
 [tasks.build_workspace]
 command = "cargo"
-args = ["build", "--workspace"]
+args = ["build", "--workspace", "${@}"]
 dependencies = ["format"]
 
 [tasks.build_release_workspace]
 command = "cargo"
-args = ["build", "--release", "--workspace"]
+args = ["build", "--release", "--workspace", "${@}"]
 dependencies = ["format"]
 
 [tasks.test_workspace]
 command = "cargo"
-args = ["test", "--workspace"]
+args = ["test", "--workspace", "${@}"]
 # END Workspaces
 
 [tasks.sleep]

@@ -1,17 +1,17 @@
 [tasks.docker_build]
 linux.command = "docker"
 windows.command = "docker"
-args = ["compose", "build", "--parallel", "--force-rm", "--no-cache"]
+args = ["compose", "build", "--parallel", "--force-rm", "--no-cache", "${@}"]
 
 [tasks.docker_up]
 linux.command = "docker"
 windows.command = "docker"
-args = ["compose", "up", "-d"]
+args = ["compose", "up", "-d", "${@}"]
 
 [tasks.docker_down_full]
 linux.command = "docker"
 windows.command = "docker"
-args = ["compose", "down", "--volumes", "--rmi", "all"]
+args = ["compose", "down", "--volumes", "--rmi", "all", "${@}"]
 
 [tasks.docker_start]
 run_task = { name = ["docker_build", "docker_up"], parallel = false }
