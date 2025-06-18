@@ -93,7 +93,7 @@ strip            = "none"             # true | false | "none" | "symbols" | "deb
 panic            = "abort"            # "unwind" | "abort"
 lto              = "off"              # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
 trim-paths       = "none"
-tune-cpu         = "native"
+# tune-cpu         = "native"
 
 ######################################################################################################################################################
 
@@ -110,7 +110,7 @@ strip            = "symbols"                 # true | false | "none" | "symbols"
 panic            = "unwind"
 lto              = "off"                     # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
 trim-paths       = ["diagnostics", "object"]
-tune-cpu         = "native"
+# tune-cpu         = "native"
 
 
 [profile.dev.package."*"]
