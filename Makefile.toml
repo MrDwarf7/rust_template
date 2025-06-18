@@ -43,6 +43,12 @@ run_task = { name = ["clean"], parallel = false }
 [tasks.f]
 run_task = { name = ["format"], parallel = false }
 
+[tasks.c]
+run_task = { name = ["check"], parallel = false }
+
+[tasks.cp]
+run_task = { name = ["clippy"], parallel = false }
+
 [tasks.envs]
 run_task = { name = "print_all", parallel = false }
 
