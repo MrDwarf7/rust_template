@@ -1,6 +1,10 @@
 #!/bin/bash
 set -euo pipefail
 
+# This is/can be used in the .github/workflows/draft.yml workflow
+# Though it's often easier to just do it directly in the yml unless
+# what you're needing is a fair bit more complicated
+
 export ARTIFACT_NAME="REPLACE_NAME_HERE-$1"
 
 # Build for the target
