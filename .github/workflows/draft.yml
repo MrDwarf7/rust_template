@@ -19,6 +19,7 @@ env:
   PROJECT_NAME: rust_template
   NIGHTLY_BODY: ${{ github.event.release.body }}
   LICENSE_FILE_REG: LICENS*|LICENSE-*|LICENSE-MIT|LICENSE-APACHE
+  LICENSE_FILES_WINDOWS: LICENSE*
   # LICENSE_FILE: LICENS*
   # LICENSE_FILE: "LICENSE"
   # LICENSE_FILE: "LICENSE-*"
@@ -154,7 +155,7 @@ jobs:
         # We have to create a zip arch in order for draft to find it as the upload job handles it outside the container or gh handles it directly
         run: |
           $ARTIFACT_NAME="${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}"
-          $LICENSE_FILE="${{ env.LICENSE_FILE }}"
+          $LICENSE_FILE="${{ env.LICENSE_FILES_WINDOWS }}"
           # $DRAFT_DIR="${ARTIFACT_NAME}"
           New-Item -ItemType Directory -Path "$ARTIFACT_NAME"
           Copy-Item -Path "target\${{ matrix.target }}\release\${{ env.PROJECT_NAME }}.exe" -Destination "$ARTIFACT_NAME"
