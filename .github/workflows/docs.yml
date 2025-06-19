@@ -6,7 +6,7 @@ on:
       - main
 env:
   # RUSTC_WRAPPER: sccache
-  RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+  RUSTC_WRAPPER: sccache
   CACHE_VERSION: v1
   SCCACHE_VERSION: 0.10.0
   SCCACHE_GHA_ENABLED: true
@@ -31,8 +31,7 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      # RUSTC_WRAPPER: sccache
-      RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+      RUSTC_WRAPPER: sccache
       CACHE_VERSION: v1
       SCCACHE_VERSION: 0.10.0
     steps:
@@ -88,8 +87,7 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      # RUSTC_WRAPPER: sccache
-      RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+      RUSTC_WRAPPER: sccache
       CACHE_VERSION: v1
       SCCACHE_VERSION: 0.10.0
     steps:
@@ -155,8 +153,7 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      # RUSTC_WRAPPER: sccache
-      RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+      RUSTC_WRAPPER: sccache
       CACHE_VERSION: v1
       SCCACHE_VERSION: 0.10.0
       CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe

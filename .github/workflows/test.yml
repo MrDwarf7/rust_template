@@ -6,7 +6,7 @@ on:
       - main
       - develop
 env:
-  RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+  RUSTC_WRAPPER: sccache
   CACHE_VERSION: v1
   SCCACHE_VERSION: 0.10.0
   SCCACHE_GHA_ENABLED: true
@@ -29,7 +29,7 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+      RUSTC_WRAPPER: sccache
       CACHE_VERSION: v1
       RUST_BACKTRACE: 1
     if: "!contains(github.event.head_commit.message, 'skip ci')"
