@@ -1,4 +1,5 @@
 # Justfile for Rust Project Automation
+# For Windows users,
 # Set the shell to powershell
 # Define a variable for the cargo command to allow easy modification if needed
 # Variable for helper text (Mind the indentations and use of double quotes)
@@ -6,57 +7,69 @@
 # %s/\v\{\{\s(runner_command)\s(.+)\}/\{\{ variable_name_for_runner \}\} /g
 # Can be used to replace the runner_command with the actual command to run
 
+# You may prefer powershell.exe over pwsh.exe, or another shell entirely.
 set windows-shell := ["pwsh.exe","--noprofile", "-NoLogo", "-Command"]
 
-runner_command := "cargo"
+cargo := "cargo"
+runner_command := "cargo make"
 
-# ---------------------------------------------------------------------------------
-# Default Recipe: build
-# Description: If no recipe is specified, default to 'build'.
-# Usage: just
+# Default command called when invoking `just` without arguments
+default: help
 
-# ---------------------------------------------------------------------------------
-default: simple
+helper_text := """
+Run the following commands as `just <command>` or `just <alias>` to execute them.\n
+\t\t📋 Available Commands:\n
+ -- help             -    Display this help message
+ -- build            -    Build the project in debug mode
+ -- build-release    -    Build the project in release mode
+ -- build-all        -    Build all targets in the project
+ -- run              -    Run the project in debug mode
+ -- run-release      -    Run the project in release mode
+ -- test             -    Run tests for the project
+ -- test-all         -    Run all tests in the workspace
+ -- test-insta       -    Run Cargo Insta tests
+ -- test-no-harness  -    Run tests without capturing stdout
+ -- format           -    Format the code using cargo fmt
+ -- check            -    Run checks for the project
+ -- check-clippy     -    Run clippy for the project
+ -- doc              -    Generate documentation for the project
+ -- doc-open         -    Generate documentation and open it in the browser
+ -- doc-test         -    Generate documentation and run tests
+ -- clean            -    Clean the project
+ -- reset            -    Reset the project by cleaning and full rebuilding it, including docs generation
+ -- simple           -    Run simple commands
+ -- full             -    Run full commands
+
+\t\t➕ Aliases:\n
+ - h                 -     Display this help message
+ - b                 -     Build the project in debug mode
+ - br                -     Build the project in release mode
+ - ba                -     Build all targets in the project
+ - a                 -     Build all targets in the project
+ - r                 -     Run the project in debug mode
+ - rr                -     Run the project in release mode
+ - t                 -     Run tests for the project
+ - ta                -     Run all tests in the workspace
+ - ti                -     Run Cargo Insta tests
+ - tnh               -     Run tests without capturing stdout
+ - f                 -     Format the code using cargo fmt
+ - l                 -     Run checks for the project
+ - c                 -     Run checks for the project
+ - cp                -     Run clippy for the project
+ - la                -     Run clippy for the project
+ - d                 -     Generate documentation for the project
+ - do                -     Generate documentation and open it in the browser
+ - dt                -     Generate documentation and run tests
+ - cl                -     Clean the project
+ - rst               -     Reset the project by cleaning and full rebuilding it, including docs generation
+ - s                 -     Run simple commands
+ - dev               -     Run simple commands
+ - out               -     Run full commands"""
 
 # ---------------------------------------------------------------------------------
 # Recipe: help
 # Description: Display available commands.
 # Usage: just help
-
-helper_text := """
-\r\n\t📋 Available Commands:
-➖ help             -    Display this help message
-➖ build            -    Build the project in debug mode
-➖ run              -    Run the project in debug mode
-➖ build-release    -    Build the project in release mode
-➖ run-release      -    Run the project in release mode
-➖ test             -    Run tests for the project
-➖ test-all         -    Run all tests in the workspace
-➖ test-no-harness  -    Run tests without capturing stdout
-➖ lint             -    Run linting for the project
-➖ doc              -    Generate documentation for the project
-➖ doc-open         -    Generate documentation and open it in the browser
-➖ doc-test         -    Generate documentation and run tests
-➖ simple           -    Run simple commands
-➖ full             -    Run full commands
-➖ clean            -    Clean the project
-\r\n\t➕ Aliases:
-➖ h                -     Display this help message
-➖ b                -     Build the project in debug mode
-➖ r                -     Run the project in debug mode
-➖ br               -     Build the project in release mode
-➖ rr               -     Run the project in release mode
-➖ t                -     Run tests for the project
-➖ ta               -     Run all tests in the workspace
-➖ tnh              -     Run tests without capturing stdout
-➖ l                -     Run linting for the project
-➖ d                -     Generate documentation for the project
-➖ do               -     Generate documentation and open it in the browser
-➖ dt               -     Generate documentation and run tests
-➖ s                -     Run simple commands
-➖ f                -     Run full commands
-➖ cl               -     Clean the project
-"""
 
 # ---------------------------------------------------------------------------------
 help:
@@ -70,11 +83,35 @@ alias h := help
 # Usage: just build
 
 # ---------------------------------------------------------------------------------
-build:
+build *args='':
     @echo "🔨 Building the project in debug mode..."
-    {{ runner_command }} build --workspace --all-features
+    {{ runner_command }} b {{ args }}
 
 alias b := build
+
+# ---------------------------------------------------------------------------------
+# Recipe: build-release
+# Description: Build the project in release mode.
+# Usage: just build-release
+
+# ---------------------------------------------------------------------------------
+build-release *args='':
+    @echo "🔨 Building the project in release mode..."
+    {{ runner_command }} br {{ args }}
+
+alias br := build-release
+
+# ---------------------------------------------------------------------------------
+# Recipe: build-all
+# Description: Build all targets in the project.
+# Usage: just build-all
+
+# ---------------------------------------------------------------------------------
+build-all *args='':
+    {{ runner_command }} a {{ args }}
+
+alias ba := build-all
+alias a := build-all
 
 # ---------------------------------------------------------------------------------
 # Recipe: run
@@ -84,21 +121,9 @@ alias b := build
 # ---------------------------------------------------------------------------------
 run *args='':
     @echo "🚀 Running the project in debug mode..."
-    {{ runner_command }} run {{ args }}
+    {{ runner_command }} r {{ args }}
 
 alias r := run
-
-# ---------------------------------------------------------------------------------
-# Recipe: build-release
-# Description: Build the project in release mode.
-# Usage: just build-release
-
-# ---------------------------------------------------------------------------------
-build-release:
-    @echo "🔨 Building the project in release mode..."
-    {{ runner_command }} build --release --workspace --all-features
-
-alias br := build-release
 
 # ---------------------------------------------------------------------------------
 # Recipe: run-release
@@ -106,18 +131,11 @@ alias br := build-release
 # Usage: just run-release
 
 # ---------------------------------------------------------------------------------
-run-release:
+run-release *args='':
     @echo "🚀 Running the project in release mode..."
-    {{ runner_command }} run --release --workspace --all-features
+    {{ runner_command }} rr {{ args }}
 
 alias rr := run-release
-
-build-all:
-    @echo "🔨 Building all..."
-    @just build
-    @just build-release
-
-alias ba := build-all
 
 # ---------------------------------------------------------------------------------
 # Recipe: test
@@ -125,9 +143,9 @@ alias ba := build-all
 # Usage: just test
 
 # ---------------------------------------------------------------------------------
-test:
+test *args='':
     @echo "🧪 Running tests..."
-    {{ runner_command }} test --all-targets --all-features
+    {{ runner_command }} t {{ args }}
 
 alias t := test
 
@@ -137,11 +155,23 @@ alias t := test
 # Usage: just test-all
 
 # ---------------------------------------------------------------------------------
-test-all:
+test-all *args='':
     @echo "🧪 Running all tests in the workspace..."
-    {{ runner_command }} test --all --all-targets --all-features
+    {{ runner_command }} ta {{ args }}
 
 alias ta := test-all
+
+# ---------------------------------------------------------------------------------
+# Recipe: test-insta
+# Description: Run Cargo Insta tests.
+# Usage: just test-insta
+
+# ---------------------------------------------------------------------------------
+test-insta:
+    @echo "🧪 Running Cargo Insta tests..."
+    {{ cargo }} insta test --lib
+
+alias ti := test-insta
 
 # ---------------------------------------------------------------------------------
 # Recipe: test-no-harness
@@ -151,81 +181,135 @@ alias ta := test-all
 # ---------------------------------------------------------------------------------
 test-no-harness:
     @echo "🧪 Running tests without capturing stdout..."
-    {{ runner_command }} test --all-features -- --nocapture
+    {{ cargo }} test --all-features -- --nocapture
 
 alias tnh := test-no-harness
 
 # ---------------------------------------------------------------------------------
-# Recipe: lint
-# Description: Run linting for the project.
-# Usage: just lint
+# Recipe: format
+# Description: Format the code using `cargo fmt`.
+# Usage: just format
 
 # ---------------------------------------------------------------------------------
-lint:
+format *args='':
+    @echo "🧹 Running code formatting..."
+    {{ runner_command }} f {{ args }}
+
+alias f := format
+
+# ---------------------------------------------------------------------------------
+# Recipe: check
+# Description: Run code checks using `cargo check`.
+# Usage: just check
+
+# ---------------------------------------------------------------------------------
+check *args='':
+    @echo "🔍 Running checks..."
+    {{ runner_command }} c {{ args }}
+
+alias l := check
+alias c := check
+
+# ---------------------------------------------------------------------------------
+# Recipe: check-clippy
+# Description: Run code checks using `cargo clippy`.
+# Usage: just check-clippy
+
+# ---------------------------------------------------------------------------------
+check-clippy *args='':
     @echo "🔍 Running linting..."
-    {{ runner_command }} clippy --fix --allow-dirty --workspace --all-features
+    {{ runner_command }} cp {{ args }}
 
-alias l := lint
+alias la := check-clippy
+alias cp := check-clippy
 
 # ---------------------------------------------------------------------------------
-# Recipe: doc
+# Recipe: docs
 # Description: Generate documentation for the project.
-# Usage: just doc
+# Usage: just docs
 
 # ---------------------------------------------------------------------------------
-doc:
+docs:
     @echo "📚 Generating documentation..."
-    {{ runner_command }} doc
+    {{ cargo }}  doc
 
-alias d := doc
+alias d := docs
 
 # ---------------------------------------------------------------------------------
-# Recipe: doc-open
+# Recipe: docs-open
 # Description: Generate documentation and open it in the default browser.
-# Usage: just doc-open
+# Usage: just docs-open
 
 # ---------------------------------------------------------------------------------
-doc-open:
+docs-open:
     @echo "📚 Generating documentation and opening it in the browser..."
-    {{ runner_command }} doc --open
+    {{ cargo }} doc --open
 
-alias do := doc-open
+alias do := docs-open
 
-doc-test:
+# ---------------------------------------------------------------------------------
+# Recipe: docs-test
+# Description: Run tests and generate documentation.
+# Usage: just docs-test
+
+# ---------------------------------------------------------------------------------
+docs-test:
     @echo "📚 Generating documentation and running tests..."
-    {{ runner_command }} test --doc
+    {{ cargo }} test --doc
 
-alias dt := doc-test
+alias dt := docs-test
 
-simple:
-    @echo "🚀 Running simple..."
-    @just build
-    @just lint
-    @just test
+# ---------------------------------------------------------------------------------
+# Recipe: clean
+# Description: Clean the project.
+# Usage: just clean
 
-alias s := simple
-
-full:
-    @echo "🚀 Running full..."
-    @just build
-    @just build-release
-    @just lint
-    @just test-all
-    @just doc
-
-alias f := full
-
-clean:
+# ---------------------------------------------------------------------------------
+clean *args='':
     @echo "🧹 Cleaning the project..."
-    {{ runner_command }} clean
+    {{ runner_command }} cl {{ args }}
 
 alias cl := clean
 
+# ---------------------------------------------------------------------------------
+# Recipe: reset
+# Description: Reset the project by cleaning and full rebuilding it. Includes docs gen.
+# Usage: just simple
+
+# ---------------------------------------------------------------------------------
 reset:
     @echo "🧹 Resetting the project..."
-    @just clean
-    @build-all
+    {{ runner_command }} reset
     @just doc
-    @just lint
 
 alias rst := reset
+
+# ---------------------------------------------------------------------------------
+# Recipe: simple
+# Description: Run the simple build, check, and test commands.
+# Usage: just simple
+
+# ---------------------------------------------------------------------------------
+simple:
+    @echo "🚀 Running simple..."
+    @just build
+    @just check
+    @just test
+
+alias s := simple
+alias dev := simple
+
+# ---------------------------------------------------------------------------------
+# Recipe: full
+# Description: Run the full build, check-clippy, test, and documentation commands.
+# Usage: just full
+
+# ---------------------------------------------------------------------------------
+full:
+    @echo "🚀 Running full..."
+    @just build-all
+    @just check-clippy
+    @just test-all
+    @just doc
+
+alias out := full
