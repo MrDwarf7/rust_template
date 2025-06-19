@@ -18,8 +18,9 @@ env:
   RUST_BACKTRACE: 1
   PROJECT_NAME: rust_template
   NIGHTLY_BODY: ${{ github.event.release.body }}
+  LICENSE_FILE_REG: LICENS*|LICENSE-*|LICENSE-MIT|LICENSE-APACHE
+  # LICENSE_FILE: LICENS*
   # LICENSE_FILE: "LICENSE"
-  LICENSE_FILE: LICENS*
   # LICENSE_FILE: "LICENSE-*"
   # LICENSE_FILE: "LICENSE-MIT"
   # LICENSE_FILE: "LICENSE-APACHE"
@@ -84,7 +85,8 @@ jobs:
           cargo build --release --locked --target "${{ matrix.target }}"
           mkdir -p "${ARTIFACT_NAME}"
           cp "target/${{ matrix.target }}/release/${{ env.PROJECT_NAME }}" "${ARTIFACT_NAME}"
-          cp "README.md" "${LICENSE_FILE}" "${ARTIFACT_NAME}"
+          # cp "README.md" "${LICENSE_FILE}" "${ARTIFACT_NAME}"
+          find . -maxdepth 1 -type f -regex ".*\(${LICENSE_FILE_REG}\)" -exec sh -c 'cp README.md "$@" "${ARTIFACT_NAME}"' _ {} +
           cd "${ARTIFACT_NAME}"
           zip -r "../${ARTIFACT_NAME}.zip" .
           cd ..
@@ -152,7 +154,7 @@ jobs:
         # We have to create a zip arch in order for draft to find it as the upload job handles it outside the container or gh handles it directly
         run: |
           $ARTIFACT_NAME="${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}"
-          export LICENSE_FILE="${{ env.LICENSE_FILE }}"
+          $LICENSE_FILE="${{ env.LICENSE_FILE }}"
           # $DRAFT_DIR="${ARTIFACT_NAME}"
           New-Item -ItemType Directory -Path "$ARTIFACT_NAME"
           Copy-Item -Path "target\${{ matrix.target }}\release\${{ env.PROJECT_NAME }}.exe" -Destination "$ARTIFACT_NAME"
