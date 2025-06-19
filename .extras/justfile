@@ -32,9 +32,9 @@ Run the following commands as `just <command>` or `just <alias>` to execute them
  -- format           -    Format the code using cargo fmt
  -- check            -    Run checks for the project
  -- check-clippy     -    Run clippy for the project
- -- doc              -    Generate documentation for the project
- -- doc-open         -    Generate documentation and open it in the browser
- -- doc-test         -    Generate documentation and run tests
+ -- docs             -    Generate documentation for the project
+ -- docs-open        -    Generate documentation and open it in the browser
+ -- docs-test        -    Generate documentation and run tests
  -- clean            -    Clean the project
  -- reset            -    Reset the project by cleaning and full rebuilding it, including docs generation
  -- simple           -    Run simple commands
@@ -280,7 +280,7 @@ alias cl := clean
 reset:
     @echo "🧹 Resetting the project..."
     {{ runner_command }} reset
-    @just doc
+    @just docs
 
 alias rst := reset
 
