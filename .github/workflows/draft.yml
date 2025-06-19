@@ -9,6 +9,10 @@ on:
 #    inputs:
 
 env:
+  # RUSTC_WRAPPER: sccache
+  RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+  CACHE_VERSION: v1
+  SCCACHE_VERSION: 0.10.0
   SCCACHE_GHA_ENABLED: true
   CARGO_INCREMENTAL: 0
   CARGO_TERM_COLOR: always
@@ -33,14 +37,31 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
+      # RUSTC_WRAPPER: sccache
+      RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+      CACHE_VERSION: v1
+      SCCACHE_VERSION: 0.10.0
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@master
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
-      - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.cargo/sccache/
+            ~/.rustup/
+            target/
+          restore-keys: |
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
+      # - name: "Setup sccache"
+      #   uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install gcc"
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
@@ -79,15 +100,32 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
+      # RUSTC_WRAPPER: sccache
+      RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
+      CACHE_VERSION: v1
+      SCCACHE_VERSION: 0.10.0
       CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@master
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
-      - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.9
+      - uses: actions/cache@v4
+        with:
+          key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            ~/.cargo/sccache/
+            ~/.rustup/
+            target/
+          restore-keys: |
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
+      # - name: "Setup sccache"
+      #   uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install gcc"
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
