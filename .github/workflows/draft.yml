@@ -44,8 +44,14 @@ jobs:
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@master
+      - name: "Install cargo tools"
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-binstall,cargo-make,just,taplo,sccache
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-all-crates: true
       - uses: actions/cache@v4
         with:
           key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
@@ -108,8 +114,14 @@ jobs:
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@master
+      - name: "Install cargo tools"
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-binstall,cargo-make,just,taplo,sccache
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
+        with:
+          cache-all-crates: true
       - uses: actions/cache@v4
         with:
           key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
