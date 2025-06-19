@@ -41,7 +41,7 @@ jobs:
       - name: "Setup Rust toolchain"
         run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
       - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Run Cargo Doc checks"
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
         env:
@@ -74,7 +74,7 @@ jobs:
         with:
           cache-all-crates: true
       - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
@@ -112,7 +112,7 @@ jobs:
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
       - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.6
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install gcc"
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
@@ -163,6 +163,12 @@ jobs:
           echo \n\n
           echo "tree from github workspace call"
           tree -afh ${{ github.workspace }}
+      - name: Zip - Documentation
+        shell: bash
+        run: |
+          cd "${{ env.PROJECT_NAME }}"
+          zip -r "../${{ env.PROJECT_NAME }}.zip" .
+          cd ..
       - name: "Docs - draft"
         uses: softprops/action-gh-release@v2
         with:
