@@ -19,7 +19,7 @@ env:
   PROJECT_NAME: rust_template
   NIGHTLY_BODY: ${{ github.event.release.body }}
   # LICENSE_FILE: "LICENSE"
-  LICENSE_FILE: "LICENSE*"
+  LICENSE_FILE: LICENS*
   # LICENSE_FILE: "LICENSE-*"
   # LICENSE_FILE: "LICENSE-MIT"
   # LICENSE_FILE: "LICENSE-APACHE"
@@ -152,10 +152,11 @@ jobs:
         # We have to create a zip arch in order for draft to find it as the upload job handles it outside the container or gh handles it directly
         run: |
           $ARTIFACT_NAME="${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}"
+          export LICENSE_FILE="${{ env.LICENSE_FILE }}"
           # $DRAFT_DIR="${ARTIFACT_NAME}"
           New-Item -ItemType Directory -Path "$ARTIFACT_NAME"
           Copy-Item -Path "target\${{ matrix.target }}\release\${{ env.PROJECT_NAME }}.exe" -Destination "$ARTIFACT_NAME"
-          Copy-Item -Path "README.md", "LICENSE-APACHE", "LICENSE-MIT" -Destination "$ARTIFACT_NAME"
+          Copy-Item -Path "README.md", "$LICENSE_FILE" -Destination "$ARTIFACT_NAME"
           Compress-Archive -Path "$ARTIFACT_NAME\*" -Destination "$ARTIFACT_NAME.zip"
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
