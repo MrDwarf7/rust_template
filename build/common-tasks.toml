@@ -5,7 +5,18 @@ BREAKER = "----------------------------------------"
 
 ROOT = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}"
 
-#PROFILE = "${CARGO_MAKE_CARGO_PROFILE}"
+# Platform specific file extensions, can use specifics for
+# build/dist taks that call linux.(args|command) vs windows.(args|command)
+WINDOWS_EXTENSION = ".exe"
+LINUX_EXTENSION = ""
+# mac outputs same as Linux right?
+# MACOS_EXTENSION = ""
+
+# Currently hardcoding the env variable that's above for this
+BIN_EXTENSION = "${WINDOWS_EXTENSION}"
+
+## This isn't needed anyway
+# PROFILE = "${CARGO_MAKE_CARGO_PROFILE}"
 PROFILE = "release"
 VERSION = "${CARGO_MAKE_PROJECT_VERSION}"
 # Name of the output binary
