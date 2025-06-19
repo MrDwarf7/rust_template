@@ -6,7 +6,7 @@ extend = [
 ]
 
 # Name of output if/when calling dist tasks, should match the cargo bin output
-env.PROJECT_NAME = "cargo_output_binary_name_for_PROJECT_NAME"
+env.PROJECT_NAME = "rust_template" # "cargo_output_binary_name_for_PROJECT_NAME"
 # Default profile to use for builds during dist related tasks
 env.SLEEP_TIME = "15"
 
