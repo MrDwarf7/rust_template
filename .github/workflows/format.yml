@@ -38,10 +38,12 @@ jobs:
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@master
+      - name: "Setup sccache"
+        uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install cargo tools"
         uses: taiki-e/install-action@v2
         with:
-          tool: cargo-binstall,cargo-make,just,taplo,sccache
+          tool: cargo-binstall,cargo-make,just,taplo
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
         with:
