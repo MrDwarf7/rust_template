@@ -11,7 +11,7 @@ env:
   CARGO_INCREMENTAL: 0
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  PROJECT_NAME: REPLACE_NAME_HERE
+  PROJECT_NAME: rust_template
 jobs:
   check:
     name: "Build - check"
@@ -87,4 +87,3 @@ jobs:
         run: cargo clippy --all-targets --all-features -- -W clippy::pedantic
       - name: "Build project"
         run: cargo build --release --all
-

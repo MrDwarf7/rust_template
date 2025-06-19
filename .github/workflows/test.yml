@@ -10,7 +10,7 @@ env:
   CARGO_INCREMENTAL: 0
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  PROJECT_NAME: REPLACE_NAME_HERE
+  PROJECT_NAME: rust_template
 jobs:
   test:
     name: "Test - test"
@@ -43,4 +43,3 @@ jobs:
         run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
       - name: "Run Cargo test"
         run: cargo test --all --target ${{ matrix.target }}
-

@@ -4,7 +4,7 @@ on:
     branches:
       - master
       - main
-      # tags: ["v[0-9]+.[0-9]+.[0-9]?"]
+    tags: ["v[0-9]+.[0-9]+.[0-9]?"]
   workflow_dispatch:
 #    inputs:
 
@@ -13,7 +13,7 @@ env:
   CARGO_INCREMENTAL: 0
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
-  PROJECT_NAME: REPLACE_NAME_HERE
+  PROJECT_NAME: rust_template
   NIGHTLY_BODY: ${{ github.event.release.body }}
   DRAFT_BODY: ""
 jobs:

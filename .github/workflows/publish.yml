@@ -1,7 +1,13 @@
 name: "Publish"
+on:
+  push:
+    branches:
+      - master
+      - main
+    tags: ["v[0-9]+.[0-9]+.[0-9]?"]
 env:
   preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
-  PROJECT_NAME: REPLACE_NAME_HERE
+  PROJECT_NAME: rust_template
 jobs:
   publish:
     name: "Publish - publish"
