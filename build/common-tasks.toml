@@ -28,6 +28,8 @@ echo "FOLDER_BIN_EXE: ${FOLDER_BIN_EXE}"
 echo "BREAKER: ${BREAKER}"
 '''], multi_line = true }
 
+# Sanity command to dump out all the variables
+# Also serves as a way to see variable interp in multiline scripts (it's odd)
 [tasks.print_all]
 script_runner = "@duckscript"
 script = '''
@@ -73,13 +75,13 @@ args = ["check", "--all-targets", "--color", "always", "${@}"]
 [tasks.clippy]
 command = "cargo"
 args = [
-  "clippy",
-  "--all-targets",
-  "--color",
-  "always",
-  "--",
-  "-W",
-  "clippy::pedantic",
+    "clippy",
+    "--all-targets",
+    "--color",
+    "always",
+    "--",
+    "-W",
+    "clippy::pedantic",
 ]
 # END Core bare. min
 
