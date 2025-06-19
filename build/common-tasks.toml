@@ -26,7 +26,16 @@ OUTPUT_BIN_NAME = "${BIN_NAME}_${VERSION}"
 # The folder where the binary will be copied to -- /_output_bin_name_dist
 DIST_FOLDER = "${ROOT}/_${OUTPUT_BIN_NAME}_dist"
 # the FULL path from root WITH EXE - root / target /current_profile / the_bin_name.EXE
-FOLDER_BIN_EXE = "${ROOT}/target/${PROFILE}/${BIN_NAME}.exe"
+FOLDER_BIN_EXE = "${ROOT}/target/${PROFILE}/${BIN_NAME}${BIN_EXTENSION}"
+
+# If you're running on an older Windows, or a builder (workflows etc.)
+# You may want to change this to "powershell.exe" or "powershell"
+# I have not tested with the older versions personally- all commands are
+# powershell/pwsh compatible afik
+#
+# NOTE: cmd.exe is NOT supported as the commands use CMDlets for zipping, moving, etc.
+#
+WINDOWS_SHELL = "pwsh.exe"
 
 VARS = { script = ['''
 echo ""ROOT: ${ROOT}
@@ -141,7 +150,7 @@ args = ["test", "--workspace", "${@}"]
 [tasks.sleep]
 linux.command = "sleep"
 linux.args = ["${SLEEP_TIME}"]
-windows.command = "pwsh.exe"
+windows.command = "${WINDOWS_SHELL}"
 windows.args = ["-Command", "Start-Sleep", "-Seconds", "${SLEEP_TIME}"]
 
 ## START Misc tasks
