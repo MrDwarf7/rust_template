@@ -10,7 +10,7 @@ description = "It does cool stuff!"
 # license = "MIT"
 license-file = "LICENSE"
 readme       = "README.md"
-# For running the main server as a watch call
+# For running the main server as a watch, call
 # cargo watch -q -c -w src/ -x run
 
 ######################################################################################################################################################
