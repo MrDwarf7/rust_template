@@ -45,6 +45,12 @@ run_task = { name = ["test"], parallel = false }
 [tasks.ta]
 run_task = { name = ["test_all"], parallel = false }
 
+[tasks.tnc]
+run_task = { name = ["test_no_capture"], parallel = false }
+
+[tasks.tanc]
+run_task = { name = ["test_all_no_capture"], parallel = false }
+
 [tasks.f]
 run_task = { name = ["format"], parallel = false }
 

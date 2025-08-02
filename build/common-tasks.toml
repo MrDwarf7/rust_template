@@ -108,9 +108,17 @@ args = [
 # START Tests
 [tasks.test]
 command = "cargo"
-args = ["test", "${@}", "--", "--nocapture"]
+args = ["test", "${@}"]
 
 [tasks.test_all]
+command = "cargo"
+args = ["test", "--all", "${@}"]
+
+[tasks.test_no_capture]
+command = "cargo"
+args = ["test", "${@}", "--", "--nocapture"]
+
+[tasks.test_all_no_capture]
 command = "cargo"
 args = ["test", "--all", "${@}", "--", "--nocapture"]
 # END Tests
