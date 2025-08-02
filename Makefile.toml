@@ -1,8 +1,8 @@
 extend = [
-    { path = "./build/common-tasks.toml" },
-    { path = "./build/dist-tasks.toml" },
-    { path = "./build/docker-tasks.toml", optional = true },
-    { path = "./build/watch-tasks.toml", optional = true },
+  { path = "./build/common-tasks.toml" },
+  { path = "./build/dist-tasks.toml" },
+  { path = "./build/docker-tasks.toml", optional = true },
+  { path = "./build/watch-tasks.toml", optional = true },
 ]
 
 # Name of output if/when calling dist tasks, should match the cargo bin output
@@ -19,12 +19,12 @@ run_task = { name = ["build_release"], parallel = false }
 
 [tasks.a]
 run_task = { name = [
-    "build_workspace",
-    "build",
-    "test",
-    "build_release_workspace",
-    "build_release",
-    "test_all",
+  "build_workspace",
+  "build",
+  "test",
+  "build_release_workspace",
+  "build_release",
+  "test_all",
 ], parallel = false }
 
 [tasks.r]
@@ -65,10 +65,10 @@ run_task = { name = "print_all", parallel = false }
 
 [tasks.up]
 run_task = { name = [
-    "a",
-    "docker_start",
-    "sleep",
-    "run_as_project",
+  "a",
+  "docker_start",
+  "sleep",
+  "run_as_project",
 ], parallel = false }
 
 [tasks.down]

@@ -95,13 +95,13 @@ args = ["check", "--all-targets", "--color", "always", "${@}"]
 [tasks.clippy]
 command = "cargo"
 args = [
-    "clippy",
-    "--all-targets",
-    "--color",
-    "always",
-    "--",
-    "-W",
-    "clippy::pedantic",
+  "clippy",
+  "--all-targets",
+  "--color",
+  "always",
+  "--",
+  "-W",
+  "clippy::pedantic",
 ]
 # END Core bare. min
 
