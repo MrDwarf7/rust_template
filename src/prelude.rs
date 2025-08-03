@@ -20,6 +20,16 @@ pub fn time<T>(t: &str, f: impl FnOnce() -> T) -> T {
     r
 }
 
+// #[derive(Clone)]
+// pub struct LevelWrapper<L, E>
+// where
+//     L: Into<tracing::Level>,
+//     E: Into<tracing_subscriber::filter::EnvFilter>,
+// {
+//     pub level:      L,
+//     pub env_filter: E,
+// }
+
 // pub type TracingSubscriber = tracing_subscriber::fmt::SubscriberBuilder<
 //     tracing_subscriber::fmt::format::DefaultFields,
 //     tracing_subscriber::fmt::format::Format<tracing_subscriber::fmt::format::Full>,
@@ -33,6 +43,30 @@ pub fn time<T>(t: &str, f: impl FnOnce() -> T) -> T {
 //         .with_line_number(true)
 //         .with_thread_ids(true)
 //     // .with_env_filter(level)
+//     // .with_span_events(tracing_subscriber::fmt::format::FmtSpan::CLOSE)
+//     // .with_timer(tracing_subscriber::fmt::time::SystemTime)
+// }
+//
+//
+
+// More complex implementation that allows for custom levels and environment filters
+// requires the use of the impl From<VerbosityLevel> for LevelWrapper<L, E> functionality in
+// `cli.rs` file.
+
+// pub fn init_logger<L, E>(level: LevelWrapper<L, E>) -> TracingSubscriber
+// where
+//     L: Into<tracing::Level> + Clone,
+//     E: Into<tracing_subscriber::filter::EnvFilter>,
+// {
+//     let max_level: tracing::Level = level.level.clone().into();
+//     let env_level: tracing_subscriber::filter::EnvFilter = level.env_filter.into();
+//     tracing_subscriber::fmt()
+//         .with_level(true)
+//         .with_ansi(true)
+//         .with_line_number(true)
+//         .with_thread_ids(true)
+//         .with_max_level(max_level)
+//         .with_env_filter(env_level)
 //     // .with_span_events(tracing_subscriber::fmt::format::FmtSpan::CLOSE)
 //     // .with_timer(tracing_subscriber::fmt::time::SystemTime)
 // }

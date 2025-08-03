@@ -5,6 +5,7 @@ use clap::{Parser, ValueEnum, command};
 
 use crate::prelude::*;
 
+#[rustfmt::skip]
 #[derive(Parser, Debug)]
 #[command(
     name = crate::crate_name!(),
@@ -15,6 +16,8 @@ use crate::prelude::*;
         Put your long desc. here
     ",
     arg_required_else_help = true
+    // Allows for the custom parsing of the version flag
+    disable_version_flag = true,
 )]
 pub struct Cli {
     /// The directory to act as the root of the crawler.
@@ -39,7 +42,7 @@ pub struct Cli {
     pub level_verbosity: Option<VerbosityLevel>,
 
     /// Other version flag
-    #[arg(short = 'v', long = "version", help = "Prints version information")]
+    #[arg(short = 'v', short_alias = 'V', long = "version", help = "Prints version information")]
     pub version: bool,
 }
 
@@ -87,6 +90,41 @@ impl From<VerbosityLevel> for tracing_subscriber::filter::EnvFilter {
             VerbosityLevel::Info => tracing_subscriber::filter::EnvFilter::new("INFO"),
             VerbosityLevel::Debug => tracing_subscriber::filter::EnvFilter::new("DEBUG"),
             VerbosityLevel::Trace => tracing_subscriber::filter::EnvFilter::new("TRACE"),
+        }
+    }
+}
+
+impl From<VerbosityLevel> for LevelWrapper<tracing::Level, tracing_subscriber::filter::EnvFilter> {
+    #[inline]
+    fn from(level: VerbosityLevel) -> Self {
+        let env_filter: tracing_subscriber::filter::EnvFilter = level.into();
+        let level: tracing::Level = level.into();
+        LevelWrapper { level, env_filter }
+    }
+}
+
+impl From<VerbosityLevel> for tracing_subscriber::filter::EnvFilter {
+    #[inline]
+    fn from(level: VerbosityLevel) -> Self {
+        match level {
+            VerbosityLevel::Error => tracing_subscriber::filter::EnvFilter::new("ERROR"),
+            VerbosityLevel::Warn => tracing_subscriber::filter::EnvFilter::new("WARN"),
+            VerbosityLevel::Info => tracing_subscriber::filter::EnvFilter::new("INFO"),
+            VerbosityLevel::Debug => tracing_subscriber::filter::EnvFilter::new("DEBUG"),
+            VerbosityLevel::Trace => tracing_subscriber::filter::EnvFilter::new("TRACE"),
+        }
+    }
+}
+
+impl From<VerbosityLevel> for tracing::Level {
+    #[inline]
+    fn from(value: VerbosityLevel) -> Self {
+        match value {
+            VerbosityLevel::Error => tracing::Level::ERROR,
+            VerbosityLevel::Warn => tracing::Level::WARN,
+            VerbosityLevel::Info => tracing::Level::INFO,
+            VerbosityLevel::Debug => tracing::Level::DEBUG,
+            VerbosityLevel::Trace => tracing::Level::TRACE,
         }
     }
 }
