@@ -10,8 +10,10 @@ env.PROJECT_NAME = "rust_template" # "cargo_output_binary_name_for_PROJECT_NAME"
 # Default profile to use for builds during dist related tasks
 env.SLEEP_TIME = "15"
 
-# Identifies the first argument passed to the <cargo> command when building.
-env.BUILD_ARG = "zigbuild"
+# Identifies the first argument passed after `cargo` as, or inplace of `build`.
+# ie: `cargo build <...zyx...>` vs. `cargo zigbuild <...xyz...>`
+env.BUILD_ARG = "build"
+# env.BUILD_ARG = "zigbuild"
 
 ## START Full sweeps/aliases
 [tasks.b]
