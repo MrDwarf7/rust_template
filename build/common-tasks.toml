@@ -3,17 +3,20 @@ CARGO_MAKE_EXTEND_WORKSPACE_MAKEFILE = true
 CARGO_MAKE_TIME_SUMMARY = true
 BREAKER = "----------------------------------------"
 
-ROOT = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}"
+# ROOT = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}"
+ROOT = "."
 
 # Platform specific file extensions, can use specifics for
 # build/dist taks that call linux.(args|command) vs windows.(args|command)
-WINDOWS_EXTENSION = ".exe"
-LINUX_EXTENSION = ""
-# mac outputs same as Linux right?
+# WINDOWS_EXTENSION = ".exe"
+# LINUX_EXTENSION = ""
 # MACOS_EXTENSION = ""
 
+# BIN_EXTENSION = "${WINDOWS_EXTENSION}"
+
 # Currently hardcoding the env variable that's above for this
-BIN_EXTENSION = "${WINDOWS_EXTENSION}"
+# Using a 'decode-mapping' to set the correct extension
+BIN_EXTENSION = { source = "${CARGO_MAKE_RUST_TARGET_OS}", default_value = "", mapping = { "linux" = "", "macos" = "", "windows" = ".exe", "openbsd" = "" } }
 
 ## This isn't needed anyway
 # PROFILE = "${CARGO_MAKE_CARGO_PROFILE}"
