@@ -103,19 +103,6 @@ impl From<VerbosityLevel> for LevelWrapper<tracing::Level, tracing_subscriber::f
     }
 }
 
-impl From<VerbosityLevel> for tracing_subscriber::filter::EnvFilter {
-    #[inline]
-    fn from(level: VerbosityLevel) -> Self {
-        match level {
-            VerbosityLevel::Error => tracing_subscriber::filter::EnvFilter::new("ERROR"),
-            VerbosityLevel::Warn => tracing_subscriber::filter::EnvFilter::new("WARN"),
-            VerbosityLevel::Info => tracing_subscriber::filter::EnvFilter::new("INFO"),
-            VerbosityLevel::Debug => tracing_subscriber::filter::EnvFilter::new("DEBUG"),
-            VerbosityLevel::Trace => tracing_subscriber::filter::EnvFilter::new("TRACE"),
-        }
-    }
-}
-
 impl From<VerbosityLevel> for tracing::Level {
     #[inline]
     fn from(value: VerbosityLevel) -> Self {

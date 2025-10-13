@@ -14,7 +14,6 @@ ROOT = "."
 
 # BIN_EXTENSION = "${WINDOWS_EXTENSION}"
 
-# Currently hardcoding the env variable that's above for this
 # Using a 'decode-mapping' to set the correct extension
 BIN_EXTENSION = { source = "${CARGO_MAKE_RUST_TARGET_OS}", default_value = "", mapping = { "linux" = "", "macos" = "", "windows" = ".exe", "openbsd" = "" } }
 
