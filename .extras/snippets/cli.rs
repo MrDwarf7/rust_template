@@ -15,9 +15,10 @@ use crate::prelude::*;
     long_about = "\n\
         Put your long desc. here
     ",
-    arg_required_else_help = true
+    arg_required_else_help = true,
     // Allows for the custom parsing of the version flag
     disable_version_flag = true,
+    styles = get_styles()
 )]
 pub struct Cli {
     /// The directory to act as the root of the crawler.
