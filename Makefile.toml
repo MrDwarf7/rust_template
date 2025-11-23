@@ -3,6 +3,7 @@ extend = [
   { path = "./build/dist-tasks.toml" },
   { path = "./build/docker-tasks.toml", optional = true },
   { path = "./build/watch-tasks.toml", optional = true },
+  { path = "./build/typst-tasks.toml", optional = true },
 ]
 
 # Name of output if/when calling dist tasks, should match the cargo bin output
@@ -89,4 +90,27 @@ run_task = { name = ["docker_stop"], parallel = false }
 env.PROFILE = "release"
 run_task = { name = ["build_release_dist"], parallel = false }
 
-# END Full sweeps/aliases
+## END Full sweeps/aliases
+
+
+## START typst tasks
+
+[tasks.typb]
+run_task = { name = ["typst_build"], parallel = false }
+
+# [tasks.typcl]
+# run_task = { name = ["typst_compile"], parallel = false }
+
+[tasks.typw]
+run_task = { name = ["typst_watch"], parallel = false }
+
+[tasks.typnw]
+run_task = { name = ["typst_watch_no_follow"], parallel = false }
+
+[tasks.typc]
+run_task = { name = ["typst_clean"], parallel = false }
+
+[tasks.typcl]
+run_task = { name = ["typst_clean"], parallel = false }
+
+## END typst tasks
