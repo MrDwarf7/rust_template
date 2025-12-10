@@ -10,7 +10,7 @@ body:
     validations:
       required: true
     attributes:
-      label: "Software/Progeam Version"
+      label: "Software/Program Version"
       description: "Run `bin --version` and paste the output here."
       placeholder: "ex: bin 4.1.0"
   - type: "input"
