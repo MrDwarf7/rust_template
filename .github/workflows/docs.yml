@@ -5,15 +5,17 @@ on:
       - master
       - main
 env:
+  DOCS_BODY: "${{ github.event.release.body }}"
+  #
+  RUST_TOOLCHAIN: nightly
+  SCCACHE_GHA_ENABLED: true
   RUSTC_WRAPPER: sccache
   CACHE_VERSION: v1
   SCCACHE_VERSION: 0.10.0
-  SCCACHE_GHA_ENABLED: true
   CARGO_INCREMENTAL: 0
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
   PROJECT_NAME: rust_template
-  DOCS_BODY: "${{ github.event.release.body }}"
 jobs:
   docs:
     name: "Docs - docs"
@@ -37,18 +39,23 @@ jobs:
     steps:
       ########## Setup
       - name: "Checkout sources"
-        uses: actions/checkout@v4
+        uses: actions/checkout@master
+        #
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
+        #
       - name: "Install cargo tools"
         uses: taiki-e/install-action@v2
         with:
           tool: cargo-binstall,cargo-make,just,taplo
+          #
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
         with:
           cache-all-crates: true
-      - uses: actions/cache@v4
+          #
+      - name: "Setup actions/cache"
+        uses: actions/cache@v4
         with:
           key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
           path: |
@@ -61,15 +68,21 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
+          #
       - name: "Install gcc"
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+        #
       - name: "Setup Rust toolchain"
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           targets: ${{ matrix.target }}
-          ########## Action
+      # - name: "Setup Rust toolchain"
+      #   run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
+      # - name: "Ensure nightly rustfmt installed"
+      #   run: rustup component add rustfmt --toolchain nightly
+      ########## Action
       - name: "Run Cargo Doc checks"
         # - name: "Setup sccache"
         #   uses: mozilla-actions/sccache-action@v0.0.9

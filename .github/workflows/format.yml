@@ -7,11 +7,12 @@ on:
       - master
       - main
 env:
-  # RUSTC_WRAPPER: sccache
+  #
+  RUST_TOOLCHAIN: nightly
+  SCCACHE_GHA_ENABLED: true
   RUSTC_WRAPPER: sccache
   CACHE_VERSION: v1
   SCCACHE_VERSION: 0.10.0
-  SCCACHE_GHA_ENABLED: true
   CARGO_INCREMENTAL: 0
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1

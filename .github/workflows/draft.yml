@@ -9,25 +9,21 @@ on:
 #    inputs:
 
 env:
-  RUSTC_WRAPPER: sccache
-  CACHE_VERSION: v1
-  SCCACHE_VERSION: 0.10.0
-  SCCACHE_GHA_ENABLED: true
-  CARGO_INCREMENTAL: 0
-  CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
-  PROJECT_NAME: rust_template
   NIGHTLY_BODY: ${{ github.event.release.body }}
   LICENSE_FILE_REG: LICENS*|LICENSE-*|LICENSE-MIT|LICENSE-APACHE
   LICENSE_FILES_WINDOWS: LICENSE*
   # The short ref name of the branch or tag that triggered the workflow run.
   GITHUB_BRANCH_TAG_NAME: ${{ github.ref_name }}
-  # LICENSE_FILE: LICENS*
-  # LICENSE_FILE: "LICENSE"
-  # LICENSE_FILE: "LICENSE-*"
-  # LICENSE_FILE: "LICENSE-MIT"
-  # LICENSE_FILE: "LICENSE-APACHE"
-  DRAFT_BODY: ""
+  #
+  RUST_TOOLCHAIN: nightly
+  SCCACHE_GHA_ENABLED: true
+  RUSTC_WRAPPER: sccache
+  CACHE_VERSION: v1
+  SCCACHE_VERSION: 0.10.0
+  CARGO_INCREMENTAL: 0
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+  PROJECT_NAME: rust_template
 jobs:
   build-unix:
     name: "Draft - build-unix"
