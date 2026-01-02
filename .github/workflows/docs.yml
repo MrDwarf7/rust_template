@@ -41,7 +41,7 @@ jobs:
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
         ####################################################
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
@@ -101,7 +101,7 @@ jobs:
       # - name: "Cache Cargo dependencies"
       #   uses: Swatinem/rust-cache@v2
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install cargo tools"
@@ -160,7 +160,7 @@ jobs:
       RUSTC_WRAPPER: sccache
       CACHE_VERSION: v1
       SCCACHE_VERSION: 0.10.0
-      CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
+      # CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@master
@@ -194,7 +194,7 @@ jobs:
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"

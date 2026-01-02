@@ -5,6 +5,9 @@ set -euo pipefail
 # Though it's often easier to just do it directly in the yml unless
 # what you're needing is a fair bit more complicated
 
+# ARTIFACT_NAME is as follows:
+# ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}
+# the build output name | the matrix target | - The short ref name of the branch or tag that triggered the workflow run.
 export ARTIFACT_NAME="REPLACE_NAME_HERE-$1"
 
 # Build for the target
@@ -17,9 +20,9 @@ cp "README.md" "LICENSE-APACHE" "LICENSE-MIT" "$ARTIFACT_NAME"
 
 # Zip the artifact
 if ! command -v zip &>/dev/null; then
-    sudo apt-get update && sudo apt-get install -yq zip
+  sudo apt-get update && sudo apt-get install -yq zip
 fi
 # Zips the items without including the folder itself in the resulting archive
-cd $ARTIFACT_NAME
-zip -r "../$ARTIFACT_NAME.zip" *
+cd "$ARTIFACT_NAME"
+zip -r "../$ARTIFACT_NAME.zip" ./*
 cd ..

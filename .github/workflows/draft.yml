@@ -20,6 +20,8 @@ env:
   NIGHTLY_BODY: ${{ github.event.release.body }}
   LICENSE_FILE_REG: LICENS*|LICENSE-*|LICENSE-MIT|LICENSE-APACHE
   LICENSE_FILES_WINDOWS: LICENSE*
+  # The short ref name of the branch or tag that triggered the workflow run.
+  GITHUB_BRANCH_TAG_NAME: ${{ github.ref_name }}
   # LICENSE_FILE: LICENS*
   # LICENSE_FILE: "LICENSE"
   # LICENSE_FILE: "LICENSE-*"
@@ -74,13 +76,13 @@ jobs:
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       # - name: "Make script executable # Test if works when already within GH Actions"
       #   run: chmod +x build/build.sh
       - name: "Build"
         shell: bash
         run: |
-          export ARTIFACT_NAME="${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}"
+          export ARTIFACT_NAME="${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ env.GITHUB_BRANCH_TAG_NAME }}"
           export LICENSE_FILE="${{ env.LICENSE_FILE }}"
           # export DRAFT_DIR="${ARTIFACT_NAME}"
           cargo build --release --locked --target "${{ matrix.target }}"
@@ -94,8 +96,8 @@ jobs:
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }} # Adding .zip to the name will cause XYZ.zip.zip (Where the second one is just a naming convention)
-          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}.zip # We don't want the zipped archive as upload-artifact already zips it
+          name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ env.GITHUB_BRANCH_TAG_NAME }} # Adding .zip to the name will cause XYZ.zip.zip (Where the second one is just a naming convention)
+          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ env.GITHUB_BRANCH_TAG_NAME }}.zip # We don't want the zipped archive as upload-artifact already zips it
           if-no-files-found: 'error'
           compression-level: '9'
           # overwrite: 'true'
@@ -146,7 +148,7 @@ jobs:
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Build"
         run: cargo build --release --locked --target ${{ matrix.target }}
       - name: "Pack artifact"
@@ -154,7 +156,7 @@ jobs:
         working-directory: ${{ github.workspace }}
         # We have to create a zip arch in order for draft to find it as the upload job handles it outside the container or gh handles it directly
         run: |
-          $ARTIFACT_NAME="${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}"
+          $ARTIFACT_NAME="${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ env.GITHUB_BRANCH_TAG_NAME }}"
           $LICENSE_FILE="${{ env.LICENSE_FILES_WINDOWS }}"
           # $DRAFT_DIR="${ARTIFACT_NAME}"
           New-Item -ItemType Directory -Path "$ARTIFACT_NAME"
@@ -164,8 +166,8 @@ jobs:
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }} # Adding .zip to the name will cause XYZ.zip.zip (Where the second one is just a naming convention)
-          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ github.ref_name }}.zip # We don't want the zipped archive as upload-artifact already zips it
+          name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ env.GITHUB_BRANCH_TAG_NAME }} # Adding .zip to the name will cause XYZ.zip.zip (Where the second one is just a naming convention)
+          path: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-${{ env.GITHUB_BRANCH_TAG_NAME }}.zip # We don't want the zipped archive as upload-artifact already zips it
           if-no-files-found: 'error'
           compression-level: '9'
           # overwrite: 'true'

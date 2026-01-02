@@ -66,6 +66,6 @@ jobs:
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Run Cargo test"
         run: cargo test --all --target ${{ matrix.target }}

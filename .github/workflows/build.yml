@@ -71,7 +71,7 @@ jobs:
       # - name: "Install cargo-binstall"
       # uses: cargo-bins/cargo-binstall@main
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Ensure nightly rustfmt installed"
         run: rustup component add rustfmt --toolchain nightly
       - name: "Run Cargo fmt"
@@ -133,7 +133,7 @@ jobs:
       - name: "Install sccache via cargo-binstall"
         run: cargo binstall -y sccache@${{ env.SCCACHE_VERSION }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile default --target ${{ matrix.target }} --no-self-update
+        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Ensure nightly rustfmt installed"
         run: rustup component add rustfmt --toolchain nightly
       - name: "Run Cargo fmt"
