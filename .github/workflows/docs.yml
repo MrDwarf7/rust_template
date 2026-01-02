@@ -227,7 +227,7 @@ jobs:
     steps:
       #
       - name: "Generate docs body"
-      - run: |
+        run: |
           echo 'DOCS_BODY<<EOF' >> $GITHUB_ENV
           echo "From commit: ${GITHUB_SHA:0:8}" >> $GITHUB_ENV
           echo "Generated on: $(date -u +"%Y-%m-%d %H:%M") UTC" >> $GITHUB_ENV
