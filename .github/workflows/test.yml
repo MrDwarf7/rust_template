@@ -29,10 +29,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
-      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
-      CACHE_VERSION: ${{ env.CACHE_VERSION }}
-      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
+      SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
+      RUSTC_WRAPPER: env.RUSTC_WRAPPER
+      CACHE_VERSION: env.CACHE_VERSION
+      SCCACHE_VERSION: env.SCCACHE_VERSION
       RUST_BACKTRACE: 1
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
