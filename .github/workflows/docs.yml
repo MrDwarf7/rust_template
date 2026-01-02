@@ -41,8 +41,10 @@ jobs:
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
-        ####################################################
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          targets: ${{ matrix.target }}
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install cargo tools"
@@ -101,7 +103,10 @@ jobs:
       # - name: "Cache Cargo dependencies"
       #   uses: Swatinem/rust-cache@v2
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          targets: ${{ matrix.target }}
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install cargo tools"
@@ -194,7 +199,10 @@ jobs:
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
       - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          targets: ${{ matrix.target }}
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
