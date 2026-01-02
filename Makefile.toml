@@ -23,6 +23,14 @@ run_task = { name = ["build"], parallel = false }
 [tasks.br]
 run_task = { name = ["build_release"], parallel = false }
 
+[tasks.ba]
+run_task = { name = [
+  "build_workspace",
+  "build",
+  "build_release_workspace",
+  "build_release",
+], parallel = false }
+
 [tasks.a]
 run_task = { name = [
   "build_workspace",
