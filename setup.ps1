@@ -13,14 +13,23 @@ $PROJECT_NAME = $FOLDER_NAME -replace '\.', '_'
 # Configurable list of optional folders to ask about removing
 $FOLDERS_TO_ASK = @("data", "scratch")
 
-$GITHUB_FILE_PUBLISH = ".github/_publish.yml"
-$GITHUB_FILE_CONFIG = ".github/workflows/config.yml"
+$GITHUB_ISSUE_TEMPLATE_DIR = ".github/ISSUE_TEMPLATE"
+$GITHUB_WORKFLOWS_DIR = ".github/workflows"
 
-$GITHUB_FILE_WORKFLOWS = @(
-    ".github/workflows/01-bug.yml"
-    ".github/workflows/02-feature-request.yml"
-    ".github/workflows/03-docs-problem.yml"
-    ".github/workflows/04-build-problem.yml"
+$GITHUB_FILE_PUBLISH = ".github/_publish.yml"
+$GITHUB_FILE_CONFIG = ".github/ISSUE_TEMPLATE/config.yml"
+
+$GITHUB_FILES = @(
+  "$GITHUB_WORKFLOWS_DIR/build.yml"
+  "$GITHUB_WORKFLOWS_DIR/docs.yml"
+  "$GITHUB_WORKFLOWS_DIR/draft.yml"
+  "$GITHUB_WORKFLOWS_DIR/format.yml"
+  "$GITHUB_WORKFLOWS_DIR/test.yml"
+
+  "$GITHUB_ISSUE_TEMPLATE_DIR/01-bug.yml"
+  "$GITHUB_ISSUE_TEMPLATE_DIR/02-feature-request.yml"
+  "$GITHUB_ISSUE_TEMPLATE_DIR/03-docs-problem.yml"
+  "$GITHUB_ISSUE_TEMPLATE_DIR/04-build-problem.yml"
 )
 
 function Replace-InFile {
@@ -41,6 +50,7 @@ function Replace-InFile {
 function Ask-YesNo {
     param([string]$Prompt)
 
+    Write-Host "\n"
     while ($true) {
         $answer = Read-Host "$Prompt [y/n]"
         if ($answer -match '^[Yy]') { return $true }
@@ -72,8 +82,8 @@ function Maybe-RemoveBacon {
 
 function Update-MakefileToml {
     if (Test-Path "Makefile.toml") {
-        Write-Host "Updating Makefile.toml (using FOLDER_NAME: $FOLDER_NAME)"
-        Replace-InFile "Makefile.toml" 'env\.PROJECT_NAME = "rust_template"' "env.PROJECT_NAME = `"$FOLDER_NAME`""
+        Write-Host "Updating Makefile.toml (using FOLDER_NAME: $PROJECT_NAME)"
+        Replace-InFile "Makefile.toml" 'env\.PROJECT_NAME = "rust_template"' "env.PROJECT_NAME = `"$PROJECT_NAME`""
     }
 }
 
@@ -106,7 +116,7 @@ function Update-GithubPublish {
 }
 
 function Update-IssueTemplateWorkflows {
-    foreach ($file in $GITHUB_FILE_WORKFLOWS) {
+    foreach ($file in $GITHUB_FILES) {
         if (Test-Path $file) {
             Write-Host "Updating $file (PROJECT_NAME → $PROJECT_NAME)"
             Replace-InFile $file "PROJECT_NAME: rust_template" "PROJECT_NAME: $PROJECT_NAME"
@@ -122,55 +132,74 @@ function Update-ConfigYml {
     }
 }
 
+function Setup-UsingJJ {
+    $cmd_bin = "jj"
+
+    Write-Host "jj command found."
+    if (Ask-YesNo "Do you want to initialize with jj (recommended for existing remote)?") {
+      Write-Host "Choose initialization method:"
+      Write-Host "\t 1) jj git init"
+      Write-Host "\t 2) jj git init --colocate  (shares .git directory with Git tools)"
+
+      while ($true) {
+        $choice = Read-Host "Enter choice (1 or 2)"
+        if ($choice -eq "1") {
+          jj git init
+          break
+        } elseif ($choice -eq "2") {
+          jj git init --colocate
+          break
+        } else {
+          Write-Host "Invalid choice, please enter 1 or 2."
+        }
+      }
+      return
+    }
+}
+
 function Setup-Repository {
     Write-Host ""
+    $cmd_bin = "git"
 
-    if (Ask-YesNo "Have you already set up the GitHub repository (remote exists)?") {
-        # Remote exists → offer jj colocation option if available
-        if (Get-Command jj -ErrorAction SilentlyContinue) {
-            Write-Host "jj command found."
-            if (Ask-YesNo "Do you want to initialize with jj (recommended for existing remote)?") {
-                Write-Host "Choose initialization method:"
-                Write-Host "  1) jj git init"
-                Write-Host "  2) jj git init --colocate  (shares .git directory with Git tools)"
+    Add-Content -Path ./.gitignore -Value "./.extras/"
 
-                while ($true) {
-                    $choice = Read-Host "Enter choice (1 or 2)"
-                    if ($choice -eq "1") {
-                        jj git init
-                        break
-                    }
-                    elseif ($choice -eq "2") {
-                        jj git init --colocate
-                        break
-                    }
-                    else {
-                        Write-Host "Invalid choice, please enter 1 or 2."
-                    }
-                }
-                return
-            }
-        }
-        else {
-            Write-Host "jj not available."
-        }
-
-        # Fallback to plain git init
-        git init
-        Write-Host "Initialized empty Git repository."
+    if (Get-Command jj -ErrorAction SilentlyContinue) {
+      $cmd_bin = "jj"
     }
-    else {
-        # No remote yet → default to plain git init
-        Write-Host "No existing remote. Initializing a fresh Git repository."
-        git init
-        Write-Host "Initialized empty Git repository. You can create the GitHub repo later and add it as remote."
+
+    # Remote exists → offer jj colocation option if available
+    if ("$cmd_bin" -eq "jj") {
+      Setup-UsingJJ
+      Invoke-Expression "$cmd_bin file untrack .extras"
+    } else {
+      # No remote yet → default to plain git init
+      Write-Host "No existing remote. Initializing a fresh Git repository."
+      Invoke-Expression "$cmd_bin init"
+      Write-Host "Initialized empty Git repository. You can create the GitHub repo later and add it as remote."
     }
+
+    return
+}
+
+funciton Maybe-RemoveSetupScript {
+    if (Test-Path "setup.ps1") {
+      if (Ask-YesNo "Do you want to remove setup.ps1?") {
+        Remove-Item "setup.ps1" -Force
+        Write-Host "Removed setup.ps1"
+      } else {
+        Write-Host "Kept setup.ps1"
+      }
+    }
+    return
 }
 
 function Main {
     Write-Host "Starting project template setup for folder: $FOLDER_NAME"
     Write-Host "Derived PROJECT_NAME (for Cargo/binary): $PROJECT_NAME"
     Write-Host ""
+
+    # Remove the other operating system's setup script
+    Remove-Item -Path setup.sh -Force -ErrorAction SilentlyContinue
 
     Remove-VcsDirs
     Remove-Target
@@ -185,6 +214,7 @@ function Main {
 
     Write-Host ""
     Write-Host "Setup complete!"
+    Maybe-RemoveSetupScript
 }
 
 Main
