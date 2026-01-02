@@ -37,9 +37,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
-      CACHE_VERSION: v1
-      SCCACHE_VERSION: 0.10.0
+      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+      CACHE_VERSION: ${{ env.CACHE_VERSION }}
+      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: "Checkout sources"
@@ -102,10 +103,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
-      # RUSTC_WRAPPER: "/home/runner/.cargo/bin/sccache"
-      CACHE_VERSION: v1
-      SCCACHE_VERSION: 0.10.0
+      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+      CACHE_VERSION: ${{ env.CACHE_VERSION }}
+      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: "Checkout sources"

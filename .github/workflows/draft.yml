@@ -40,9 +40,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
-      CACHE_VERSION: v1
-      SCCACHE_VERSION: 0.10.0
+      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+      CACHE_VERSION: ${{ env.CACHE_VERSION }}
+      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@master
@@ -114,9 +115,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
-      CACHE_VERSION: v1
-      SCCACHE_VERSION: 0.10.0
+      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+      CACHE_VERSION: ${{ env.CACHE_VERSION }}
+      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
       CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
     steps:
       - name: "Checkout sources"

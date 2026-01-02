@@ -5,7 +5,6 @@ on:
       - master
       - main
 env:
-  # RUSTC_WRAPPER: sccache
   RUSTC_WRAPPER: sccache
   CACHE_VERSION: v1
   SCCACHE_VERSION: 0.10.0
@@ -31,9 +30,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
-      CACHE_VERSION: v1
-      SCCACHE_VERSION: 0.10.0
+      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+      CACHE_VERSION: ${{ env.CACHE_VERSION }}
+      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@v4
@@ -79,6 +79,10 @@ jobs:
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
         env:
           RUSTDOCFLAGS: "-D warnings"
+          SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+          RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+          CACHE_VERSION: ${{ env.CACHE_VERSION }}
+          SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
   package-docs-unix:
     name: "Docs - package-docs-unix"
     strategy:
@@ -91,9 +95,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
-      CACHE_VERSION: v1
-      SCCACHE_VERSION: 0.10.0
+      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+      CACHE_VERSION: ${{ env.CACHE_VERSION }}
+      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
     steps:
       - name: "Checkout sources"
         uses: actions/checkout@v4
@@ -136,6 +141,10 @@ jobs:
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
+          SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+          RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+          CACHE_VERSION: ${{ env.CACHE_VERSION }}
+          SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
       - name: "Ensure Zip Installed on Unix"
         run: |
@@ -162,9 +171,10 @@ jobs:
             rust: nightly
     runs-on: ${{ matrix.os }}
     env:
-      RUSTC_WRAPPER: sccache
-      CACHE_VERSION: v1
-      SCCACHE_VERSION: 0.10.0
+      SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+      RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+      CACHE_VERSION: ${{ env.CACHE_VERSION }}
+      SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
       # CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
     steps:
       - name: "Checkout sources"
@@ -206,6 +216,10 @@ jobs:
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
+          SCCACHE_GHA_ENABLED: ${{ env.SCCACHE_GHA_ENABLED }}
+          RUSTC_WRAPPER: ${{ env.RUSTC_WRAPPER }}
+          CACHE_VERSION: ${{ env.CACHE_VERSION }}
+          SCCACHE_VERSION: ${{ env.SCCACHE_VERSION }}
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
