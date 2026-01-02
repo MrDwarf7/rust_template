@@ -61,7 +61,6 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.cargo/sccache/
-            ~/.rustup/
             target/
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
@@ -128,7 +127,6 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.cargo/sccache/
-            ~/.rustup/
             target/
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
