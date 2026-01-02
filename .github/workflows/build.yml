@@ -7,12 +7,7 @@ on:
 env:
   preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
   on_schedule: "false"
-  # RUSTC_WRAPPER: sccache
-  #
   RUST_TOOLCHAIN: nightly
-  # RUST_TOOLCHAIN_PROFILE: default
-  # RUST_TOOLCHAIN_OVERRIDE: true
-  #
   SCCACHE_GHA_ENABLED: true
   RUSTC_WRAPPER: sccache
   CACHE_VERSION: v1
@@ -36,11 +31,11 @@ jobs:
             target: x86_64-pc-windows-msvc
             rust: nightly
     runs-on: ${{ matrix.os }}
-    env:
-      SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-      RUSTC_WRAPPER: env.RUSTC_WRAPPER
-      CACHE_VERSION: env.CACHE_VERSION
-      SCCACHE_VERSION: env.SCCACHE_VERSION
+    # env:
+    #   SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
+    #   RUSTC_WRAPPER: env.RUSTC_WRAPPER
+    #   CACHE_VERSION: env.CACHE_VERSION
+    #   SCCACHE_VERSION: env.SCCACHE_VERSION
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: "Checkout sources"
@@ -102,11 +97,11 @@ jobs:
             target: x86_64-pc-windows-msvc
             rust: nightly
     runs-on: ${{ matrix.os }}
-    env:
-      SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-      RUSTC_WRAPPER: env.RUSTC_WRAPPER
-      CACHE_VERSION: env.CACHE_VERSION
-      SCCACHE_VERSION: env.SCCACHE_VERSION
+    # env:
+    #   SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
+    #   RUSTC_WRAPPER: env.RUSTC_WRAPPER
+    #   CACHE_VERSION: env.CACHE_VERSION
+    #   SCCACHE_VERSION: env.SCCACHE_VERSION
     if: "!contains(github.event.head_commit.message, 'skip ci')"
     steps:
       - name: "Checkout sources"
