@@ -8,6 +8,11 @@ env:
   preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
   on_schedule: "false"
   # RUSTC_WRAPPER: sccache
+  #
+  RUST_TOOLCHAIN: nightly
+  RUST_TOOLCHAIN_PROFILE: default
+  RUST_TOOLCHAIN_OVERRIDE: true
+  #
   RUSTC_WRAPPER: sccache
   CACHE_VERSION: v1
   SCCACHE_VERSION: 0.10.0
@@ -68,10 +73,16 @@ jobs:
       - name: "Install gcc"
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
-      # - name: "Install cargo-binstall"
-      # uses: cargo-bins/cargo-binstall@main
-      - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
+        # - name: "Install cargo-binstall"
+        # uses: cargo-bins/cargo-binstall@main
+      - name: "Setup Rust toolchain via actions-rs"
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          profile: ${{ env.RUST_TOOLCHAIN_PROFILE }}
+          override: ${{ env.RUST_TOOLCHAIN_OVERRIDE }}
+      # - name: "Setup Rust toolchain"
+      #   run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Ensure nightly rustfmt installed"
         run: rustup component add rustfmt --toolchain nightly
       - name: "Run Cargo fmt"
@@ -132,8 +143,14 @@ jobs:
         uses: cargo-bins/cargo-binstall@main
       - name: "Install sccache via cargo-binstall"
         run: cargo binstall -y sccache@${{ env.SCCACHE_VERSION }}
-      - name: "Setup Rust toolchain"
-        run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
+      - name: "Setup Rust toolchain via actions-rs"
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          profile: ${{ env.RUST_TOOLCHAIN_PROFILE }}
+          override: ${{ env.RUST_TOOLCHAIN_OVERRIDE }}
+      # - name: "Setup Rust toolchain"
+      #   run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
       - name: "Ensure nightly rustfmt installed"
         run: rustup component add rustfmt --toolchain nightly
       - name: "Run Cargo fmt"

@@ -1,4 +1,4 @@
-name: "Doc-check & Generation"
+name: "Docs - Check & Generation"
 on:
   push:
     branches:
