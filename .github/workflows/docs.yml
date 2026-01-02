@@ -35,16 +35,9 @@ jobs:
     #   CACHE_VERSION: env.CACHE_VERSION
     #   SCCACHE_VERSION: env.SCCACHE_VERSION
     steps:
+      ########## Setup
       - name: "Checkout sources"
         uses: actions/checkout@v4
-      - name: "Install gcc"
-        if: matrix.gcc != ''
-        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
-      - name: "Setup Rust toolchain"
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          targets: ${{ matrix.target }}
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install cargo tools"
@@ -64,12 +57,19 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.cargo/sccache/
-            ~/.rustup/
             target/
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
-          ####################################################
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+      - name: "Setup Rust toolchain"
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          targets: ${{ matrix.target }}
+          ########## Action
       - name: "Run Cargo Doc checks"
         # - name: "Setup sccache"
         #   uses: mozilla-actions/sccache-action@v0.0.9
