@@ -92,6 +92,7 @@ jobs:
           cd "${ARTIFACT_NAME}"
           zip -r "../${ARTIFACT_NAME}.zip" .
           cd ..
+        #
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
@@ -154,6 +155,7 @@ jobs:
       ########## Action
       - name: "Build"
         run: cargo build --release --locked --target ${{ matrix.target }}
+        #
       - name: "Pack artifact"
         shell: powershell
         working-directory: ${{ github.workspace }}
@@ -166,6 +168,7 @@ jobs:
           Copy-Item -Path "target\${{ matrix.target }}\release\${{ env.PROJECT_NAME }}.exe" -Destination "$ARTIFACT_NAME"
           Copy-Item -Path "README.md", "$LICENSE_FILE" -Destination "$ARTIFACT_NAME"
           Compress-Archive -Path "$ARTIFACT_NAME\*" -Destination "$ARTIFACT_NAME.zip"
+        #
       - name: "Upload artifact"
         uses: actions/upload-artifact@v4
         with:
@@ -175,6 +178,7 @@ jobs:
           compression-level: '9'
           # overwrite: 'true'
   draft:
+    name: "Draft - draft"
     if: startsWith(github.ref, 'refs/tags/')
     permissions:
       contents: write
@@ -185,7 +189,8 @@ jobs:
       - name: "Checkout sources"
         uses: actions/checkout@v4
         #
-      - uses: actions/download-artifact@v4
+      - name: "Download artifacts"
+        uses: actions/download-artifact@v4
         id: artifact-download-step
         with:
           merge-multiple: true
@@ -203,6 +208,7 @@ jobs:
   #          body_path: ${{ github.workspace }}-CHANGELOG.txt ## For adding changelog content
 
   nightly:
+    name: "Draft - nightly"
     if: ${{ !startsWith(github.ref, 'refs/tags/') }}
     permissions:
       contents: write
@@ -214,16 +220,22 @@ jobs:
           echo "From commit: ${GITHUB_SHA:0:8}" >> $GITHUB_ENV
           echo "Generated on: $(date -u +"%Y-%m-%d %H:%M") UTC" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+        #
+      - name: "Checkout sources"
+        uses: actions/checkout@v4
+        #
+      - name: "Download artifacts"
+        uses: actions/download-artifact@v4
         with:
           merge-multiple: true
+          #
       - name: "Update the tag"
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag --force nightly && git push --force origin tag nightly
-      - name: "Nightly"
+        #
+      - name: "Realse Nightly"
         uses: softprops/action-gh-release@v2
         with:
           tag_name: nightly

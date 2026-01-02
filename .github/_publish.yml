@@ -17,15 +17,22 @@ jobs:
           - os: ubuntu-latest
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      #
+      - name: "Checkout sources"
+        uses: actions/checkout@master
+        #
+      - name: "Download artifacts"
+        uses: actions/download-artifact@v4
         with:
           merge-multiple: true
+          #
       - name: "Echo Tag Ref(s)"
         run: |
           echo "Tag name for GITHUB_REF_NAME: $GITHUB_REF_NAME"
           echo "Tag name from github.ref_name ${{ github.ref_name }}"
-      - uses: svenstaro/upload-release-action@master
+        #
+      - name: "Upload Release Assets"
+        uses: svenstaro/upload-release-action@master
         if: env.preview == 'false'
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}

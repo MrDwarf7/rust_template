@@ -141,10 +141,6 @@ jobs:
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           targets: ${{ matrix.target }}
-      # - name: "Setup Rust toolchain"
-      #   run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
-      # - name: "Ensure nightly rustfmt installed"
-      #   run: rustup component add rustfmt --toolchain nightly
       ########## Action
       - name: "Run Cargo fmt"
         run: cargo +nightly fmt --all
