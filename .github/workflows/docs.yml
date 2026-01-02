@@ -31,11 +31,6 @@ jobs:
             target: x86_64-pc-windows-msvc
             rust: nightly
     runs-on: ${{ matrix.os }}
-    # env:
-    #   SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-    #   RUSTC_WRAPPER: env.RUSTC_WRAPPER
-    #   CACHE_VERSION: env.CACHE_VERSION
-    #   SCCACHE_VERSION: env.SCCACHE_VERSION
     steps:
       ########## Setup
       - name: "Checkout sources"
@@ -64,6 +59,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.cargo/sccache/
+            ~/.rustup/
             target/
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
@@ -78,23 +74,10 @@ jobs:
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           targets: ${{ matrix.target }}
-      # - name: "Setup Rust toolchain"
-      #   run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
-      # - name: "Ensure nightly rustfmt installed"
-      #   run: rustup component add rustfmt --toolchain nightly
       ########## Action
       - name: "Run Cargo Doc checks"
-        # - name: "Setup sccache"
-        #   uses: mozilla-actions/sccache-action@v0.0.9
-        # - name: "Setup sccache"
-        #   uses: mozilla-actions/sccache-action@v0.0.9
-
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
         env:
-          # SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-          # RUSTC_WRAPPER: env.RUSTC_WRAPPER
-          # CACHE_VERSION: env.CACHE_VERSION
-          # SCCACHE_VERSION: env.SCCACHE_VERSION
           RUSTDOCFLAGS: "-D warnings"
   package-docs-unix:
     name: "Docs - package-docs-unix"
@@ -107,35 +90,26 @@ jobs:
             gcc: gcc-x86-64-linux-gnu
             rust: nightly
     runs-on: ${{ matrix.os }}
-    # env:
-    #   SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-    #   RUSTC_WRAPPER: env.RUSTC_WRAPPER
-    #   CACHE_VERSION: env.CACHE_VERSION
-    #   SCCACHE_VERSION: env.SCCACHE_VERSION
     steps:
+      ########## Setup
       - name: "Checkout sources"
-        uses: actions/checkout@v4
-      - name: "Install gcc"
-        if: matrix.gcc != ''
-        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
-      # - name: "Cache Cargo dependencies"
-      #   uses: Swatinem/rust-cache@v2
-      - name: "Setup Rust toolchain"
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          targets: ${{ matrix.target }}
+        uses: actions/checkout@master
+        #
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
+        #
       - name: "Install cargo tools"
         uses: taiki-e/install-action@v2
         with:
           tool: cargo-binstall,cargo-make,just,taplo
+          #
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
         with:
           cache-all-crates: true
-      - uses: actions/cache@v4
+          #
+      - name: "Setup actions/cache"
+        uses: actions/cache@v4
         with:
           key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
           path: |
@@ -149,14 +123,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
-      # - name: "Setup sccache"
-      #   uses: mozilla-actions/sccache-action@v0.0.9
+          #
+      - name: "Install gcc"
+        if: matrix.gcc != ''
+        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+        #
+      - name: "Setup Rust toolchain"
+        uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ env.RUST_TOOLCHAIN }}
+          targets: ${{ matrix.target }}
+      ########## Action
       - name: "Run Cargo Doc generation"
         env:
-          # SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-          # RUSTC_WRAPPER: env.RUSTC_WRAPPER
-          # CACHE_VERSION: env.CACHE_VERSION
-          # SCCACHE_VERSION: env.SCCACHE_VERSION
           RUSTDOCFLAGS: "-D warnings"
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
       - name: "Ensure Zip Installed on Unix"
@@ -183,26 +162,26 @@ jobs:
             target: x86_64-pc-windows-msvc
             rust: nightly
     runs-on: ${{ matrix.os }}
-    # env:
-    #   SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-    #   RUSTC_WRAPPER: env.RUSTC_WRAPPER
-    #   CACHE_VERSION: env.CACHE_VERSION
-    #   SCCACHE_VERSION: env.SCCACHE_VERSION
-    #   CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
     steps:
+      ########## Setup
       - name: "Checkout sources"
         uses: actions/checkout@master
+        #
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
+        #
       - name: "Install cargo tools"
         uses: taiki-e/install-action@v2
         with:
           tool: cargo-binstall,cargo-make,just,taplo
+          #
       - name: "Cache Cargo dependencies"
         uses: Swatinem/rust-cache@v2
         with:
           cache-all-crates: true
-      - uses: actions/cache@v4
+          #
+      - name: "Setup actions/cache"
+        uses: actions/cache@v4
         with:
           key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
           path: |
@@ -216,22 +195,19 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
-      # - name: "Setup sccache"
-      #   uses: mozilla-actions/sccache-action@v0.0.9
+          #
       - name: "Install gcc"
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
+        #
       - name: "Setup Rust toolchain"
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           targets: ${{ matrix.target }}
+      ########## Action
       - name: "Run Cargo Doc generation"
         env:
-          # SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-          # RUSTC_WRAPPER: env.RUSTC_WRAPPER
-          # CACHE_VERSION: env.CACHE_VERSION
-          # SCCACHE_VERSION: env.SCCACHE_VERSION
           RUSTDOCFLAGS: "-D warnings"
         run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
       - name: "Upload artifact"

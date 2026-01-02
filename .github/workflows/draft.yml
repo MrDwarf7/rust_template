@@ -35,11 +35,6 @@ jobs:
             gcc: gcc-x86-64-linux-gnu
             rust: nightly
     runs-on: ${{ matrix.os }}
-    # env:
-    #   SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-    #   RUSTC_WRAPPER: env.RUSTC_WRAPPER
-    #   CACHE_VERSION: env.CACHE_VERSION
-    #   SCCACHE_VERSION: env.SCCACHE_VERSION
     steps:
       ########## Setup
       - name: "Checkout sources"
@@ -74,8 +69,6 @@ jobs:
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
           #
-      # - name: "Setup sccache"
-      #   uses: mozilla-actions/sccache-action@v0.0.9
       - name: "Install gcc"
         if: matrix.gcc != ''
         run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
@@ -85,8 +78,6 @@ jobs:
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           targets: ${{ matrix.target }}
-      # - name: "Make script executable # Test if works when already within GH Actions"
-      #   run: chmod +x build/build.sh
       ########## Action
       - name: "Build"
         shell: bash
@@ -119,12 +110,6 @@ jobs:
             target: x86_64-pc-windows-msvc
             rust: nightly
     runs-on: ${{ matrix.os }}
-    # env:
-    #   SCCACHE_GHA_ENABLED: env.SCCACHE_GHA_ENABLED
-    #   RUSTC_WRAPPER: env.RUSTC_WRAPPER
-    #   CACHE_VERSION: env.CACHE_VERSION
-    #   SCCACHE_VERSION: env.SCCACHE_VERSION
-    #   CARGO_TARGET_X86_64_PC_WINDOWS_MSVC_LINKER: lld-link.exe
     steps:
       ########## Setup
       - name: "Checkout sources"
@@ -153,6 +138,7 @@ jobs:
             ~/.cargo/registry/cache/
             ~/.cargo/git/db/
             ~/.cargo/sccache/
+            ~/.rustup/
             target/
           restore-keys: |
             ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
@@ -167,10 +153,6 @@ jobs:
         with:
           toolchain: ${{ env.RUST_TOOLCHAIN }}
           targets: ${{ matrix.target }}
-      # - name: "Setup Rust toolchain"
-      #   run: rustup toolchain install nightly --profile minimal --target ${{ matrix.target }} --no-self-update
-      # - name: "Ensure nightly rustfmt installed"
-      #   run: rustup component add rustfmt --toolchain nightly
       ########## Action
       - name: "Build"
         run: cargo build --release --locked --target ${{ matrix.target }}
@@ -201,12 +183,15 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-unix, build-windows]
     steps:
+      #
       - name: "Checkout sources"
         uses: actions/checkout@v4
+        #
       - uses: actions/download-artifact@v4
         id: artifact-download-step
         with:
           merge-multiple: true
+          #
       - name: "Draft"
         uses: softprops/action-gh-release@master
         with:
