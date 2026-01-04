@@ -21,15 +21,15 @@ Put your long desc. here
     styles = get_styles()
 )]
 pub struct Cli {
-    /// The directory to act as the root of the crawler.
+    /// First index help text
     #[arg(index = 1, help = "First index help text", value_hint = clap::ValueHint::FilePath)]
     pub first_param: PathBuf,
 
-    /// The input extension to crawl for.
+    /// Second index help text
     #[arg(index = 2, help = "Second index help text", value_hint = clap::ValueHint::Other)]
     pub second_param: String,
 
-    /// The output extension to convert to. This is subject to Pandoc's supported formats.
+    /// Third index help text
     #[arg(index = 3, help = "Third index help text", value_hint = clap::ValueHint::Other)]
     pub third_param: String,
 

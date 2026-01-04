@@ -11,6 +11,7 @@ enabled = true
 include = [ "**/Cargo.toml", ".taplo.toml", "Cargo.toml" ]
 
 [rule.formatting]
+crlf                 = false
 align_entries        = true
 align_comments       = true
 array_trailing_comma = true

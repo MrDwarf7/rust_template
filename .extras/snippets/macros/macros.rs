@@ -1,5 +1,9 @@
-/// Will require some changes to get working or additional deps in the template
-// #[cfg(feature = "debug")]
+// /// Allows you to print debug messages when the `debug` feature is enabled.
+// /// The output is styled and includes the module path for easier tracing.
+// /// When the `debug` feature is not enabled, the macro
+// /// does nothing, ensuring that debug messages do not affect performance in production builds.
+// #[cfg(any(debug_assertions, feature = "debug"))]
+// #[macro_export]
 // macro_rules! debug {
 //     ($($arg:tt)*) => ({
 //         use std::fmt::Write as _;
@@ -14,12 +18,17 @@
 //     })
 // }
 //
-// https://github.com/clap-rs/clap/blob/eadcc8f66c128272ea309fed3d53d45b9c700b6f/clap_builder/src/macros.rs#L566
-#[cfg(not(feature = "debug"))]
-macro_rules! debug {
-    ($($arg:tt)*) => {};
-}
+// /// The counterpart to the `debug` macro when the `debug` feature is not enabled.
+// /// Allows using the same macro calls with differing behavior based on the presence of the `debug`
+// /// feature, ensuring that debug messages are omitted in production builds without requiring changes
+// /// to the codebase.
+// #[cfg(not(any(debug_assertions, feature = "debug")))]
+// #[macro_export]
+// macro_rules! debug {
+//     ($($arg:tt)*) => {};
+// }
 
+#[macro_export]
 macro_rules! ok {
     ($expr:expr) => {
         match $expr {
@@ -31,6 +40,7 @@ macro_rules! ok {
     };
 }
 
+#[macro_export]
 macro_rules! some {
     ($expr:expr) => {
         match $expr {
