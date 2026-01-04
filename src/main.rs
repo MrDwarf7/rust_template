@@ -1,7 +1,7 @@
 mod error;
 mod prelude;
 
-pub use self::prelude::{Error, Result, W};
+pub use crate::error::{Error, Result};
 
 fn main() -> Result<()> {
     println!("Hello, world!");

@@ -12,9 +12,9 @@ use crate::prelude::*;
     author = crate::crate_authors!(),
     version = crate::crate_version!(),
     about = crate::crate_description!(),
-    long_about = "\n\
-        Put your long desc. here
-    ",
+    long_about = "\n
+Put your long desc. here
+",
     arg_required_else_help = true,
     // Allows for the custom parsing of the version flag
     disable_version_flag = true,

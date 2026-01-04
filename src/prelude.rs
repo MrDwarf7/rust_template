@@ -1,10 +1,7 @@
 // in-crate Error type
-pub use crate::error::Error;
+pub use crate::error::{Error, Result};
 
 // pub use tracing::{debug, error, info, warn};
-
-// in-crate result type
-pub type Result<T> = std::result::Result<T, Error>;
 
 // Wrapper struct
 #[allow(dead_code)]

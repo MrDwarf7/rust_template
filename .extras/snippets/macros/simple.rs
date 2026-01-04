@@ -62,7 +62,6 @@ macro_rules! some {
 /// assert_eq!(m, "rust_template");
 ///
 /// ```
-#[cfg(feature = "cargo")]
 #[macro_export]
 macro_rules! crate_name {
     () => {
@@ -89,7 +88,6 @@ macro_rules! crate_name {
 /// assert_eq!(m, "author1 lastname <author1@example.com>:author2 lastname <author2@example.com>"
 ///
 /// ```
-#[cfg(feature = "cargo")]
 #[macro_export]
 macro_rules! crate_authors {
     ($sep:expr) => {{
@@ -121,7 +119,6 @@ macro_rules! crate_authors {
 /// assert_eq!(m, "0.1.0");
 ///
 /// ```
-#[cfg(feature = "cargo")]
 #[macro_export]
 macro_rules! crate_version {
     () => {
@@ -141,7 +138,6 @@ macro_rules! crate_version {
 /// assert_eq!(m, "A description of the crate");
 ///
 /// ```
-#[cfg(feature = "cargo")]
 #[macro_export]
 macro_rules! crate_description {
     () => {

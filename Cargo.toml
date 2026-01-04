@@ -1,10 +1,10 @@
-cargo-features = ["codegen-backend", "profile-rustflags", "trim-paths"]
+cargo-features = [ "codegen-backend", "profile-rustflags", "trim-paths" ]
 # cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
 name        = "rust_template"
 version     = "0.1.0"
-authors     = ["MrDwarf7", "Blake B. <github.com/MrDwarf7>"]
+authors     = [ "MrDwarf7", "Blake B. <github.com/MrDwarf7>" ]
 edition     = "2024"
 description = "It does cool stuff!"
 # license = "MIT"
@@ -84,7 +84,6 @@ thiserror = "*"
 opt-level        = 1
 codegen-units    = 256
 incremental      = true
-rustflags        = ["-Zthreads=16"]
 codegen-backend  = "cranelift"
 debug            = "line-tables-only"
 debug-assertions = true
@@ -93,6 +92,7 @@ strip            = "none"             # true | false | "none" | "symbols" | "deb
 panic            = "abort"            # "unwind" | "abort"
 lto              = "off"              # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
 trim-paths       = "none"
+# rustflags        = ["-Zthreads=16"]
 # tune-cpu         = "native"
 
 ######################################################################################################################################################
@@ -101,15 +101,15 @@ trim-paths       = "none"
 opt-level        = 3
 codegen-units    = 1
 incremental      = false
-rustflags        = ["-Zthreads=16"]
-codegen-backend  = "cranelift"               # May break deps.
+codegen-backend  = "cranelift"                 # May break deps.
 debug            = "none"
 debug-assertions = false
-overflow-checks  = false                     # debatable
-strip            = "symbols"                 # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
+overflow-checks  = false                       # debatable
+strip            = "symbols"                   # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
 panic            = "unwind"
-lto              = "off"                     # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths       = ["diagnostics", "object"]
+lto              = "off"                       # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+trim-paths       = [ "diagnostics", "object" ]
+# rustflags        = ["-Zthreads=16"]
 # tune-cpu         = "native"
 
 
