@@ -7,6 +7,8 @@ ROOT="$(pwd)"
 FOLDER_NAME="$(basename "$ROOT")"
 PROJECT_NAME="${FOLDER_NAME//./_}"
 
+GITHUB_USER="mrdwarf7"
+
 # Configurable list of optional folders to ask about removing
 FOLDERS_TO_ASK=("data" "scratch")
 
@@ -94,6 +96,16 @@ update_cargo_toml() {
   if [[ -f "Cargo.toml" ]]; then
     printf "Updating Cargo.toml (using PROJECT_NAME: %s)\n" "$PROJECT_NAME"
     replace_in_file "Cargo.toml" 'name[[:space:]]*=[[:space:]]*"rust_template"' "name = \"$PROJECT_NAME\""
+  fi
+}
+
+update_cliff_toml() {
+  if [[ -f "cliff.toml" ]]; then
+    printf "Updating cliff.toml (using PROJECT_NAME: %s)\n" "$PROJECT_NAME"
+    replace_in_file "cliff.toml" 'replace[[:space:]]*=[[:space:]]*."rust_template"' "replace = \"https://github.com/$GITHUB_USER/$PROJECT_NAME\""
+
+  else
+    printf "cliff.toml not found, skipping.\n"
   fi
 }
 
@@ -215,6 +227,7 @@ main() {
   maybe_remove_bacon
   update_makefile_toml
   update_cargo_toml
+  update_cliff_toml
   maybe_remove_optional_folders
   update_github_publish
   update_issue_template_workflows
