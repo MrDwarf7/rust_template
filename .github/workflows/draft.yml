@@ -38,7 +38,7 @@ jobs:
     steps:
       ########## Setup
       - name: "Checkout sources"
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
         #
       - name: "Setup sccache"
         uses: mozilla-actions/sccache-action@v0.0.9
@@ -65,8 +65,8 @@ jobs:
             ~/.cargo/sccache/
             target/
           restore-keys: |
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-.*${{ github.job }}-
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}.*
           #
       - name: "Install gcc"
         if: matrix.gcc != ''
@@ -140,8 +140,8 @@ jobs:
             ~/.cargo/sccache/
             target/
           restore-keys: |
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-${{ github.job }}-
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-.*${{ github.job }}-
+            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}.*
           #
       - name: "Install gcc"
         if: matrix.gcc != ''
