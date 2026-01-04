@@ -130,14 +130,22 @@ args = ["test", "--all", "${@}", "--", "--nocapture"]
 command = "cargo"
 # We also capture anything after the main command
 args = ["run", "${@}"]
+dependencies = ["build_workspace", "build"]
 
 [tasks.run_release]
 command = "cargo"
 args = ["run", "--release", "${@}"]
+dependencies = ["build_release_workspace", "build_release"]
 
 [tasks.run_as_project]
 command = "cargo"
 args = ["run", " --bin", "${PROJECT_NAME}", "${@}"]
+dependencies = [
+  "build_workspace",
+  "build",
+  "build_release_workspace",
+  "build_release",
+]
 
 # END Function outputs
 
