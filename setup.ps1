@@ -101,7 +101,8 @@ function Maybe-RemoveOptionalFolders {
                 Remove-Item $folder -Recurse -Force
                 Write-Host "Removed $folder/"
             } else {
-                Write-Host "Kept $folder/"
+                Write-Host "Kept $folder/ and added to .gitignore"
+                Add-Content -Path ./.gitignore -Value "/$folder/"
             }
         }
     }

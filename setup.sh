@@ -104,7 +104,8 @@ maybe_remove_optional_folders() {
         rm -rf "$folder"
         printf "Removed %s/\n" "$folder"
       else
-        printf "Kept %s/" "$folder"
+        printf "Kept %s/ and added to .gitignore\n" "$folder"
+        printf "%s\n" "$folder" >>./.gitignore
       fi
     fi
   done
