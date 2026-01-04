@@ -5,6 +5,9 @@ _*
 _*/
 _*/**/*
 
+.bak/
+.bak/*
+.bak/**/*
 
 debug/
 target/

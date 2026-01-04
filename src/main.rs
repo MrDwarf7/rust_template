@@ -1,3 +1,6 @@
+// #[cfg(feature = "macros")]
+// mod macros;
+
 mod error;
 mod prelude;
 

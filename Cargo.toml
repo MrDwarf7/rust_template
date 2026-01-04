@@ -1,4 +1,5 @@
-cargo-features = [ "codegen-backend", "profile-rustflags", "trim-paths" ]
+cargo-features = [ "codegen-backend", "trim-paths" ]
+# cargo-features = [ "codegen-backend", "profile-rustflags", "trim-paths" ]
 # cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
 # The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
@@ -15,6 +16,11 @@ readme       = "README.md"
 
 ######################################################################################################################################################
 ######################################################################################################################################################
+
+[features]
+default = [ "macros" ]
+macros  = [  ]
+# debug   = [  ]
 
 
 # [package.metadata.winresource]
@@ -40,7 +46,7 @@ readme       = "README.md"
 # dotenvy = "*"
 # futures = "*"
 #
-# clap = "*"
+# clap = { version = "*", features = [ "derive" ] } # Optionall: "env"
 # anstyle = "*"
 
 # Base dependencies/Commons

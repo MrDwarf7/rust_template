@@ -13,8 +13,7 @@ jobs:
     name: "Publish - publish"
     strategy:
       matrix:
-        include:
-          - os: ubuntu-latest
+        os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       #

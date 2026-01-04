@@ -41,6 +41,10 @@ run_task = { name = [
   "test_all",
 ], parallel = false }
 
+[tasks.A]
+description = "Full verification sweep for the repository."
+run_task = { name = ["format", "check", "clippy", "a"], parallel = false }
+
 [tasks.r]
 run_task = { name = ["run"], parallel = false }
 

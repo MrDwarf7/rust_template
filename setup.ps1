@@ -182,7 +182,7 @@ function Setup-Repository {
     return
 }
 
-funciton Maybe-RemoveSetupScript {
+function Maybe-RemoveSetupScript {
     if (Test-Path "setup.ps1") {
       if (Ask-YesNo "Do you want to remove setup.ps1?") {
         Remove-Item "setup.ps1" -Force

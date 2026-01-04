@@ -7,7 +7,7 @@ BREAKER = "----------------------------------------"
 ROOT = "."
 
 # Platform specific file extensions, can use specifics for
-# build/dist taks that call linux.(args|command) vs windows.(args|command)
+# build/dist tasks that call linux.(args|command) vs windows.(args|command)
 # WINDOWS_EXTENSION = ".exe"
 # LINUX_EXTENSION = ""
 # MACOS_EXTENSION = ""
