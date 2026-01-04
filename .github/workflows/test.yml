@@ -5,6 +5,7 @@ on:
       - master
       - main
       - develop
+      - dev
 env:
   #
   RUST_TOOLCHAIN: nightly
