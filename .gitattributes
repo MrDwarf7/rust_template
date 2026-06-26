@@ -1,0 +1,17 @@
+# Force LF line endings on checkout for all text files
+# This ensures cargo fmt with newline_style = "Unix" passes on Windows runners
+* text=auto eol=lf
+
+# Denote all files that are truly binary and should not be modified
+*.lock binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.woff binary
+*.woff2 binary
+*.eot binary
+*.ttf binary
+*.otf binary

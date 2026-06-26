@@ -4,12 +4,22 @@ extend = [
   { path = "./build/docker-tasks.toml", optional = true },
   { path = "./build/watch-tasks.toml", optional = true },
   { path = "./build/typst-tasks.toml", optional = true },
+  { path = "./build/release-tasks.toml", optional = true },
 ]
 
 # Name of output if/when calling dist tasks, should match the cargo bin output
 env.PROJECT_NAME = "rust_template" # "cargo_output_binary_name_for_PROJECT_NAME"
 # Default profile to use for builds during dist related tasks
 env.SLEEP_TIME = "15"
+
+# GitHub / repo metadata (set by setup.sh during template init)
+env.GITHUB_USER = "mrdwarf7"
+env.REPO_NAME = "rust_template.rs"      # GitHub repo name (with .rs)
+env.GITHUB_URL = "https://github.com/mrdwarf7/rust_template.rs"
+
+# Changelog tool configuration
+env.CHANGELOG_TOOL = "git-cliff"
+env.CHANGELOG_ARGS_BASE = "--repository ${GITHUB_URL} --commit-path . --sort newest --strip all --with-commit"
 
 # Identifies the first argument passed after `cargo` as, or inplace of `build`.
 # ie: `cargo build <...zyx...>` vs. `cargo zigbuild <...xyz...>`
@@ -103,6 +113,30 @@ env.PROFILE = "release"
 run_task = { name = ["build_release_dist"], parallel = false }
 
 ## END Full sweeps/aliases
+
+## START release tasks (delegated to release-tasks.toml)
+# These are top-level aliases that call into release-tasks.toml
+
+[tasks.bump]
+description = "Bump patch version, update changelog, commit + tag (use bump_minor/bump_major for others)"
+run_task = { name = ["bump_patch"], parallel = false }
+
+[tasks.bump_patch]
+run_task = { name = ["bump_patch"], parallel = false }
+
+[tasks.bump_minor]
+run_task = { name = ["bump_minor"], parallel = false }
+
+[tasks.bump_major]
+run_task = { name = ["bump_major"], parallel = false }
+
+[tasks.changelog]
+run_task = { name = ["changelog"], parallel = false }
+
+[tasks.changelog_check]
+run_task = { name = ["changelog_check"], parallel = false }
+
+## END release tasks
 
 
 ## START typst tasks

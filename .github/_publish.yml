@@ -13,12 +13,13 @@ jobs:
     name: "Publish - publish"
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        include:
+          - os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
       #
       - name: "Checkout sources"
-        uses: actions/checkout@master
+        uses: actions/checkout@v6
         #
       - name: "Download artifacts"
         uses: actions/download-artifact@v4

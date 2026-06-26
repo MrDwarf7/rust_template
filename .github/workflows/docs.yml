@@ -4,80 +4,43 @@ on:
     branches:
       - master
       - main
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 env:
-  DOCS_BODY: "${{ github.event.release.body }}"
-  #
-  RUST_TOOLCHAIN: nightly
+  CARGO_TERM_COLOR: always
+  CARGO_INCREMENTAL: 0
+  RUST_BACKTRACE: 1
   SCCACHE_GHA_ENABLED: true
   RUSTC_WRAPPER: sccache
-  CACHE_VERSION: v1
-  SCCACHE_VERSION: 0.10.0
-  CARGO_INCREMENTAL: 0
-  CARGO_TERM_COLOR: always
-  RUST_BACKTRACE: 1
   PROJECT_NAME: rust_template
+
 jobs:
   docs:
-    name: "Docs - docs"
+    name: "Docs - ${{ matrix.target }}"
     strategy:
       fail-fast: false
       matrix:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            gcc: gcc-x86-64-linux-gnu
-            rust: nightly
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            rust: nightly
     runs-on: ${{ matrix.os }}
     steps:
-      ########## Setup
-      - name: "Checkout sources"
-        uses: actions/checkout@v6
-        #
-      - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.9
-        #
-      - name: "Install cargo tools"
-        uses: taiki-e/install-action@v2
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup-rust
         with:
-          tool: cargo-binstall,cargo-make,just,taplo
-          #
-      - name: "Cache Cargo dependencies"
-        uses: Swatinem/rust-cache@v2
-        with:
-          cache-all-crates: true
-          #
-      - name: "Setup actions/cache"
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            ~/.cargo/sccache/
-            target/
-          restore-keys: |
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-.*${{ github.job }}-
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}.*
-          #
-      - name: "Install gcc"
-        if: matrix.gcc != ''
-        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
-        #
-      - name: "Setup Rust toolchain"
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          targets: ${{ matrix.target }}
-      ########## Action
-      - name: "Run Cargo Doc checks"
-        run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
+          target: ${{ matrix.target }}
+
+      - name: Run Cargo Doc checks
+        run: cargo doc --no-deps --all-features --all --locked --target ${{ matrix.target }} --document-private-items
         env:
           RUSTDOCFLAGS: "-D warnings"
+
   package-docs-unix:
     name: "Docs - package-docs-unix"
     strategy:
@@ -86,66 +49,28 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
-            gcc: gcc-x86-64-linux-gnu
-            rust: nightly
     runs-on: ${{ matrix.os }}
     steps:
-      ########## Setup
-      - name: "Checkout sources"
-        uses: actions/checkout@v6
-        #
-      - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.9
-        #
-      - name: "Install cargo tools"
-        uses: taiki-e/install-action@v2
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup-rust
         with:
-          tool: cargo-binstall,cargo-make,just,taplo
-          #
-      - name: "Cache Cargo dependencies"
-        uses: Swatinem/rust-cache@v2
-        with:
-          cache-all-crates: true
-          #
-      - name: "Setup actions/cache"
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            ~/.cargo/sccache/
-            target/
-          restore-keys: |
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-.*${{ github.job }}-
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}.*
-          #
-      - name: "Install gcc"
-        if: matrix.gcc != ''
-        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
-        #
-      - name: "Setup Rust toolchain"
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          targets: ${{ matrix.target }}
-      ########## Action
-      - name: "Run Cargo Doc generation"
+          target: ${{ matrix.target }}
+
+      - name: Run Cargo Doc generation
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
-        #
-      - name: "Ensure Zip Installed on Unix"
+        run: cargo doc --no-deps --all-features --all --locked --target ${{ matrix.target }} --document-private-items
+
+      - name: Ensure Zip Installed on Unix
         run: |
           if ! command -v zip &> /dev/null
           then
               sudo apt-get install zip
           fi
           zip --version
-        #
-      - name: "Upload artifact"
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
@@ -153,6 +78,7 @@ jobs:
           if-no-files-found: 'error'
           compression-level: '9'
           overwrite: 'true'
+
   package-docs-windows:
     name: "Docs - package-docs-windows"
     strategy:
@@ -160,64 +86,28 @@ jobs:
         include:
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            rust: nightly
     runs-on: ${{ matrix.os }}
     steps:
-      ########## Setup
-      - name: "Checkout sources"
-        uses: actions/checkout@v6
-        #
-      - name: "Setup sccache"
-        uses: mozilla-actions/sccache-action@v0.0.9
-        #
-      - name: "Install cargo tools"
-        uses: taiki-e/install-action@v2
+      - uses: actions/checkout@v7
+
+      - uses: ./.github/actions/setup-rust
         with:
-          tool: cargo-binstall,cargo-make,just,taplo
-          #
-      - name: "Cache Cargo dependencies"
-        uses: Swatinem/rust-cache@v2
-        with:
-          cache-all-crates: true
-          #
-      - name: "Setup actions/cache"
-        uses: actions/cache@v4
-        with:
-          key: ${{ runner.os }}-${{ env.CACHE_VERSION }}-${{ hashFiles('**/Cargo.toml', '**/Cargo.lock') }}
-          path: |
-            ~/.cargo/bin/
-            ~/.cargo/registry/index/
-            ~/.cargo/registry/cache/
-            ~/.cargo/git/db/
-            ~/.cargo/sccache/
-            target/
-          restore-keys: |
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}-.*${{ github.job }}-
-            ${{ runner.os }}-${{ github.workflow }}-${{ env.CACHE_VERSION }}.*
-          #
-      - name: "Install gcc"
-        if: matrix.gcc != ''
-        run: sudo apt update && sudo apt install -yq ${{ matrix.gcc }}
-        #
-      - name: "Setup Rust toolchain"
-        uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: ${{ env.RUST_TOOLCHAIN }}
-          targets: ${{ matrix.target }}
-      ########## Action
-      - name: "Run Cargo Doc generation"
+          target: ${{ matrix.target }}
+
+      - name: Run Cargo Doc generation
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: cargo doc --no-deps --all-features --all --target ${{ matrix.target }} --document-private-items
-        #
-      - name: "Upload artifact"
+        run: cargo doc --no-deps --all-features --all --locked --target ${{ matrix.target }} --document-private-items
+
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.PROJECT_NAME }}-${{ matrix.target }}-docs.zip
-          path: target\${{ matrix.target }}\doc\
+          path: target\\${{ matrix.target }}\\doc\\
           if-no-files-found: 'error'
           compression-level: '9'
           overwrite: 'true'
+
   publish-docs:
     name: "Docs - publish-docs"
     permissions:
@@ -225,30 +115,29 @@ jobs:
     runs-on: ubuntu-latest
     needs: [package-docs-unix, package-docs-windows]
     steps:
-      #
-      - name: "Generate docs body"
+      - name: Generate docs body
         run: |
           echo 'DOCS_BODY<<EOF' >> $GITHUB_ENV
           echo "From commit: ${GITHUB_SHA:0:8}" >> $GITHUB_ENV
-          echo "Generated on: $(date -u +"%Y-%m-%d %H:%M") UTC" >> $GITHUB_ENV
+          echo "Generated on: $(date -u +\"%Y-%m-%d %H:%M\") UTC" >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
-        #
-      - name: "Checkout sources"
-        uses: actions/checkout@v6
-        #
-      - name: "Download artifacts"
+
+      - name: Checkout sources
+        uses: actions/checkout@v7
+
+      - name: Download artifacts
         uses: actions/download-artifact@v4
         id: artifact-download-step
         with:
           merge-multiple: true
-          #
-      - name: "Update tag for docs"
+
+      - name: Update tag for docs
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git tag --force docs && git push --force origin tag docs
-          #
-      - name: "Get directory structure"
+
+      - name: Get directory structure
         shell: bash
         run: |
           sudo apt update
@@ -256,21 +145,21 @@ jobs:
           echo "tree from single dot"
           tree -afh .
           echo \n\n
+
           echo "tree from github workspace call"
           tree -afh ${{ github.workspace }}
-        #
+
       - name: Zip - Documentation
         shell: bash
         run: |
           cd "${{ env.PROJECT_NAME }}"
           zip -r "../${{ env.PROJECT_NAME }}.zip" .
           cd ..
-        #
-      - name: "Docs - draft"
+
+      - name: Docs - draft
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "docs"
-          # repository: ${{ github.repository }}
           fail_on_unmatched_files: true
           draft: true
           files: |
@@ -279,4 +168,3 @@ jobs:
           body: ${{ env.DOCS_BODY }}
           target_commitish: ${{ github.sha }}
           generate_release_notes: false
-  #          body_path: ${{ github.workspace }}-CHANGELOG.txt ## For adding changelog content

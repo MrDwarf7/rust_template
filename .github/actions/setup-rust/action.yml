@@ -1,0 +1,99 @@
+name: "Setup Rust"
+description: "Standard Rust CI setup: checkout, sccache, cargo tools, toolchain (from rust-toolchain.toml), cache, and mold linker"
+inputs:
+  target:
+    description: "Target triple (e.g. x86_64-unknown-linux-gnu)"
+    required: false
+    default: ""
+  toolchain:
+    description: "Rust toolchain channel (e.g. nightly, stable). Reads rust-toolchain.toml if empty."
+    required: false
+    default: ""
+  components:
+    description: "Comma-separated rustup components (e.g. clippy,rustfmt). Reads rust-toolchain.toml if empty."
+    required: false
+    default: ""
+  use-mold:
+    description: "Install mold linker (Linux only)"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout sources
+      uses: actions/checkout@v6
+
+    - name: Setup sccache
+      uses: mozilla-actions/sccache-action@v0.0.9
+
+    - name: Install cargo tools
+      uses: taiki-e/install-action@v2
+      with:
+        tool: cargo-binstall,cargo-make,just,taplo
+
+    - name: Cache Cargo dependencies
+      uses: Swatinem/rust-cache@v2
+      with:
+        cache-all-crates: true
+        save-if: ${{ github.ref == 'refs/heads/main' }}
+        key: ${{ inputs.target }}
+
+    - name: Install gcc
+      shell: bash
+      if: ${{ contains(inputs.target, 'linux') }}
+      run: |
+        sudo apt update
+        case "${{ inputs.target }}" in
+          aarch64-unknown-linux-gnu) sudo apt install -yq gcc-aarch64-linux-gnu ;;
+          armv7-unknown-linux-gnueabihf) sudo apt install -yq gcc-arm-linux-gnueabihf ;;
+          x86_64-unknown-linux-gnu) sudo apt install -yq gcc-x86-64-linux-gnu ;;
+        esac
+
+    - name: Install mold linker (Linux)
+      shell: bash
+      if: ${{ inputs.use-mold == 'true' && runner.os == 'Linux' }}
+      run: |
+        set -euo pipefail
+        MOLD_VERSION='2.41.0'
+        arch=$(uname -m)
+        case "$arch" in
+          x86_64)   mold_arch='x86_64-linux' ;;
+          aarch64)  mold_arch='aarch64-linux' ;;
+          *)        echo "unsupported arch: $arch"; exit 1 ;;
+        esac
+        url="https://github.com/rui314/mold/releases/download/v${MOLD_VERSION}/mold-${MOLD_VERSION}-${mold_arch}.tar.gz"
+        for attempt in 1 2 3; do
+          if curl -fsSL -o /tmp/mold.tar.gz "$url"; then break; fi
+          echo "attempt $attempt failed" && sleep 3
+          [ "$attempt" = 3 ] && exit 1
+        done
+        sudo tar -C /opt -xzf /tmp/mold.tar.gz
+        sudo ln -sf "/opt/mold-${MOLD_VERSION}-${mold_arch}/bin/mold" /usr/local/bin/mold
+        sudo ln -sf "/opt/mold-${MOLD_VERSION}-${mold_arch}/bin/mold" /usr/local/bin/ld.mold
+        mold --version
+
+    - name: Set RUSTFLAGS for mold (Linux)
+      shell: bash
+      if: ${{ inputs.use-mold == 'true' && runner.os == 'Linux' }}
+      run: echo "RUSTFLAGS=-C linker=clang -C link-arg=-fuse-ld=mold" >> $GITHUB_ENV
+
+    - name: Setup Rust toolchain
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.toolchain }}" ]; then
+          rustup toolchain install "${{ inputs.toolchain }}" --profile minimal
+          rustup default "${{ inputs.toolchain }}"
+        else
+          rustup toolchain install
+        fi
+        if [ -n "${{ inputs.target }}" ]; then
+          rustup target add "${{ inputs.target }}" 2>/dev/null || true
+        fi
+        rustup show
+
+    - name: Install components
+      shell: bash
+      if: "${{ inputs.components != '' }}"
+      run: |
+        rustup component add ${{ inputs.components }}

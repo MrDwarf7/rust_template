@@ -1,0 +1,60 @@
+name: "Checkout"
+description: "Checkout repository with actions/checkout@v7"
+inputs:
+  token:
+    description: "Token to use for checkout"
+    required: false
+    default: ""
+  ref:
+    description: "Branch, tag, or SHA to checkout"
+    required: false
+    default: ""
+  path:
+    description: "Path to checkout to"
+    required: false
+    default: ""
+  fetch-depth:
+    description: "Number of commits to fetch"
+    required: false
+    default: "0"
+  submodules:
+    description: "Whether to checkout submodules"
+    required: false
+    default: "false"
+  lfs:
+    description: "Whether to download Git LFS files"
+    required: false
+    default: "false"
+  set-safe-directory:
+    description: "Set safe directory in git config"
+    required: false
+    default: "true"
+  show-progress:
+    description: "Show progress"
+    required: false
+    default: "true"
+  sparse-checkout:
+    description: "Sparse checkout paths"
+    required: false
+    default: ""
+  sparse-checkout-cone-mode:
+    description: "Use cone mode for sparse checkout"
+    required: false
+    default: "true"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout
+      uses: actions/checkout@v7
+      with:
+        token: ${{ inputs.token }}
+        ref: ${{ inputs.ref }}
+        path: ${{ inputs.path }}
+        fetch-depth: ${{ inputs.fetch-depth }}
+        submodules: ${{ inputs.submodules }}
+        lfs: ${{ inputs.lfs }}
+        set-safe-directory: ${{ inputs.set-safe-directory }}
+        show-progress: ${{ inputs.show-progress }}
+        sparse-checkout: ${{ inputs.sparse-checkout }}
+        sparse-checkout-cone-mode: ${{ inputs.sparse-checkout-cone-mode }}

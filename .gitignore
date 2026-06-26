@@ -9,6 +9,10 @@ _*/**/*
 .bak/*
 .bak/**/*
 
+.extras/
+.extras/*
+.extras/**/*
+
 debug/
 target/
 *config.to*
