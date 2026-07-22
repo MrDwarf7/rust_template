@@ -18,7 +18,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout sources"
-        uses: "./.github/actions/checkout"
+        uses: "actions/checkout@v7"
 
       - name: "Download artifacts"
         uses: "actions/download-artifact@v8"
