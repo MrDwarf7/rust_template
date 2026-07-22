@@ -11,6 +11,7 @@ description = "It does cool stuff!"
 # license = "MIT"
 license-file = "LICENSE"
 readme       = "README.md"
+build        = "build.rs"
 # For running the main server as a watch, call
 # cargo watch -q -c -w src/ -x run
 
@@ -22,20 +23,15 @@ default = [ "macros" ]
 macros  = [  ]
 # debug   = [  ]
 
+# Windows exe icon + version info (release builds). Assets under assets/icon.ico.
+[package.metadata.winresource]
+OriginalFilename = "rust_template.exe"
+FileDescription = "It does cool stuff!"
+LegalCopyright = "Copyright (c) Blake B. @github.com/MrDwarf7"
+#CompanyName = "https://github.com/MrDwarf7"
 
-# [package.metadata.winresource]
-# OriginalFilename = "csv_parser_rs.exe"
-# FileDescription = "A CLI tool to parse a CSV file and filter out rows based on a set of criteria."
-# LegalCopyright = "Copyright © 2025 by Blake B. @github.com/MrDwarf7"
-# #CompanyName = "https://github.com/MrDwarf7"
-#
-# [target.'cfg(windows)'.build-dependencies]
-# windres = "0.2"
-#
-# [build-dependencies]
-# winresource = "0.1.19"
-# windres = "0.2.2"
-# winapi = { version = "0.3.9" }
+[target.'cfg(windows)'.build-dependencies]
+winresource = "0.1.19"
 
 ######################################################################################################################################################
 ######################################################################################################################################################

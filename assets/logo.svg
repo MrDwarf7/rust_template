@@ -1,4 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
-  <rect width="150" height="150" rx="20" fill="#2D2D2D"/>
-  <text x="75" y="95" font-family="system-ui, sans-serif" font-size="60" font-weight="bold" fill="#00D9A5" text-anchor="middle">{{PROJECT_NAME[0]}}</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#2D2D2D"/>
+  <text x="256" y="340" font-family="DejaVu Sans, Liberation Sans, Arial, sans-serif"
+        font-size="280" font-weight="700" fill="#00D9A5" text-anchor="middle">R</text>
 </svg>
