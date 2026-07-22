@@ -1,40 +1,102 @@
 name: "Publish"
+# Promotes the draft release created by Draft on the same tag push.
+# Why not svenstaro/upload-release-action here?
+#   GET /repos/{owner}/{repo}/releases/tags/{tag} does NOT return drafts
+#   (GitHub REST). svenstaro then tries to create, races the existing draft,
+#   and fails with a misleading "Not Found". Draft already attached the zips;
+#   this workflow only flips draft -> published.
 on:
   push:
     tags: ["v[0-9]+.[0-9]+.[0-9]?"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to publish (e.g. v0.1.0). Defaults to the ref name on tag push."
+        required: false
+        default: ""
+
+permissions:
+  contents: write
 
 env:
-  preview: "${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}"
   PROJECT_NAME: "rust_template"
 
 jobs:
   publish:
-    name: "Publish - publish"
-    strategy:
-      matrix:
-        include:
-          - os: "ubuntu-latest"
-            target: "x86_64-unknown-linux-gnu"
-    runs-on: "${{ matrix.os }}"
+    name: "Publish - promote draft"
+    runs-on: "ubuntu-latest"
     steps:
       - name: "Checkout sources"
         uses: "actions/checkout@v7"
 
-      - name: "Download artifacts"
-        uses: "actions/download-artifact@v8"
-        with:
-          merge-multiple: true
-
-      - name: "Echo Tag Ref(s)"
+      - name: "Resolve tag name"
+        id: "tag"
+        shell: "bash"
         run: |
-          echo "Tag name for GITHUB_REF_NAME: $GITHUB_REF_NAME"
-          echo "Tag name from github.ref_name ${{ github.ref_name }}"
+          set -euo pipefail
+          if [ -n "${{ inputs.tag }}" ]; then
+            TAG="${{ inputs.tag }}"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF_NAME}"
+          else
+            echo "::error::No tag on ref and no workflow_dispatch input.tag"
+            exit 1
+          fi
+          # strip accidental refs/tags/ prefix
+          TAG="${TAG#refs/tags/}"
+          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
+          echo "Publishing tag: ${TAG}"
 
-      - name: "Upload Release Assets"
-        uses: "svenstaro/upload-release-action@v2"
-        if: env.preview == 'false'
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          file: "${{ env.PROJECT_NAME }}-*.zip"
-          file_glob: true
-          overwrite: true
+      - name: "Wait for draft release and publish it"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+          TAG: "${{ steps.tag.outputs.tag }}"
+        shell: "bash"
+        run: |
+          set -euo pipefail
+
+          find_draft_id() {
+            # List endpoint returns drafts; GET .../releases/tags/{tag} does NOT.
+            gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate \
+              --jq ".[] | select(.tag_name == \"${TAG}\" and .draft == true) | .id" \
+              | head -n1
+          }
+
+          find_any_id() {
+            gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate \
+              --jq ".[] | select(.tag_name == \"${TAG}\") | .id" \
+              | head -n1
+          }
+
+          # Draft.yml builds assets and opens a draft on the same tag push.
+          # Give it time to finish before we promote.
+          RID=""
+          for attempt in $(seq 1 30); do
+            RID="$(find_draft_id || true)"
+            if [ -n "${RID}" ]; then
+              echo "Found draft release id=${RID} for tag ${TAG} (attempt ${attempt})"
+              break
+            fi
+            ANY="$(find_any_id || true)"
+            if [ -n "${ANY}" ]; then
+              DRAFT_STATE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${ANY}" --jq .draft)"
+              if [ "${DRAFT_STATE}" = "false" ]; then
+                echo "Release id=${ANY} for ${TAG} is already published -- nothing to do"
+                exit 0
+              fi
+            fi
+            echo "No draft for ${TAG} yet (attempt ${attempt}/30); sleeping 20s"
+            sleep 20
+          done
+
+          if [ -z "${RID}" ]; then
+            echo "::error::Timed out waiting for draft release on tag ${TAG}."
+            echo "Ensure the Draft workflow ran on this tag and created a draft release."
+            exit 1
+          fi
+
+          echo "Promoting release ${RID} (tag ${TAG}) to published"
+          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${RID}" \
+            -f draft=false \
+            -f make_latest=true \
+            --jq '{id,tag_name,draft,prerelease,html_url,assets:[.assets[].name]}'
