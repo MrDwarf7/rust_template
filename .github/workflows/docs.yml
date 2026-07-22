@@ -31,7 +31,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Setup Rust"
         uses: "./.github/actions/setup-rust"
@@ -54,7 +54,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Setup Rust"
         uses: "./.github/actions/setup-rust"
@@ -93,7 +93,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Setup Rust"
         uses: "./.github/actions/setup-rust"
@@ -129,38 +129,38 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Download artifacts"
         uses: "actions/download-artifact@v8"
         id: "artifact-download-step"
         with:
+          path: "docs-artifacts"
           merge-multiple: true
-
-      - name: "Update tag for docs"
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag --force docs && git push --force origin tag docs
 
       - name: "Get directory structure"
         shell: "bash"
         run: |
-          sudo apt update
-          echo $PWD
-          echo "tree from single dot"
-          tree -afh .
-          echo \n\n
-
-          echo "tree from github workspace call"
-          tree -afh ${{ github.workspace }}
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq tree zip
+          echo "PWD=$PWD"
+          tree -afh docs-artifacts || ls -laR docs-artifacts
 
       - name: "Zip - Documentation"
         shell: "bash"
         run: |
-          cd "${{ env.PROJECT_NAME }}"
-          zip -r "../${{ env.PROJECT_NAME }}.zip" .
+          cd docs-artifacts
+          zip -r "../${{ env.PROJECT_NAME }}-docs.zip" .
           cd ..
+          ls -la "${{ env.PROJECT_NAME }}-docs.zip"
+
+      # Recreate floating docs tag via API (no git push --force; no workflows scope).
+      - name: "Drop existing docs release and tag"
+        env:
+          GH_TOKEN: "${{ github.token }}"
+        run: |
+          gh release delete docs --yes --cleanup-tag 2>/dev/null || true
+          gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/docs" 2>/dev/null || true
 
       - name: "Docs - draft"
         uses: "softprops/action-gh-release@v3"
@@ -168,7 +168,8 @@ jobs:
           tag_name: "docs"
           fail_on_unmatched_files: true
           draft: true
-          files: "${{ env.PROJECT_NAME }}.zip"
+          make_latest: false
+          files: "${{ env.PROJECT_NAME }}-docs.zip"
           name: "[${{ github.ref_name }} Docs]"
           body: "${{ env.DOCS_BODY }}"
           target_commitish: "${{ github.sha }}"

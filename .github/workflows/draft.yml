@@ -34,7 +34,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Setup Rust"
         uses: "./.github/actions/setup-rust"
@@ -72,7 +72,7 @@ jobs:
     runs-on: "${{ matrix.os }}"
     steps:
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Setup Rust"
         uses: "./.github/actions/setup-rust"
@@ -110,7 +110,7 @@ jobs:
     needs: [build-unix, build-windows]
     steps:
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Download artifacts"
         uses: "actions/download-artifact@v8"
@@ -142,24 +142,28 @@ jobs:
           echo "EOF" >> $GITHUB_ENV
 
       - name: "Checkout sources"
-        uses: "actions/checkout@v7"
+        uses: "./.github/actions/checkout"
 
       - name: "Download artifacts"
         uses: "actions/download-artifact@v8"
         with:
           merge-multiple: true
 
-      - name: "Update the tag"
+      # Recreate floating nightly via API (no git push --force; no workflows scope).
+      # gh release delete --cleanup-tag drops release + tag; softprops recreates both.
+      - name: "Drop existing nightly release and tag"
+        env:
+          GH_TOKEN: "${{ github.token }}"
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag --force nightly && git push --force origin tag nightly
+          gh release delete nightly --yes --cleanup-tag 2>/dev/null || true
+          gh api --method DELETE "repos/${GITHUB_REPOSITORY}/git/refs/tags/nightly" 2>/dev/null || true
 
       - name: "Release Nightly"
         uses: "softprops/action-gh-release@v3"
         with:
           tag_name: "nightly"
           prerelease: true
+          make_latest: false
           fail_on_unmatched_files: true
           files: "${{ env.PROJECT_NAME }}-*"
           name: "Nightly Build"
