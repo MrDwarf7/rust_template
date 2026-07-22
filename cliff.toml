@@ -41,7 +41,6 @@ trim = true
 
 # changelog footer
 footer = """
-<!-- wow a comment! -->
 """
 
 # """

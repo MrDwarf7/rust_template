@@ -1,10 +1,14 @@
 <!-- PROJECT LOGO / BANNER -->
 <p align="center">
-  <img src="assets/logo.svg" alt="{{PROJECT_NAME}}" width="150">
+  <img src="assets/README-header.png" alt="{{PROJECT_NAME}}" width="100%">
 </p>
 
 <p align="center">
-  <strong>{{PROJECT_NAME}}</strong> — {{TAGLINE}}
+  <img src="assets/icon-128.png" alt="{{PROJECT_NAME}} icon" width="64">
+</p>
+
+<p align="center">
+  <strong>{{PROJECT_NAME}}</strong> -- {{TAGLINE}}
   <br>
   <a href="https://crates.io/crates/{{PROJECT_NAME}}"><img src="https://img.shields.io/crates/v/{{PROJECT_NAME}}" alt="crates.io"></a>
   <a href="https://github.com/{{GITHUB_USER}}/{{REPO_NAME}}/actions/workflows/build.yml"><img src="https://github.com/{{GITHUB_USER}}/{{REPO_NAME}}/actions/workflows/build.yml/badge.svg" alt="build"></a>
