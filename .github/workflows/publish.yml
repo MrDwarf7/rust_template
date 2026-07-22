@@ -1,10 +1,6 @@
 name: "Publish"
 # Promotes the draft release created by Draft on the same tag push.
-# Why not svenstaro/upload-release-action here?
-#   GET /repos/{owner}/{repo}/releases/tags/{tag} does NOT return drafts
-#   (GitHub REST). svenstaro then tries to create, races the existing draft,
-#   and fails with a misleading "Not Found". Draft already attached the zips;
-#   this workflow only flips draft -> published.
+# Logic lives in .github/scripts/promote-draft-release.sh (editor-friendly).
 on:
   push:
     tags: ["v[0-9]+.[0-9]+.[0-9]?"]
@@ -29,74 +25,9 @@ jobs:
       - name: "Checkout sources"
         uses: "actions/checkout@v7"
 
-      - name: "Resolve tag name"
-        id: "tag"
-        shell: "bash"
-        run: |
-          set -euo pipefail
-          if [ -n "${{ inputs.tag }}" ]; then
-            TAG="${{ inputs.tag }}"
-          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
-            TAG="${GITHUB_REF_NAME}"
-          else
-            echo "::error::No tag on ref and no workflow_dispatch input.tag"
-            exit 1
-          fi
-          # strip accidental refs/tags/ prefix
-          TAG="${TAG#refs/tags/}"
-          echo "tag=${TAG}" >> "${GITHUB_OUTPUT}"
-          echo "Publishing tag: ${TAG}"
-
-      - name: "Wait for draft release and publish it"
+      - name: "Promote draft release"
         env:
           GH_TOKEN: "${{ github.token }}"
-          TAG: "${{ steps.tag.outputs.tag }}"
+          INPUT_TAG: "${{ inputs.tag }}"
         shell: "bash"
-        run: |
-          set -euo pipefail
-
-          find_draft_id() {
-            # List endpoint returns drafts; GET .../releases/tags/{tag} does NOT.
-            gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate \
-              --jq ".[] | select(.tag_name == \"${TAG}\" and .draft == true) | .id" \
-              | head -n1
-          }
-
-          find_any_id() {
-            gh api "repos/${GITHUB_REPOSITORY}/releases" --paginate \
-              --jq ".[] | select(.tag_name == \"${TAG}\") | .id" \
-              | head -n1
-          }
-
-          # Draft.yml builds assets and opens a draft on the same tag push.
-          # Give it time to finish before we promote.
-          RID=""
-          for attempt in $(seq 1 30); do
-            RID="$(find_draft_id || true)"
-            if [ -n "${RID}" ]; then
-              echo "Found draft release id=${RID} for tag ${TAG} (attempt ${attempt})"
-              break
-            fi
-            ANY="$(find_any_id || true)"
-            if [ -n "${ANY}" ]; then
-              DRAFT_STATE="$(gh api "repos/${GITHUB_REPOSITORY}/releases/${ANY}" --jq .draft)"
-              if [ "${DRAFT_STATE}" = "false" ]; then
-                echo "Release id=${ANY} for ${TAG} is already published -- nothing to do"
-                exit 0
-              fi
-            fi
-            echo "No draft for ${TAG} yet (attempt ${attempt}/30); sleeping 20s"
-            sleep 20
-          done
-
-          if [ -z "${RID}" ]; then
-            echo "::error::Timed out waiting for draft release on tag ${TAG}."
-            echo "Ensure the Draft workflow ran on this tag and created a draft release."
-            exit 1
-          fi
-
-          echo "Promoting release ${RID} (tag ${TAG}) to published"
-          gh api --method PATCH "repos/${GITHUB_REPOSITORY}/releases/${RID}" \
-            -f draft=false \
-            -f make_latest=true \
-            --jq '{id,tag_name,draft,prerelease,html_url,assets:[.assets[].name]}'
+        run: "bash .github/scripts/promote-draft-release.sh"
