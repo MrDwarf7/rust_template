@@ -1,10 +1,15 @@
 name: "Checkout"
-description: "Checkout repository with actions/checkout@v7"
+description: "Checkout repository with actions/checkout@v7 (override-version for v5/v6/v7)"
+
 inputs:
+  override-version:
+    description: "Override the version of actions/checkout to use (v5, v6, or v7). Defaults to v7."
+    required: false
+    default: "v7"
   token:
     description: "Token to use for checkout"
     required: false
-    default: ""
+    default: "${{ github.token }}"
   ref:
     description: "Branch, tag, or SHA to checkout"
     required: false
@@ -42,19 +47,59 @@ inputs:
     required: false
     default: "true"
 
+# NOTE: GitHub Actions does not allow expressions in `uses:`.
+# Version selection is done via mutually exclusive steps instead.
 runs:
   using: "composite"
   steps:
-    - name: Checkout
-      uses: actions/checkout@v7
+    - name: "Checkout (v7)"
+      if: "${{ inputs.override-version == 'v7' || inputs.override-version == '' }}"
+      uses: "actions/checkout@v7"
       with:
-        token: ${{ inputs.token }}
-        ref: ${{ inputs.ref }}
-        path: ${{ inputs.path }}
-        fetch-depth: ${{ inputs.fetch-depth }}
-        submodules: ${{ inputs.submodules }}
-        lfs: ${{ inputs.lfs }}
-        set-safe-directory: ${{ inputs.set-safe-directory }}
-        show-progress: ${{ inputs.show-progress }}
-        sparse-checkout: ${{ inputs.sparse-checkout }}
-        sparse-checkout-cone-mode: ${{ inputs.sparse-checkout-cone-mode }}
+        token: "${{ inputs.token }}"
+        ref: "${{ inputs.ref }}"
+        path: "${{ inputs.path }}"
+        fetch-depth: "${{ inputs.fetch-depth }}"
+        submodules: "${{ inputs.submodules }}"
+        lfs: "${{ inputs.lfs }}"
+        set-safe-directory: "${{ inputs.set-safe-directory }}"
+        show-progress: "${{ inputs.show-progress }}"
+        sparse-checkout: "${{ inputs.sparse-checkout }}"
+        sparse-checkout-cone-mode: "${{ inputs.sparse-checkout-cone-mode }}"
+
+    - name: "Checkout (v6)"
+      if: "${{ inputs.override-version == 'v6' }}"
+      uses: "actions/checkout@v6"
+      with:
+        token: "${{ inputs.token }}"
+        ref: "${{ inputs.ref }}"
+        path: "${{ inputs.path }}"
+        fetch-depth: "${{ inputs.fetch-depth }}"
+        submodules: "${{ inputs.submodules }}"
+        lfs: "${{ inputs.lfs }}"
+        set-safe-directory: "${{ inputs.set-safe-directory }}"
+        show-progress: "${{ inputs.show-progress }}"
+        sparse-checkout: "${{ inputs.sparse-checkout }}"
+        sparse-checkout-cone-mode: "${{ inputs.sparse-checkout-cone-mode }}"
+
+    - name: "Checkout (v5)"
+      if: "${{ inputs.override-version == 'v5' }}"
+      uses: "actions/checkout@v5"
+      with:
+        token: "${{ inputs.token }}"
+        ref: "${{ inputs.ref }}"
+        path: "${{ inputs.path }}"
+        fetch-depth: "${{ inputs.fetch-depth }}"
+        submodules: "${{ inputs.submodules }}"
+        lfs: "${{ inputs.lfs }}"
+        set-safe-directory: "${{ inputs.set-safe-directory }}"
+        show-progress: "${{ inputs.show-progress }}"
+        sparse-checkout: "${{ inputs.sparse-checkout }}"
+        sparse-checkout-cone-mode: "${{ inputs.sparse-checkout-cone-mode }}"
+
+    - name: "Fail on unsupported override-version"
+      if: "${{ inputs.override-version != '' && inputs.override-version != 'v5' && inputs.override-version != 'v6' && inputs.override-version != 'v7' }}"
+      shell: "bash"
+      run: |
+        echo "::error::Unsupported override-version '${{ inputs.override-version }}'. Supported: v5, v6, v7"
+        exit 1

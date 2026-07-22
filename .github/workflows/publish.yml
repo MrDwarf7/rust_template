@@ -2,40 +2,42 @@ name: "Publish"
 on:
   push:
     branches:
-      - master
-      - main
+      - "master"
+      - "main"
     tags: ["v[0-9]+.[0-9]+.[0-9]?"]
+
 env:
-  preview: ${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}
-  PROJECT_NAME: rust_template
+  preview: "${{ github.event_name == 'release' && contains(github.event.release.tag_name, 'preview') }}"
+  PROJECT_NAME: "rust_template"
+
 jobs:
   publish:
     name: "Publish - publish"
     strategy:
       matrix:
         include:
-          - os: [ubuntu-latest]
-    runs-on: ${{ matrix.os }}
+          - os: "ubuntu-latest"
+            target: "x86_64-unknown-linux-gnu"
+    runs-on: "${{ matrix.os }}"
     steps:
-      #
       - name: "Checkout sources"
-        uses: actions/checkout@v6
-        #
+        uses: "./.github/actions/checkout"
+
       - name: "Download artifacts"
-        uses: actions/download-artifact@v4
+        uses: "actions/download-artifact@v8"
         with:
           merge-multiple: true
-          #
+
       - name: "Echo Tag Ref(s)"
         run: |
           echo "Tag name for GITHUB_REF_NAME: $GITHUB_REF_NAME"
           echo "Tag name from github.ref_name ${{ github.ref_name }}"
-        #
+
       - name: "Upload Release Assets"
-        uses: svenstaro/upload-release-action@master
+        uses: "svenstaro/upload-release-action@v2"
         if: env.preview == 'false'
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
-          file: ${{ env.PROJECT_NAME }}-*.zip
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          file: "${{ env.PROJECT_NAME }}-*.zip"
           file_glob: true
           overwrite: true

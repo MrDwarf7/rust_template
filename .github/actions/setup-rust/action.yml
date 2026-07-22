@@ -1,5 +1,6 @@
 name: "Setup Rust"
-description: "Standard Rust CI setup: checkout, sccache, cargo tools, toolchain (from rust-toolchain.toml), cache, and mold linker"
+description: "Standard Rust CI setup: sccache, cargo tools, toolchain (from rust-toolchain.toml), cache, and mold linker. Does NOT checkout -- call ./.github/actions/checkout first."
+
 inputs:
   target:
     description: "Target triple (e.g. x86_64-unknown-linux-gnu)"
@@ -21,27 +22,24 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Checkout sources
-      uses: actions/checkout@v6
+    - name: "Setup sccache"
+      uses: "mozilla-actions/sccache-action@v0.0.10"
 
-    - name: Setup sccache
-      uses: mozilla-actions/sccache-action@v0.0.9
-
-    - name: Install cargo tools
-      uses: taiki-e/install-action@v2
+    - name: "Install cargo tools"
+      uses: "taiki-e/install-action@v2"
       with:
-        tool: cargo-binstall,cargo-make,just,taplo
+        tool: "cargo-binstall,cargo-make,just,taplo"
 
-    - name: Cache Cargo dependencies
-      uses: Swatinem/rust-cache@v2
+    - name: "Cache Cargo dependencies"
+      uses: "Swatinem/rust-cache@v2"
       with:
         cache-all-crates: true
-        save-if: ${{ github.ref == 'refs/heads/main' }}
-        key: ${{ inputs.target }}
+        save-if: "${{ github.ref == 'refs/heads/main' }}"
+        key: "${{ inputs.target }}"
 
-    - name: Install gcc
-      shell: bash
-      if: ${{ contains(inputs.target, 'linux') }}
+    - name: "Install gcc"
+      shell: "bash"
+      if: "${{ contains(inputs.target, 'linux') }}"
       run: |
         sudo apt update
         case "${{ inputs.target }}" in
@@ -50,9 +48,9 @@ runs:
           x86_64-unknown-linux-gnu) sudo apt install -yq gcc-x86-64-linux-gnu ;;
         esac
 
-    - name: Install mold linker (Linux)
-      shell: bash
-      if: ${{ inputs.use-mold == 'true' && runner.os == 'Linux' }}
+    - name: "Install mold linker (Linux)"
+      shell: "bash"
+      if: "${{ inputs.use-mold == 'true' && runner.os == 'Linux' }}"
       run: |
         set -euo pipefail
         MOLD_VERSION='2.41.0'
@@ -73,13 +71,13 @@ runs:
         sudo ln -sf "/opt/mold-${MOLD_VERSION}-${mold_arch}/bin/mold" /usr/local/bin/ld.mold
         mold --version
 
-    - name: Set RUSTFLAGS for mold (Linux)
-      shell: bash
-      if: ${{ inputs.use-mold == 'true' && runner.os == 'Linux' }}
+    - name: "Set RUSTFLAGS for mold (Linux)"
+      shell: "bash"
+      if: "${{ inputs.use-mold == 'true' && runner.os == 'Linux' }}"
       run: echo "RUSTFLAGS=-C linker=clang -C link-arg=-fuse-ld=mold" >> $GITHUB_ENV
 
-    - name: Setup Rust toolchain
-      shell: bash
+    - name: "Setup Rust toolchain"
+      shell: "bash"
       run: |
         if [ -n "${{ inputs.toolchain }}" ]; then
           rustup toolchain install "${{ inputs.toolchain }}" --profile minimal
@@ -92,8 +90,8 @@ runs:
         fi
         rustup show
 
-    - name: Install components
-      shell: bash
+    - name: "Install components"
+      shell: "bash"
       if: "${{ inputs.components != '' }}"
       run: |
         rustup component add ${{ inputs.components }}
