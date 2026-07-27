@@ -133,6 +133,15 @@ function Remove-CargoLock {
     }
 }
 
+function Remove-Assets {
+    # Branding assets are template-specific; the new project regenerates them
+    # via assets/generate-assets.sh, so drop everything except that script.
+    if (Test-Path "assets") {
+        Write-Host "Removing template assets (keeping generate-assets.sh)..."
+        Get-ChildItem -Path "assets" -File | Where-Object { $_.Name -ne 'generate-assets.sh' } | Remove-Item -Force
+    }
+}
+
 function Maybe-RemoveBacon {
     if (Test-Path "bacon.toml") {
         if (Ask-YesNo "Do you want to remove bacon.toml?") {
@@ -413,6 +422,7 @@ function Main {
 
     Remove-VcsDirs
     Remove-Target
+    Remove-Assets
     Maybe-RemoveBacon
     Update-MakefileToml
     Update-CargoToml

@@ -166,6 +166,15 @@ remove_cargo_lock() {
   fi
 }
 
+remove_assets() {
+  # Branding assets are template-specific; the new project regenerates them
+  # via assets/generate-assets.sh, so drop everything except that script.
+  if [[ -d "assets" ]]; then
+    printf "Removing template assets (keeping generate-assets.sh)...\n"
+    find assets -type f ! -name 'generate-assets.sh' -delete
+  fi
+}
+
 maybe_remove_bacon() {
   if [[ -f "bacon.toml" ]]; then
     if ask_yes_no "Do you want to remove bacon.toml?"; then
@@ -416,6 +425,7 @@ main() {
   remove_vcs_dirs
   remove_target
   remove_cargo_lock
+  remove_assets
   maybe_remove_bacon
   update_makefile_toml
   update_cargo_toml
