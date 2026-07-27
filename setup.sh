@@ -7,9 +7,9 @@ ROOT="$(pwd)"
 FOLDER_NAME="$(basename "$ROOT")"
 
 # Strip .rs suffix first for package/binary name, keep full folder name for GitHub repo
-REPO_NAME="${FOLDER_NAME}"                    # very_cool.rs (GitHub repo)
-PROJECT_NAME="${REPO_NAME%.rs}"                # very_cool (Cargo package, binary)
-PROJECT_NAME="${PROJECT_NAME//./_}"            # dots → underscores if any remain
+REPO_NAME="${FOLDER_NAME}"          # very_cool.rs (GitHub repo)
+PROJECT_NAME="${REPO_NAME%.rs}"     # very_cool (Cargo package, binary)
+PROJECT_NAME="${PROJECT_NAME//./_}" # dots → underscores if any remain
 
 GITHUB_USER="mrdwarf7"
 
@@ -54,42 +54,42 @@ replace_in_file() {
 process_readme_template() {
   local template="README.template.md"
   local output="README.md"
-  
+
   if [[ ! -f "$template" ]]; then
     printf "Warning: %s not found, skipping README processing.\n" "$template"
     return
   fi
-  
+
   printf "Processing README template...\n"
   cp "$template" "$output"
-  
+
   PROJECT_NAME_UPPER=$(echo "$PROJECT_NAME" | tr '[:lower:]' '[:upper:]' | tr '-' '_')
   # REPO_NAME already has .rs (e.g., very_cool.rs) - use for GitHub URLs
   # REPO_NAME_CLEAN = without .rs for display
   REPO_NAME_CLEAN="${REPO_NAME%.rs}"
-  
+
   replace_in_file "$output" '{{PROJECT_NAME}}' "$PROJECT_NAME"
   replace_in_file "$output" '{{PROJECT_NAME_UPPER}}' "$PROJECT_NAME_UPPER"
   replace_in_file "$output" '{{GITHUB_USER}}' "$GITHUB_USER"
-  replace_in_file "$output" '{{REPO_NAME}}' "$REPO_NAME"  # full with .rs for GitHub URLs
+  replace_in_file "$output" '{{REPO_NAME}}' "$REPO_NAME" # full with .rs for GitHub URLs
   replace_in_file "$output" '{{SHORT_DESCRIPTION}}' "A brief one-line description"
   replace_in_file "$output" '{{LONG_DESCRIPTION}}' "A longer 2-3 sentence description of what this project does and who it's for."
   replace_in_file "$output" '{{TAGLINE}}' "A compelling tagline"
-  
+
   printf "Generated %s from template\n" "$output"
-  
+
   # Clean up template file
   if [[ "$AUTO_YES" == true ]]; then
     rm -f "$template"
     printf "Removed %s (auto-yes mode)\n" "$template"
   else
-    if ask_yes_no "Remove template file %s?" "$template"; then
+    if ask_yes_no "Remove template file $template"; then
       rm -f "$template"
       printf "Removed %s\n" "$template"
     else
       # Add to .gitignore if not already there
       if ! grep -q "^README\.template\.md$" .gitignore 2>/dev/null; then
-        printf "README.template.md\n" >> .gitignore
+        printf "README.template.md\n" >>.gitignore
         printf "Kept %s and added to .gitignore\n" "$template"
       fi
     fi
@@ -106,48 +106,48 @@ ask_yes_no() {
   while true; do
     read -p "$prompt [Y/n]: " answer
     case "$answer" in
-        [Yy]*|"") return 0 ;;
-        [Nn]*) return 1 ;;
-        *) printf "Please answer y or n.\n" ;;
+    [Yy]* | "") return 0 ;;
+    [Nn]*) return 1 ;;
+    *) printf "Please answer y or n.\n" ;;
     esac
   done
 }
-    # Prompt for a choice from a numbered list.
-    # Respects AUTO_YES: if true, picks default_choice (first arg after prompt).
-    ask_choice() {
-      local prompt="$1"
-      local default_choice="$2"
-      shift 2
+# Prompt for a choice from a numbered list.
+# Respects AUTO_YES: if true, picks default_choice (first arg after prompt).
+ask_choice() {
+  local prompt="$1"
+  local default_choice="$2"
+  shift 2
 
-      if [[ "$AUTO_YES" == true ]]; then
-        CHOICE_RESULT="$default_choice"
-        return
-      fi
+  if [[ "$AUTO_YES" == true ]]; then
+    CHOICE_RESULT="$default_choice"
+    return
+  fi
 
-      while true; do
-        read -p "$prompt" choice
-        case "$choice" in
-        "")
-          CHOICE_RESULT="$default_choice"
+  while true; do
+    read -p "$prompt" choice
+    case "$choice" in
+    "")
+      CHOICE_RESULT="$default_choice"
+      return
+      ;;
+    "$default_choice")
+      CHOICE_RESULT="$default_choice"
+      return
+      ;;
+    *)
+      # Validate against remaining args
+      for valid in "$@"; do
+        if [[ "$choice" == "$valid" ]]; then
+          CHOICE_RESULT="$choice"
           return
-          ;;
-        "$default_choice")
-          CHOICE_RESULT="$default_choice"
-          return
-          ;;
-        *)
-          # Validate against remaining args
-          for valid in "$@"; do
-            if [[ "$choice" == "$valid" ]]; then
-              CHOICE_RESULT="$choice"
-              return
-            fi
-          done
-          printf "Invalid choice.\n"
-          ;;
-        esac
+        fi
       done
-    }
+      printf "Invalid choice.\n"
+      ;;
+    esac
+  done
+}
 
 remove_vcs_dirs() {
   printf "Removing any existing .git or .jj directories...\n"
@@ -234,7 +234,7 @@ update_github_publish() {
       }
       in_env && !/^[[:space:]]/ { in_env=0 }
       { print }
-    ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+    ' "$file" >"$file.tmp" && mv "$file.tmp" "$file"
   fi
 }
 
@@ -251,7 +251,7 @@ update_docs_yml() {
       }
       in_env && !/^[[:space:]]/ { in_env=0 }
       { print }
-    ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+    ' "$file" >"$file.tmp" && mv "$file.tmp" "$file"
   fi
 }
 
@@ -270,7 +270,7 @@ update_issue_template_workflows() {
         }
         in_env && !/^[[:space:]]/ { in_env=0 }
         { print }
-      ' "$file" > "$file.tmp" && mv "$file.tmp" "$file"
+      ' "$file" >"$file.tmp" && mv "$file.tmp" "$file"
     fi
   done
 }
@@ -317,21 +317,21 @@ update_release_tasks() {
 
 setup_using_jj() {
   local cmd_bin="jj"
-  
+
   # Check if jj is installed
   if ! command -v jj >/dev/null 2>&1; then
     printf "%s not found, skipping jj initialization.\n" "$cmd_bin"
     return 1
   fi
-  
+
   printf "%s command found.\n" "$cmd_bin"
 
   if ask_yes_no "Do you want to initialize with $cmd_bin (recommended for existing remote)?"; then
-      printf "Choose initialization method:\n"
-      printf "\t 1) %s git init\n" "$cmd_bin"
-      printf "\t 2) %s git init --colocate  (shares .git directory with Git tools)\n" "$cmd_bin"
+    printf "Choose initialization method:\n"
+    printf "\t 1) %s git init\n" "$cmd_bin"
+    printf "\t 2) %s git init --colocate  (shares .git directory with Git tools)\n" "$cmd_bin"
 
-      ask_choice "Enter choice (1 or 2) [2]: " "2" "1" "2"
+    ask_choice "Enter choice (1 or 2) [2]: " "2" "1" "2"
     case "$CHOICE_RESULT" in
     1)
       $cmd_bin git init
@@ -341,11 +341,11 @@ setup_using_jj() {
       ;;
     esac
 
-    return 0  # initialized with jj
+    return 0 # initialized with jj
   fi
 
   printf "User opted not to use %s for initialization.\n" "$cmd_bin"
-  return 1  # declined
+  return 1 # declined
 }
 
 setup_repository() {
