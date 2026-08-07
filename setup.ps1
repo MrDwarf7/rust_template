@@ -41,6 +41,7 @@ $GITHUB_FILES = @(
   "$GITHUB_WORKFLOWS_DIR/draft.yml"
   "$GITHUB_WORKFLOWS_DIR/format.yml"
   "$GITHUB_WORKFLOWS_DIR/test.yml"
+  "$GITHUB_WORKFLOWS_DIR/publish.yml"
 )
 
 function Replace-InFile {
@@ -208,7 +209,7 @@ function Update-GithubPublish {
                 $in_env = $true
                 $new_lines += $line
             } elseif ($in_env -and $line -match '^\s') {
-                $new_lines += $line -replace 'PROJECT_NAME: rust_template', "PROJECT_NAME: $PROJECT_NAME"
+                $new_lines += $line -replace 'PROJECT_NAME: "rust_template"', "PROJECT_NAME: `"$PROJECT_NAME`""
             } elseif ($in_env -and $line -notmatch '^\s') {
                 $in_env = $false
                 $new_lines += $line
@@ -233,7 +234,7 @@ function Update-DocsYml {
                 $in_env = $true
                 $new_lines += $line
             } elseif ($in_env -and $line -match '^\s') {
-                $new_lines += $line -replace 'PROJECT_NAME: rust_template', "PROJECT_NAME: $PROJECT_NAME"
+                $new_lines += $line -replace 'PROJECT_NAME: "rust_template"', "PROJECT_NAME: `"$PROJECT_NAME`""
             } elseif ($in_env -and $line -notmatch '^\s') {
                 $in_env = $false
                 $new_lines += $line
@@ -258,7 +259,7 @@ function Update-IssueTemplateWorkflows {
                     $in_env = $true
                     $new_lines += $line
                 } elseif ($in_env -and $line -match '^\s') {
-                    $new_lines += $line -replace 'PROJECT_NAME: rust_template', "PROJECT_NAME: $PROJECT_NAME"
+                    $new_lines += $line -replace 'PROJECT_NAME: "rust_template"', "PROJECT_NAME: `"$PROJECT_NAME`""
                 } elseif ($in_env -and $line -notmatch '^\s') {
                     $in_env = $false
                     $new_lines += $line

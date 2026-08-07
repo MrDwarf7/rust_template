@@ -30,6 +30,7 @@ GITHUB_FILES=(
   "$GITHUB_WORKFLOWS_DIR/draft.yml"
   "$GITHUB_WORKFLOWS_DIR/format.yml"
   "$GITHUB_WORKFLOWS_DIR/test.yml"
+  "$GITHUB_WORKFLOWS_DIR/publish.yml"
 )
 
 # Portable sed -i replacement
@@ -154,6 +155,11 @@ remove_vcs_dirs() {
   rm -rf .git .jj
 }
 
+remove_update_existing() {
+  printf "Removing update-existing.py script...\n"
+  rm -f update-existing.py
+}
+
 remove_target() {
   printf "Removing target/ directory...\n"
   rm -rf target
@@ -237,7 +243,7 @@ update_github_publish() {
     awk -v new="$PROJECT_NAME" '
       /^env:/ { in_env=1; print; next }
       in_env && /^[[:space:]]/ {
-        sub(/PROJECT_NAME: rust_template/, "PROJECT_NAME: " new)
+        sub(/PROJECT_NAME: "rust_template"/, "PROJECT_NAME: \"" new "\"")
         print
         next
       }
@@ -254,7 +260,7 @@ update_docs_yml() {
     awk -v new="$PROJECT_NAME" '
       /^env:/ { in_env=1; print; next }
       in_env && /^[[:space:]]/ {
-        sub(/PROJECT_NAME: rust_template/, "PROJECT_NAME: " new)
+        sub(/PROJECT_NAME: "rust_template"/, "PROJECT_NAME: \"" new "\"")
         print
         next
       }
@@ -273,7 +279,7 @@ update_issue_template_workflows() {
       awk -v new="$PROJECT_NAME" '
         /^env:/ { in_env=1; print; next }
         in_env && /^[[:space:]]/ {
-          sub(/PROJECT_NAME: rust_template/, "PROJECT_NAME: " new)
+          sub(/PROJECT_NAME: "rust_template"/, "PROJECT_NAME: \"" new "\"")
           print
           next
         }
@@ -379,6 +385,14 @@ setup_repository() {
   return
 }
 
+setup_agents() {
+  if [[ -f "setup-agents.py" ]]; then
+    printf "\nConfiguring AGENTS.md...\n"
+    uv run ./setup-agents.py || printf "Warning: setup-agents.py failed, AGENTS.md may need manual edits.\n"
+  fi
+  return
+}
+
 maybe_remove_setup_script() {
   if ask_yes_no "Do you want to remove the setup script (setup.sh)?"; then
     rm -- "$0"
@@ -440,9 +454,13 @@ main() {
   process_readme_template
   setup_repository
 
+  # Patch AGENTS.md to match repo state (VCS, project name)
+  setup_agents
+
   printf "\n"
   printf "Setup complete!\n"
 
+  remove_update_existing
   maybe_remove_setup_script
 }
 
