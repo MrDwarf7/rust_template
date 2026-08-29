@@ -1,0 +1,51 @@
+name: "Setup GCC/Clang"
+description: "Pin GCC/Clang versions for native builds (C/C++ consumers, cbindgen, etc.). No-op unless version inputs set. Update inputs default + docs/CI.md together when bumping."
+
+inputs:
+  gcc-version:
+    description: "GCC major version to install (Ubuntu only). Empty = use runner default. Example: 13"
+    required: false
+    default: ""
+  clang-version:
+    description: "Clang major version (Ubuntu only). Empty = use runner default. Example: 18"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+  steps:
+    # AGENT NOTE: Version pinning is intentional for reproducible native artifacts.
+    # Bump only with explicit review and update .github/actions/setup-gcc/action.yml
+    # inputs default + docs/CI.md + any Makefile.toml env that pins them.
+    - name: "Install GCC (Ubuntu, pinned)"
+      if: "${{ runner.os == 'Linux' && inputs.gcc-version != '' }}"
+      shell: "bash"
+      run: |
+        set -euo pipefail
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq "gcc-${{ inputs.gcc-version }}" "g++-${{ inputs.gcc-version }}"
+        sudo update-alternatives --install /usr/bin/gcc gcc "/usr/bin/gcc-${{ inputs.gcc-version }}" 100
+        sudo update-alternatives --install /usr/bin/g++ g++ "/usr/bin/g++-${{ inputs.gcc-version }}" 100
+        gcc --version
+        g++ --version
+
+    - name: "Install Clang (Ubuntu, pinned)"
+      if: "${{ runner.os == 'Linux' && inputs.clang-version != '' }}"
+      shell: "bash"
+      run: |
+        set -euo pipefail
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq "clang-${{ inputs.clang-version }}"
+        clang --version
+
+    - name: "Show toolchain (all OS)"
+      shell: "bash"
+      run: |
+        printf "--- cc ---\n"
+        cc --version 2>&1 | head -n 1 || printf "cc not found\n"
+        printf "--- gcc ---\n"
+        gcc --version 2>&1 | head -n 1 || printf "gcc not found\n"
+        printf "--- clang ---\n"
+        clang --version 2>&1 | head -n 1 || printf "clang not found\n"
+        printf "--- cl (MSVC) ---\n"
+        cl 2>&1 | head -n 5 || printf "cl not found (expected on non-Windows)\n"

@@ -40,7 +40,18 @@ jobs:
         with:
           target: "${{ matrix.target }}"
 
+      - name: "Setup nightly rustfmt"
+        uses: "./.github/actions/setup-rust"
+        with:
+          toolchain: "nightly"
+          components: "rustfmt"
+          tools: ""
+          use-mold: "false"
+          set-default: "false"
+
       - name: "Run Cargo fmt"
+        env:
+          RUSTUP_TOOLCHAIN: "nightly"
         run: "cargo fmt --all --check"
 
       - name: "Build project"

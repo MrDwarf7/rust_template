@@ -22,6 +22,10 @@ inputs:
     description: "Comma-separated cargo tools to install (e.g. cargo-binstall,cargo-make,just,taplo)"
     required: false
     default: "cargo-binstall,cargo-make,just,taplo"
+  set-default:
+    description: "Set installed toolchain as default (disable for side-by-side nightly rustfmt)"
+    required: false
+    default: "true"
 
 runs:
   using: "composite"
@@ -30,6 +34,7 @@ runs:
       uses: "mozilla-actions/sccache-action@v0.0.10"
 
     - name: "Install cargo tools"
+      if: "${{ inputs.tools != '' }}"
       uses: "taiki-e/install-action@v2"
       with:
         tool: "${{ inputs.tools }}"
@@ -85,7 +90,9 @@ runs:
       run: |
         if [ -n "${{ inputs.toolchain }}" ]; then
           rustup toolchain install "${{ inputs.toolchain }}" --profile minimal
-          rustup default "${{ inputs.toolchain }}"
+          if [ "${{ inputs.set-default }}" = "true" ]; then
+            rustup default "${{ inputs.toolchain }}"
+          fi
         else
           rustup toolchain install
         fi
