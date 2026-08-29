@@ -25,6 +25,6 @@ runs:
       run: |
         # Windows PATH is semicolon-delimited; filter case-insensitively.
         # Do NOT split on ':' - that breaks drive letters like C:\.
-        filtered="$(printf '%s' "$PATH" | tr ';' '\n' | grep -iv 'Git.*usr.bin' | paste -sd ';' -)"
+        filtered="$(printf '%s' "$PATH" | tr ';' '\n' | { grep -iv 'Git.*usr.bin' || true; } | paste -sd ';' -)"
         echo "PATH=$filtered" >> "$GITHUB_ENV"
         printf "Filtered Git usr/bin from PATH (entries: %s -> %s)\n" "$(printf '%s' "$PATH" | tr ';' '\n' | wc -l)" "$(printf '%s' "$filtered" | tr ';' '\n' | wc -l)"

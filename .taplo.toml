@@ -1,5 +1,5 @@
 include = [ "**/*.toml" ]
-#exclude = []
+exclude  = [".rustfmt.toml"]
 
 [schema]
 path    = "taplo://taplo.toml"
