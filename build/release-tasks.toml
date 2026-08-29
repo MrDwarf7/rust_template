@@ -1,4 +1,5 @@
-env.CHANGELOG_ARGS_BASE = "--repository https://github.com/${GITHUB_USER}/${REPO_NAME} --commit-path . --sort newest --strip all --with-commit"
+[env]
+CHANGELOG_ARGS_BASE = "--repository https://github.com/${GITHUB_USER}/${REPO_NAME} --commit-path . --sort newest --strip all --with-commit"
 
 # Git-cliff based version bumping
 # git-cliff --bump calculates the new version and updates changelog

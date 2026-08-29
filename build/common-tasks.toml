@@ -53,6 +53,7 @@ echo "BREAKER: ${BREAKER}"
 # Sanity command to dump out all the variables
 # Also serves as a way to see variable interp in multiline scripts (it's odd)
 [tasks.print_all]
+private = true
 script_runner = "@duckscript"
 script = '''
 echo "BREAKER: ${BREAKER}"
@@ -68,6 +69,15 @@ echo "BREAKER: ${BREAKER}"
 
 # START Core bare. min
 [tasks.format]
+# ENSURES that we have nightly available for formatting
+# This is a weird caveat/bug with how cargo-make passes args to forked child procs preventing us from using 
+# the shorthand `cargo +nightly ...`.
+#
+# fmt commands docs:
+#   https://rust-lang.github.io/rustup/overrides.html
+# cargo-make#envs (global) docs:
+#   https://github.com/sagiegurari/cargo-make#global
+env.RUSTUP_TOOLCHAIN = "nightly"
 command = "cargo"
 args = ["fmt", "--", "--emit=files"]
 dependencies = ["_taplo_format"]
@@ -166,6 +176,7 @@ args = ["test", "--workspace", "${@}"]
 # END Workspaces
 
 [tasks.sleep]
+private = true
 linux.command = "sleep"
 linux.args = ["${SLEEP_TIME}"]
 windows.command = "${WINDOWS_SHELL}"
@@ -179,10 +190,12 @@ command = "taplo"
 args = ["lint"]
 
 [tasks._taplo_format]
+private = true
 command = "taplo"
 args = ["format"]
 
 [tasks._taplo_format_force]
+private = true
 command = "taplo"
 args = ["format", "--force"]
 # END Taplo (TOML Formmater) tasks

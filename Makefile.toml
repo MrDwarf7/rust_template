@@ -7,23 +7,25 @@ extend = [
   { path = "./build/release-tasks.toml", optional = true },
 ]
 
+[env]
+
 # Name of output if/when calling dist tasks, should match the cargo bin output
-env.PROJECT_NAME = "rust_template" # "cargo_output_binary_name_for_PROJECT_NAME"
+PROJECT_NAME = "rust_template" # "cargo_output_binary_name_for_PROJECT_NAME"
 # Default profile to use for builds during dist related tasks
-env.SLEEP_TIME = "15"
+SLEEP_TIME = "15"
 
 # GitHub / repo metadata (set by setup.sh during template init)
-env.GITHUB_USER = "mrdwarf7"
-env.REPO_NAME = "rust_template.rs"                              # GitHub repo name (with .rs)
-env.GITHUB_URL = "https://github.com/mrdwarf7/rust_template.rs"
+GITHUB_USER = "mrdwarf7"
+REPO_NAME = "rust_template.rs"                              # GitHub repo name (with .rs)
+GITHUB_URL = "https://github.com/mrdwarf7/rust_template.rs"
 
 # Changelog tool configuration
-env.CHANGELOG_TOOL = "git-cliff"
-env.CHANGELOG_ARGS_BASE = "--repository ${GITHUB_URL} --commit-path . --sort newest --strip all --with-commit"
+CHANGELOG_TOOL = "git-cliff"
+CHANGELOG_ARGS_BASE = "--repository ${GITHUB_URL} --commit-path . --sort newest --strip all --with-commit"
 
 # Identifies the first argument passed after `cargo` as, or inplace of `build`.
 # ie: `cargo build <...zyx...>` vs. `cargo zigbuild <...xyz...>`
-env.BUILD_ARG = "build"
+BUILD_ARG = "build"
 # env.BUILD_ARG = "zigbuild"
 
 ## START Full sweeps/aliases
