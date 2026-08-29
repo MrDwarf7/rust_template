@@ -26,8 +26,8 @@ macros  = [  ]
 # Windows exe icon + version info (release builds). Assets under assets/icon.ico.
 [package.metadata.winresource]
 OriginalFilename = "rust_template.exe"
-FileDescription = "It does cool stuff!"
-LegalCopyright = "Copyright (c) Blake B. @github.com/MrDwarf7"
+FileDescription  = "It does cool stuff!"
+LegalCopyright   = "Copyright (c) Blake B. @github.com/MrDwarf7"
 #CompanyName = "https://github.com/MrDwarf7"
 
 [target.'cfg(windows)'.build-dependencies]

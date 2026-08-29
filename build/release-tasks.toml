@@ -8,16 +8,28 @@ env.CHANGELOG_ARGS_BASE = "--repository https://github.com/${GITHUB_USER}/${REPO
 # --- patch bump (e.g. 1.0.0 -> 1.0.1) ---
 [tasks.bump_patch]
 description = "Bump patch version (1.0.0 -> 1.0.1), update changelog, commit + tag"
-run_task = { name = ["bump_patch_version", "gen_changelog_patch", "commit_version_patch"], parallel = false }
+run_task = { name = [
+  "bump_patch_version",
+  "gen_changelog_patch",
+  "commit_version_patch",
+], parallel = false }
 
 [tasks.bump_patch_version]
 command = "sh"
-args = ["-c", "if command -v cargo-set-version >/dev/null 2>&1; then cargo set-version --bump patch; else sed -i 's/^version = \\([0-9]\\+\\)\\.\\([0-9]\\+\\)\\.\\([0-9]\\+\\)/version = \\1.\\2.$((\\3+1))/' Cargo.toml; fi"]
+args = [
+  "-c",
+  "if command -v cargo-set-version >/dev/null 2>&1; then cargo set-version --bump patch; else sed -i 's/^version = \\([0-9]\\+\\)\\.\\([0-9]\\+\\)\\.\\([0-9]\\+\\)/version = \\1.\\2.$((\\3+1))/' Cargo.toml; fi",
+]
 description = "Bump patch version in Cargo.toml"
 
 [tasks.gen_changelog_patch]
 command = "${CHANGELOG_TOOL}"
-args = ["${CHANGELOG_ARGS_BASE}", "--tag-pattern \"v*\"", "--output CHANGELOG.md", "--bump patch"]
+args = [
+  "${CHANGELOG_ARGS_BASE}",
+  "--tag-pattern \"v*\"",
+  "--output CHANGELOG.md",
+  "--bump patch",
+]
 description = "Generate changelog for patch release using git-cliff"
 dependencies = ["bump_patch_version"]
 
@@ -30,16 +42,28 @@ dependencies = ["gen_changelog_patch"]
 # --- minor bump (e.g. 1.0.0 -> 1.1.0) ---
 [tasks.bump_minor]
 description = "Bump minor version (1.0.0 -> 1.1.0), update changelog, commit + tag"
-run_task = { name = ["bump_minor_version", "gen_changelog_minor", "commit_version_minor"], parallel = false }
+run_task = { name = [
+  "bump_minor_version",
+  "gen_changelog_minor",
+  "commit_version_minor",
+], parallel = false }
 
 [tasks.bump_minor_version]
 command = "sh"
-args = ["-c", "if command -v cargo-set-version >/dev/null 2>&1; then cargo set-version --bump minor; else sed -i 's/^version = \\([0-9]\\+\\)\\.\\([0-9]\\+\\)\\.\\([0-9]\\+\\)/version = \\1.$((\\2+1)).0/' Cargo.toml; fi"]
+args = [
+  "-c",
+  "if command -v cargo-set-version >/dev/null 2>&1; then cargo set-version --bump minor; else sed -i 's/^version = \\([0-9]\\+\\)\\.\\([0-9]\\+\\)\\.\\([0-9]\\+\\)/version = \\1.$((\\2+1)).0/' Cargo.toml; fi",
+]
 description = "Bump minor version in Cargo.toml"
 
 [tasks.gen_changelog_minor]
 command = "${CHANGELOG_TOOL}"
-args = ["${CHANGELOG_ARGS_BASE}", "--tag-pattern \"v*\"", "--output CHANGELOG.md", "--bump minor"]
+args = [
+  "${CHANGELOG_ARGS_BASE}",
+  "--tag-pattern \"v*\"",
+  "--output CHANGELOG.md",
+  "--bump minor",
+]
 description = "Generate changelog for minor release using git-cliff"
 dependencies = ["bump_minor_version"]
 
@@ -51,16 +75,28 @@ dependencies = ["gen_changelog_minor"]
 # --- major bump (e.g. 1.0.0 -> 2.0.0) ---
 [tasks.bump_major]
 description = "Bump major version (1.0.0 -> 2.0.0), update changelog, commit + tag"
-run_task = { name = ["bump_major_version", "gen_changelog_major", "commit_version_major"], parallel = false }
+run_task = { name = [
+  "bump_major_version",
+  "gen_changelog_major",
+  "commit_version_major",
+], parallel = false }
 
 [tasks.bump_major_version]
 command = "sh"
-args = ["-c", "if command -v cargo-set-version >/dev/null 2>&1; then cargo set-version --bump major; else sed -i 's/^version = \\([0-9]\\+\\)\\.\\([0-9]\\+\\)\\.\\([0-9]\\+\\)/version = $((\\1+1)).0.0/' Cargo.toml; fi"]
+args = [
+  "-c",
+  "if command -v cargo-set-version >/dev/null 2>&1; then cargo set-version --bump major; else sed -i 's/^version = \\([0-9]\\+\\)\\.\\([0-9]\\+\\)\\.\\([0-9]\\+\\)/version = $((\\1+1)).0.0/' Cargo.toml; fi",
+]
 description = "Bump major version in Cargo.toml"
 
 [tasks.gen_changelog_major]
 command = "${CHANGELOG_TOOL}"
-args = ["${CHANGELOG_ARGS_BASE}", "--tag-pattern \"v*\"", "--output CHANGELOG.md", "--bump major"]
+args = [
+  "${CHANGELOG_ARGS_BASE}",
+  "--tag-pattern \"v*\"",
+  "--output CHANGELOG.md",
+  "--bump major",
+]
 description = "Generate changelog for major release"
 dependencies = ["bump_major_version"]
 

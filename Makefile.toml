@@ -26,21 +26,21 @@ env.CHANGELOG_ARGS_BASE = "--repository ${GITHUB_URL} --commit-path . --sort new
 env.BUILD_ARG = "build"
 # env.BUILD_ARG = "zigbuild"
 
-env.PARALLEL_TASKS = false # true/false, if true will run tasks in parallel (if possible)
-
 ## START Full sweeps/aliases
 [tasks.b]
-run_task = { name = ["build"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["build"], parallel = false }
 
 [tasks.br]
-run_task = { name = ["build_release"], parallel = "${PARALLEL_TASKS}" }
+env.PROFILE = "release"
+run_task = { name = ["build_release"], parallel = false }
+
 [tasks.ba]
 run_task = { name = [
   "build_workspace",
   "build",
   "build_release_workspace",
   "build_release",
-], parallel = "${PARALLEL_TASKS}" }
+], parallel = false }
 
 [tasks.a]
 run_task = { name = [
@@ -50,59 +50,54 @@ run_task = { name = [
   "build_release_workspace",
   "build_release",
   "test_all",
-], parallel = "${PARALLEL_TASKS}" }
+], parallel = false }
 
 [tasks.A]
 description = "Full verification sweep for the repository."
-run_task = { name = [
-  "format",
-  "check",
-  "clippy",
-  "a",
-], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["format", "check", "clippy", "a"], parallel = false }
 
 [tasks.r]
-run_task = { name = ["run"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["run"], parallel = false }
 [tasks.rr]
-run_task = { name = ["run_release"], parallel = "${PARALLEL_TASKS}" }
+env.PROFILE = "release"
+run_task = { name = ["run_release"], parallel = false }
 
 [tasks.bw]
-run_task = { name = ["build_workspace"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["build_workspace"], parallel = false }
 
 [tasks.brw]
-run_task = { name = [
-  "build_release_workspace",
-], parallel = "${PARALLEL_TASKS}" }
+env.PROFILE = "release"
+run_task = { name = ["build_release_workspace"], parallel = false }
 
 [tasks.t]
-run_task = { name = ["test"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["test"], parallel = false }
 
 [tasks.ta]
-run_task = { name = ["test_all"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["test_all"], parallel = false }
 
 [tasks.tnc]
-run_task = { name = ["test_no_capture"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["test_no_capture"], parallel = false }
 
 [tasks.tanc]
-run_task = { name = ["test_all_no_capture"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["test_all_no_capture"], parallel = false }
 
 [tasks.f]
-run_task = { name = ["format"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["format"], parallel = false }
 
 [tasks.c]
-run_task = { name = ["check"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["check"], parallel = false }
 
 [tasks.cp]
-run_task = { name = ["clippy"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["clippy"], parallel = false }
 
 [tasks.cl]
-run_task = { name = ["clean"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["clean"], parallel = false }
 
 [tasks.reset]
-run_task = { name = ["clean", "a"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["clean", "a"], parallel = false }
 
 [tasks.envs]
-run_task = { name = "print_all", parallel = "${PARALLEL_TASKS}" }
+run_task = { name = "print_all", parallel = false }
 
 [tasks.up]
 run_task = { name = [
@@ -110,14 +105,14 @@ run_task = { name = [
   "docker_start",
   "sleep",
   "run_as_project",
-], parallel = "${PARALLEL_TASKS}" }
+], parallel = false }
 
 [tasks.down]
-run_task = { name = ["docker_stop"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["docker_stop"], parallel = false }
 
 [tasks.dist]
 env.PROFILE = "release"
-run_task = { name = ["build_release_dist"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["build_release_dist"], parallel = false }
 
 ## END Full sweeps/aliases
 
@@ -126,22 +121,22 @@ run_task = { name = ["build_release_dist"], parallel = "${PARALLEL_TASKS}" }
 
 [tasks.bump]
 description = "Bump patch version, update changelog, commit + tag (use bump_minor/bump_major for others)"
-run_task = { name = ["bump_patch"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["bump_patch"], parallel = false }
 
 [tasks.bump_patch]
-run_task = { name = ["bump_patch"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["bump_patch"], parallel = false }
 
 [tasks.bump_minor]
-run_task = { name = ["bump_minor"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["bump_minor"], parallel = false }
 
 [tasks.bump_major]
-run_task = { name = ["bump_major"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["bump_major"], parallel = false }
 
 [tasks.changelog]
-run_task = { name = ["changelog"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["changelog"], parallel = false }
 
 [tasks.changelog_check]
-run_task = { name = ["changelog_check"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["changelog_check"], parallel = false }
 
 ## END release tasks
 
@@ -149,21 +144,21 @@ run_task = { name = ["changelog_check"], parallel = "${PARALLEL_TASKS}" }
 ## START typst tasks
 
 [tasks.typb]
-run_task = { name = ["typst_build"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["typst_build"], parallel = false }
 
 # [tasks.typcl]
-# run_task = { name = ["typst_compile"], parallel = "${PARALLEL_TASKS}" }
+# run_task = { name = ["typst_compile"], parallel = false }
 
 [tasks.typw]
-run_task = { name = ["typst_watch"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["typst_watch"], parallel = false }
 
 [tasks.typnw]
-run_task = { name = ["typst_watch_no_follow"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["typst_watch_no_follow"], parallel = false }
 
 [tasks.typc]
-run_task = { name = ["typst_clean"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["typst_clean"], parallel = false }
 
 [tasks.typcl]
-run_task = { name = ["typst_clean"], parallel = "${PARALLEL_TASKS}" }
+run_task = { name = ["typst_clean"], parallel = false }
 
 ## END typst tasks

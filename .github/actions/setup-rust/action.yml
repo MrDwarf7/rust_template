@@ -23,13 +23,6 @@ inputs:
     required: false
     default: "cargo-binstall,cargo-make,just,taplo"
 
-# env:
-#   TOOLS:
-#     - cargo-binstall
-#     - cargo-make
-#     - just
-#     - taplo
-
 runs:
   using: "composite"
   steps:
