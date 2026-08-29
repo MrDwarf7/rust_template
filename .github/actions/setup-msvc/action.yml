@@ -1,9 +1,9 @@
 name: "Setup MSVC"
-description: "Setup MSVC toolchain (ilammy/msvc-dev-cmd) and fix Git Bash shadowing of link.exe. Windows only; no-op on other runners. Pair with setup-rust for Rust+MSVC builds."
+description: "Setup MSVC toolchain (ilammy/msvc-dev-cmd) and fix Git Bash shadowing of link.exe. Windows only; no-op on other runners."
 
 inputs:
   arch:
-    description: "MSVC architecture (e.g. x64, x86, x64_x86)"
+    description: "MSVC architecture (e.g. x64, x86)"
     required: false
     default: "x64"
 
@@ -18,16 +18,13 @@ runs:
 
     # Git for Windows ships C:\Program Files\Git\usr\bin\link.exe (MSYS)
     # which shadows MSVC's link.exe on PATH and breaks cl.exe linking.
-    # Remove that entry. Must run after msvc-dev-cmd. Keep it in bash
-    # so the action is maintainable as plain shell, not pwsh.
+    # Remove that entry. Must run after msvc-dev-cmd.
     - name: "Remove Git usr/bin from PATH (Windows)"
       if: "${{ runner.os == 'Windows' }}"
       shell: "bash"
       run: |
-        # Filter Git\usr\bin regardless of Program Files location / slash style
-        filtered="$(printf '%s' "$PATH" | tr ';' '\n' | tr ':' '\n' | grep -iv 'Git.*usr.bin' | paste -sd ';' -)"
-        if [ -z "$filtered" ]; then
-          filtered="$(printf '%s' "$PATH" | tr ';' '\n' | grep -iv 'Git.*usr.bin' | paste -sd ';' -)"
-        fi
+        # Windows PATH is semicolon-delimited; filter case-insensitively.
+        # Do NOT split on ':' - that breaks drive letters like C:\.
+        filtered="$(printf '%s' "$PATH" | tr ';' '\n' | grep -iv 'Git.*usr.bin' | paste -sd ';' -)"
         echo "PATH=$filtered" >> "$GITHUB_ENV"
-        printf "Filtered Git usr/bin from PATH\n"
+        printf "Filtered Git usr/bin from PATH (entries: %s -> %s)\n" "$(printf '%s' "$PATH" | tr ';' '\n' | wc -l)" "$(printf '%s' "$filtered" | tr ';' '\n' | wc -l)"

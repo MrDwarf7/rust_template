@@ -105,4 +105,8 @@ runs:
       shell: "bash"
       if: "${{ inputs.components != '' }}"
       run: |
-        rustup component add ${{ inputs.components }}
+        if [ -n "${{ inputs.toolchain }}" ]; then
+          rustup component add --toolchain "${{ inputs.toolchain }}" ${{ inputs.components }}
+        else
+          rustup component add ${{ inputs.components }}
+        fi
