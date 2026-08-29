@@ -18,6 +18,17 @@ inputs:
     description: "Install mold linker (Linux only)"
     required: false
     default: "true"
+  tools:
+    description: "Comma-separated cargo tools to install (e.g. cargo-binstall,cargo-make,just,taplo)"
+    required: false
+    default: "cargo-binstall,cargo-make,just,taplo"
+
+# env:
+#   TOOLS:
+#     - cargo-binstall
+#     - cargo-make
+#     - just
+#     - taplo
 
 runs:
   using: "composite"
@@ -28,7 +39,7 @@ runs:
     - name: "Install cargo tools"
       uses: "taiki-e/install-action@v2"
       with:
-        tool: "cargo-binstall,cargo-make,just,taplo"
+        tool: "${{ inputs.tools }}"
 
     - name: "Cache Cargo dependencies"
       uses: "Swatinem/rust-cache@v2"
