@@ -106,7 +106,8 @@ runs:
       if: "${{ inputs.components != '' }}"
       run: |
         if [ -n "${{ inputs.toolchain }}" ]; then
-          rustup component add --toolchain "${{ inputs.toolchain }}" ${{ inputs.components }}
+          components=$(echo "${{ inputs.components }}" | tr -d ' ' | tr ',' ' ') # spaces first, then , -> space
+          rustup component add --toolchain "${{ inputs.toolchain }}" $components
         else
           rustup component add ${{ inputs.components }}
         fi
