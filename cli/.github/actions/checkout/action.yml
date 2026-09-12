@@ -1,0 +1,105 @@
+name: "Checkout"
+description: "Checkout repository with actions/checkout@v7 (override-version for v5/v6/v7)"
+
+inputs:
+  override-version:
+    description: "Override the version of actions/checkout to use (v5, v6, or v7). Defaults to v7."
+    required: false
+    default: "v7"
+  token:
+    description: "Token to use for checkout"
+    required: false
+    default: "{% raw %}${{ github.token }}{% endraw %}"
+  ref:
+    description: "Branch, tag, or SHA to checkout"
+    required: false
+    default: ""
+  path:
+    description: "Path to checkout to"
+    required: false
+    default: ""
+  fetch-depth:
+    description: "Number of commits to fetch"
+    required: false
+    default: "0"
+  submodules:
+    description: "Whether to checkout submodules"
+    required: false
+    default: "false"
+  lfs:
+    description: "Whether to download Git LFS files"
+    required: false
+    default: "false"
+  set-safe-directory:
+    description: "Set safe directory in git config"
+    required: false
+    default: "true"
+  show-progress:
+    description: "Show progress"
+    required: false
+    default: "true"
+  sparse-checkout:
+    description: "Sparse checkout paths"
+    required: false
+    default: ""
+  sparse-checkout-cone-mode:
+    description: "Use cone mode for sparse checkout"
+    required: false
+    default: "true"
+
+# NOTE: GitHub Actions does not allow expressions in `uses:`.
+# Version selection is done via mutually exclusive steps instead.
+runs:
+  using: "composite"
+  steps:
+    - name: "Checkout (v7)"
+      if: "{% raw %}${{ inputs.override-version == 'v7' || inputs.override-version == '' }}{% endraw %}"
+      uses: "actions/checkout@v7"
+      with:
+        token: "{% raw %}${{ inputs.token }}{% endraw %}"
+        ref: "{% raw %}${{ inputs.ref }}{% endraw %}"
+        path: "{% raw %}${{ inputs.path }}{% endraw %}"
+        fetch-depth: "{% raw %}${{ inputs.fetch-depth }}{% endraw %}"
+        submodules: "{% raw %}${{ inputs.submodules }}{% endraw %}"
+        lfs: "{% raw %}${{ inputs.lfs }}{% endraw %}"
+        set-safe-directory: "{% raw %}${{ inputs.set-safe-directory }}{% endraw %}"
+        show-progress: "{% raw %}${{ inputs.show-progress }}{% endraw %}"
+        sparse-checkout: "{% raw %}${{ inputs.sparse-checkout }}{% endraw %}"
+        sparse-checkout-cone-mode: "{% raw %}${{ inputs.sparse-checkout-cone-mode }}{% endraw %}"
+
+    - name: "Checkout (v6)"
+      if: "{% raw %}${{ inputs.override-version == 'v6' }}{% endraw %}"
+      uses: "actions/checkout@v6"
+      with:
+        token: "{% raw %}${{ inputs.token }}{% endraw %}"
+        ref: "{% raw %}${{ inputs.ref }}{% endraw %}"
+        path: "{% raw %}${{ inputs.path }}{% endraw %}"
+        fetch-depth: "{% raw %}${{ inputs.fetch-depth }}{% endraw %}"
+        submodules: "{% raw %}${{ inputs.submodules }}{% endraw %}"
+        lfs: "{% raw %}${{ inputs.lfs }}{% endraw %}"
+        set-safe-directory: "{% raw %}${{ inputs.set-safe-directory }}{% endraw %}"
+        show-progress: "{% raw %}${{ inputs.show-progress }}{% endraw %}"
+        sparse-checkout: "{% raw %}${{ inputs.sparse-checkout }}{% endraw %}"
+        sparse-checkout-cone-mode: "{% raw %}${{ inputs.sparse-checkout-cone-mode }}{% endraw %}"
+
+    - name: "Checkout (v5)"
+      if: "{% raw %}${{ inputs.override-version == 'v5' }}{% endraw %}"
+      uses: "actions/checkout@v5"
+      with:
+        token: "{% raw %}${{ inputs.token }}{% endraw %}"
+        ref: "{% raw %}${{ inputs.ref }}{% endraw %}"
+        path: "{% raw %}${{ inputs.path }}{% endraw %}"
+        fetch-depth: "{% raw %}${{ inputs.fetch-depth }}{% endraw %}"
+        submodules: "{% raw %}${{ inputs.submodules }}{% endraw %}"
+        lfs: "{% raw %}${{ inputs.lfs }}{% endraw %}"
+        set-safe-directory: "{% raw %}${{ inputs.set-safe-directory }}{% endraw %}"
+        show-progress: "{% raw %}${{ inputs.show-progress }}{% endraw %}"
+        sparse-checkout: "{% raw %}${{ inputs.sparse-checkout }}{% endraw %}"
+        sparse-checkout-cone-mode: "{% raw %}${{ inputs.sparse-checkout-cone-mode }}{% endraw %}"
+
+    - name: "Fail on unsupported override-version"
+      if: "{% raw %}${{ inputs.override-version != '' && inputs.override-version != 'v5' && inputs.override-version != 'v6' && inputs.override-version != 'v7' }}{% endraw %}"
+      shell: "bash"
+      run: |
+        echo "::error::Unsupported override-version '{% raw %}${{ inputs.override-version }}{% endraw %}'. Supported: v5, v6, v7"
+        exit 1

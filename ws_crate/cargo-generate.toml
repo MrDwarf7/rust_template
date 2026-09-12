@@ -1,0 +1,22 @@
+[template]
+cargo_generate_version = ">=0.24.0"
+vcs = "None"
+exclude = [
+  "assets/*.png",
+  "assets/*.ico",
+  "assets/*.svg",
+]
+
+[hooks]
+pre = ["hooks/pre.rhai"]
+post = ["hooks/post.rhai"]
+
+[placeholders]
+github_user = { type = "string", prompt = "GitHub user/org for URLs?", default = "MrDwarf7" }
+short_description = { type = "string", prompt = "Short description (Cargo.toml / crates.io)?", default = "A workspace member crate" }
+
+[conditional.'crate_type == "lib"']
+ignore = ["src/main.rs", "build.rs", "assets"]
+
+[conditional.'crate_type == "bin"']
+ignore = ["src/lib.rs"]

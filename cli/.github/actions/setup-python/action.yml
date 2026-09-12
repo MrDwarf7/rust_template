@@ -1,0 +1,46 @@
+name: "Setup Python + uv"
+description: "Setup uv and Python version (reads .python-version if no input). Central version pin for non-Rust tooling. See .python-version and docs/CI.md."
+
+inputs:
+  python-version:
+    description: "Python version (e.g. 3.12). Reads .python-version if empty. Keep in sync with .python-version and Makefile.toml env if used."
+    required: false
+    default: ""
+  uv-version:
+    description: "uv version"
+    required: false
+    default: "latest"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Check .python-version exists (when no input)"
+      if: "{% raw %}${{ inputs.python-version == '' }}{% endraw %}"
+      shell: "bash"
+      run: |
+        if [ ! -f .python-version ]; then
+          printf "::error::Missing .python-version and no python-version input provided. Create .python-version (e.g. 3.12) or pass python-version input to setup-python.\n" >&2
+          exit 1
+        fi
+        printf "Using Python version from .python-version: %s\n" "$(cat .python-version)"
+
+    - name: "Setup uv (explicit python)"
+      if: "{% raw %}${{ inputs.python-version != '' }}{% endraw %}"
+      uses: "astral-sh/setup-uv@v5"
+      with:
+        version: "{% raw %}${{ inputs.uv-version }}{% endraw %}"
+        python-version: "{% raw %}${{ inputs.python-version }}{% endraw %}"
+        enable-cache: true
+
+    - name: "Setup uv (from .python-version)"
+      if: "{% raw %}${{ inputs.python-version == '' }}{% endraw %}"
+      uses: "astral-sh/setup-uv@v5"
+      with:
+        version: "{% raw %}${{ inputs.uv-version }}{% endraw %}"
+        enable-cache: true
+
+    - name: "Show versions"
+      shell: "bash"
+      run: |
+        uv --version
+        uv run --no-project python --version

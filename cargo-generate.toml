@@ -1,0 +1,3 @@
+[template]
+cargo_generate_version = ">=0.24.0"
+sub_templates = ["cli", "workspace", "ws_crate"]

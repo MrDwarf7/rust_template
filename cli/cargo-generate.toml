@@ -1,0 +1,41 @@
+[template]
+cargo_generate_version = ">=0.24.0"
+# Do not auto git-init; post hook honors vcs_kind (git | jj | none).
+vcs = "None"
+exclude = [
+  "assets/*.png",
+  "assets/*.ico",
+  "assets/*.svg",
+]
+ignore = [
+  "setup.sh",
+  "setup.ps1",
+  "setup-agents.py",
+  "update-existing.py",
+  "Cargo.lock",
+  ".extras",
+]
+
+[hooks]
+pre = ["hooks/pre.rhai"]
+post = ["hooks/post.rhai"]
+
+[placeholders]
+github_user = { type = "string", prompt = "GitHub user/org for URLs?", default = "MrDwarf7" }
+use_rs_suffix = { type = "bool", prompt = "Append .rs to the GitHub repo name?", default = true }
+tagline = { type = "string", prompt = "One-line tagline?", default = "Rust CLI" }
+short_description = { type = "string", prompt = "Short description (Cargo.toml / crates.io)?", default = "A Rust CLI" }
+long_description = { type = "string", prompt = "Longer README description?", default = "A Rust CLI scaffolded from rust_template." }
+keep_bacon = { type = "bool", prompt = "Keep bacon.toml?", default = true }
+keep_data = { type = "bool", prompt = "Keep data/?", default = false }
+keep_scratch = { type = "bool", prompt = "Keep scratch/?", default = false }
+vcs_kind = { type = "string", prompt = "Initialize VCS?", choices = ["jj", "git", "none"], default = "jj" }
+
+[conditional.'!keep_bacon']
+ignore = ["bacon.toml"]
+
+[conditional.'!keep_data']
+ignore = ["data"]
+
+[conditional.'!keep_scratch']
+ignore = ["scratch"]

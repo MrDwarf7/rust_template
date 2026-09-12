@@ -1,0 +1,61 @@
+[env]
+ROOT = "."
+DOCS_FOLDER = "${ROOT}/docs"
+
+INPUT_TYPE = "typ"
+INPUT_NAME = "gdd.${INPUT_TYPE}"
+SOURCE_FILE = "${DOCS_FOLDER}/${INPUT_NAME}"
+
+OUTPUT_TYPE = "pdf"
+OUTPUT_NAME = "gdd.${OUTPUT_TYPE}"
+
+
+[tasks.typst_build]
+command = "typst"
+args = [
+  "compile",
+  "-f",
+  "${OUTPUT_TYPE}",
+  "${SOURCE_FILE}",
+  "${DOCS_FOLDER}/${OUTPUT_NAME}",
+]
+
+[tasks.typst_compile]
+command = "typst"
+args = [
+  "compile",
+  "-f",
+  "${OUTPUT_TYPE}",
+  "${SOURCE_FILE}",
+  "${DOCS_FOLDER}/${OUTPUT_NAME}",
+]
+
+
+[tasks.typst_watch]
+command = "typst"
+args = [
+  "watch",
+  "-f",
+  "${OUTPUT_TYPE}",
+  "${SOURCE_FILE}",
+  "${DOCS_FOLDER}/${OUTPUT_NAME}",
+  "--open",
+]
+
+
+[tasks.typst_watch_no_follow]
+command = "typst"
+args = [
+  "watch",
+  "-f",
+  "${OUTPUT_TYPE}",
+  "${SOURCE_FILE}",
+  "${DOCS_FOLDER}/${OUTPUT_NAME}",
+]
+
+
+[tasks.typst_clean]
+script_runner = "@duckscript"
+script = '''
+rm -f "${DOCS_FOLDER}/${OUTPUT_NAME}"
+'''
