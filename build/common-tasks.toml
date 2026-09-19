@@ -78,34 +78,34 @@ echo "BREAKER: ${BREAKER}"
 # cargo-make#envs (global) docs:
 #   https://github.com/sagiegurari/cargo-make#global
 env.RUSTUP_TOOLCHAIN = "nightly"
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["fmt", "--", "--emit=files"]
 dependencies = ["_taplo_format"]
 
 [tasks.clean]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["clean"]
 
 [tasks.build]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["${BUILD_ARG}", "${@}"]
 dependencies = ["format"]
 
 [tasks.build_release]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["${BUILD_ARG}", "--release", "${@}"]
 dependencies = ["format"]
 
 [tasks.docs]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["doc", "--no-deps", "${@}"]
 
 [tasks.check]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["check", "--all-targets", "--color", "always", "${@}"]
 
 [tasks.clippy]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = [
   "clippy",
   "--all-targets",
@@ -119,36 +119,36 @@ args = [
 
 # START Tests
 [tasks.test]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["test", "${@}"]
 
 [tasks.test_all]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["test", "--all", "${@}"]
 
 [tasks.test_no_capture]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["test", "${@}", "--", "--nocapture"]
 
 [tasks.test_all_no_capture]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["test", "--all", "${@}", "--", "--nocapture"]
 # END Tests
 
 # START Function outputs
 [tasks.run]
-command = "cargo"
+command = "${CARGO_CMD}"
 # We also capture anything after the main command
 args = ["run", "${@}"]
 dependencies = ["build_workspace", "build"]
 
 [tasks.run_release]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["run", "--release", "${@}"]
 dependencies = ["build_release_workspace", "build_release"]
 
 [tasks.run_as_project]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["run", " --bin", "${PROJECT_NAME}", "${@}"]
 dependencies = [
   "build_workspace",
@@ -161,17 +161,17 @@ dependencies = [
 
 # START Workspaces
 [tasks.build_workspace]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["${BUILD_ARG}", "--workspace", "${@}"]
 dependencies = ["format"]
 
 [tasks.build_release_workspace]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["${BUILD_ARG}", "--release", "--workspace", "${@}"]
 dependencies = ["format"]
 
 [tasks.test_workspace]
-command = "cargo"
+command = "${CARGO_CMD}"
 args = ["test", "--workspace", "${@}"]
 # END Workspaces
 

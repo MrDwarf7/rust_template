@@ -10,10 +10,13 @@ edition     = "2024"
 description = "It does cool stuff!"
 # license = "MIT"
 license-file = "LICENSE"
-readme       = "README.md"
 build        = "build.rs"
 # For running the main server as a watch, call
 # cargo watch -q -c -w src/ -x run
+
+[[bin]]
+name = "rust-template"
+path = "src/main.rs"
 
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -103,14 +106,14 @@ trim-paths       = "none"
 opt-level        = 3
 codegen-units    = 1
 incremental      = false
-codegen-backend  = "cranelift"                 # May break deps.
+codegen-backend  = "cranelift" # May break deps.
 debug            = "none"
 debug-assertions = false
-overflow-checks  = false                       # debatable
-strip            = "symbols"                   # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
+overflow-checks  = false       # debatable
+strip            = "symbols"   # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
 panic            = "unwind"
-lto              = "off"                       # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths       = [ "diagnostics", "object" ]
+lto              = "off"       # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+# trim-paths       = [ "diagnostics", "object" ]
 # rustflags        = ["-Zthreads=16"]
 # tune-cpu         = "native"
 
@@ -133,7 +136,10 @@ codegen-backend = "cranelift" #### May break deps. for external crates??????
 # 3 = allow
 [lints.rust]
 unsafe_code = { level = "forbid", priority = 0 }
+# non_kebab_case_bins = { level = "allow", priority = 3 }
 # unsafe_code = "forbid"
 
 [lints.clippy]
 enum_glob_use = { level = "warn", priority = 2 }
+# ignore this rule
+# non_kebab_case_bins = { level = "allow", priority = 3 }

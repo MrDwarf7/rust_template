@@ -26,6 +26,13 @@ GITHUB_URL = "https://github.com/mrdwarf7/rust_template.rs"
 CHANGELOG_TOOL = "git-cliff"
 CHANGELOG_ARGS_BASE = "--repository ${GITHUB_URL} --commit-path . --sort newest --strip all --with-commit"
 
+# Direct Cargo tasks run through mbx (mr-boxington), the build cache layer.
+# They call `mbx <subcommand>` rather than `cargo`: under `cargo make`, mbx has
+# already stripped its cargo shim from PATH before exec'ing cargo, so a bare
+# `cargo` in a task would bypass it. Override with `CARGO_CMD=cargo makers ...`.
+# The test and test_all tasks instead use the checkout's LOKE fixture-aware gates.
+CARGO_CMD = { value = "mbx", condition = { env_not_set = ["CARGO_CMD"] } }
+
 # Identifies the first argument passed after `cargo` as, or inplace of `build`.
 # ie: `cargo build <...zyx...>` vs. `cargo zigbuild <...xyz...>`
 BUILD_ARG = "build"
