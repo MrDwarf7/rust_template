@@ -1,23 +1,16 @@
 [template]
 cargo_generate_version = ">=0.24.0"
+# Do not auto git-init; the post hook honors vcs_kind (jj | git | none).
 vcs = "None"
-exclude = [
-  "**/assets/*.png",
-  "**/assets/*.ico",
-  "**/assets/*.svg",
-]
-ignore = [
-  "setup.sh",
-  "setup.ps1",
-  "setup-agents.py",
-  "update-existing.py",
-  "Cargo.lock",
-  ".extras",
-]
+# Template-only files. Template logos/icons are dropped via .genignore.
+ignore = ["Cargo.lock", ".extras"]
 
+# Shared hooks live in ../hooks (repo root), resolved from this folder.
+# Member Cargo.toml files are written by ../hooks/workspace/post.rhai.
 [hooks]
-pre = ["hooks/pre.rhai"]
-post = ["hooks/post.rhai"]
+init = ["../hooks/init.rhai"]
+pre = ["../hooks/pre.rhai", "../hooks/workspace/pre.rhai"]
+post = ["../hooks/workspace/post.rhai", "../hooks/finish.rhai"]
 
 [placeholders]
 github_user = { type = "string", prompt = "GitHub user/org for URLs?", default = "MrDwarf7" }
@@ -28,8 +21,23 @@ long_description = { type = "string", prompt = "Longer README description?", def
 keep_bacon = { type = "bool", prompt = "Keep bacon.toml?", default = true }
 keep_data = { type = "bool", prompt = "Keep data/?", default = false }
 keep_scratch = { type = "bool", prompt = "Keep scratch/?", default = false }
+use_cranelift = { type = "bool", prompt = "Use the Cranelift codegen backend? (nightly; faster builds, can break some deps)", default = false }
+use_trim_paths = { type = "bool", prompt = 'Strip local paths from release binaries? (trim-paths = "object")', default = false }
 vcs_kind = { type = "string", prompt = "Initialize VCS?", choices = ["jj", "git", "none"], default = "jj" }
 extra_crates = { type = "string", prompt = "Extra member crate names (comma-separated, blank for just one)?", default = "" }
+
+# is_linux / has_* are set by ../hooks/init.rhai before prompting.
+[conditional.'is_linux'.placeholders]
+linker = { type = "string", prompt = "Linker for Linux targets? (default = rustc's own choice)", choices = ["default", "lld", "bfd", "mold", "gold"], default = "default" }
+
+[conditional.'!has_cargo_make && !has_taplo'.placeholders]
+install_tools = { type = "array", prompt = "cargo-make and taplo run this project's build system (see Makefile.toml) but are not installed. Tick any to install now", choices = ["cargo-make", "taplo"], default = [] }
+
+[conditional.'!has_cargo_make && has_taplo'.placeholders]
+install_tools = { type = "array", prompt = "cargo-make runs this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = ["cargo-make"], default = [] }
+
+[conditional.'has_cargo_make && !has_taplo'.placeholders]
+install_tools = { type = "array", prompt = "taplo (TOML formatter) is part of this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = ["taplo"], default = [] }
 
 [conditional.'!keep_bacon']
 ignore = ["bacon.toml"]

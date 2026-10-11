@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <strong>{{ crate_name }}</strong> -- {{ tagline | default: "Rust CLI" }}
+  <strong>{{ crate_name }}</strong> -- {{ tagline }}
   <br>
   <a href="https://crates.io/crates/{{ crate_name }}"><img src="https://img.shields.io/crates/v/{{ crate_name }}" alt="crates.io"></a>
   <a href="https://github.com/{{ github_user }}/{{ repo_name }}/actions/workflows/build.yml"><img src="https://github.com/{{ github_user }}/{{ repo_name }}/actions/workflows/build.yml/badge.svg" alt="build"></a>
@@ -19,7 +19,7 @@
 <!-- TAGLINE + DESCRIPTION -->
 ## {{ crate_name }}
 
-{{ long_description | default: "A Rust CLI scaffolded from rust_template." }}
+{{ long_description }}
 
 ```bash
 # Quick example

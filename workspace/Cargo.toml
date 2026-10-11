@@ -1,8 +1,136 @@
-cargo-features = [ "codegen-backend", "trim-paths" ]
+{% if use_cranelift -%}
+# Cranelift is nightly-only (needs the rustc-codegen-cranelift component).
+# Add "profile-rustflags" here to use `rustflags` in the profiles below.
+cargo-features = [ "codegen-backend" ]
 
+{% endif -%}
 [workspace]
-resolver = "2"
+resolver = "3"
 members = [
     "crates/{{ crate_name }}"{% for extra in extra_crate_list %},
     "crates/{{ extra }}"{% endfor %}
 ]
+
+# Members opt in with `<key>.workspace = true`.
+[workspace.package]
+version = "0.1.0"
+authors = [ "{{ authors }}" ]
+edition = "2024"
+license = "MIT"
+
+######################################################################################################################################################
+######################################################################################################################################################
+
+# Members opt in with `<dep>.workspace = true`.
+[workspace.dependencies]
+# eyre = "*"
+# dotenvy = "*"
+# futures = "*"
+#
+# clap = { version = "*", features = [ "derive" ] } # Optionall: "env"
+# anstyle = "*"
+
+# Base dependencies/Commons
+# reqwest = { version = "*", features = ["cookies", "json", "multipart", "stream"] }
+# uuid = { version = "*", features = ["v4"] }
+# serde = { version = "*", features = ["derive"] }
+# serde_json = "*"
+thiserror = "*"
+# tokio = { version = "*", features = ["full", "tracing"] }
+
+# Logging and tracing
+# tracing = "*"
+# tracing-subscriber = { version = "*", features = [
+#     "ansi",
+#     "chrono",
+#     "env-filter",
+#     "serde",
+#     "std",
+# ] }
+
+
+# Extra stuff
+# tokio-util = { version = "*", features = ["codec"] }
+# toml = "*"
+# dirs = "*" # Useful to get XDG spec dirs
+
+# Utilities
+# async-trait = "*"
+# static-toml = "*"
+# walkdir = "*"
+# chrono = "*"
+# itertools = "*"
+
+# Build-time
+winresource = "0.1.19"
+
+######################################################################################################################################################
+######################################################################################################################################################
+
+# Profiles only take effect here: Cargo ignores them in member manifests.
+
+[profile.dev]
+opt-level        = 1
+codegen-units    = 256
+incremental      = true
+{% if use_cranelift -%}
+codegen-backend  = "cranelift"
+{% endif -%}
+debug            = "line-tables-only"
+debug-assertions = true
+overflow-checks  = true
+strip            = "none"             # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
+panic            = "abort"            # "unwind" | "abort"
+lto              = "off"              # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+{% if use_trim_paths -%}
+trim-paths       = "none"             # "none" | "object" | "all" -- keep local paths while developing
+{% endif -%}
+# rustflags        = ["-Zthreads=16"]
+# tune-cpu         = "native"
+
+######################################################################################################################################################
+
+[profile.release]
+opt-level        = 3
+codegen-units    = 1
+incremental      = false
+{% if use_cranelift -%}
+codegen-backend  = "cranelift"                 # May break deps.
+{% endif -%}
+debug            = "none"
+debug-assertions = false
+overflow-checks  = false                       # debatable
+strip            = "symbols"                   # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
+panic            = "unwind"
+lto              = "off"                       # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
+{% if use_trim_paths -%}
+trim-paths       = "object"                    # "none" | "object" | "all" -- sanitize paths in shipped binaries
+{% endif -%}
+# rustflags        = ["-Zthreads=16"]
+# tune-cpu         = "native"
+
+
+[profile.dev.package."*"]
+inherits        = "release"
+{% if use_cranelift -%}
+codegen-backend = "cranelift" #### May break deps. for external crates
+{% endif %}
+[profile.release.package."*"]
+inherits        = "release"
+{% if use_cranelift -%}
+codegen-backend = "cranelift" #### May break deps. for external crates??????
+{% endif %}
+######################################################################################################################################################
+######################################################################################################################################################
+
+# Members opt in with `[lints] workspace = true`.
+# Lint levels / priorities/priority
+# 0 = forbid
+# 1 = deny
+# 2 = warn
+# 3 = allow
+[workspace.lints.rust]
+unsafe_code = { level = "forbid", priority = 0 }
+
+[workspace.lints.clippy]
+enum_glob_use = { level = "warn", priority = 2 }

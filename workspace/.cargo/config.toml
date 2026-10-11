@@ -1,0 +1,14 @@
+# Linker picked at generation time: {{ linker }}. Linux targets only;
+# other platforms keep rustc's default linker.
+#
+# `-fuse-ld` is appended after rustc's own link args, so it also overrides
+# the bundled rust-lld that x86_64-unknown-linux-gnu uses by default.
+# CI (.github/actions/setup-rust) exports RUSTFLAGS for mold, which replaces
+# the `rustflags` below there.
+[target.'cfg(target_os = "linux")']
+{% if linker == "mold" %}# Needs mold + clang (clang always accepts -fuse-ld; GCC needs >= 12.1).
+linker    = "clang"
+{% elsif linker == "gold" %}# Needs ld.gold (GNU binutils).
+{% elsif linker == "bfd" %}# GNU ld (binutils), the classic system linker.
+{% elsif linker == "lld" %}# Needs the system ld.lld (LLVM).
+{% endif %}rustflags = [ "-C", "link-arg=-fuse-ld={{ linker }}" ]

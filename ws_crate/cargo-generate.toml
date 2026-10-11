@@ -1,15 +1,9 @@
 [template]
 cargo_generate_version = ">=0.24.0"
 vcs = "None"
-exclude = [
-  "assets/*.png",
-  "assets/*.ico",
-  "assets/*.svg",
-]
 
 [hooks]
-pre = ["hooks/pre.rhai"]
-post = ["hooks/post.rhai"]
+post = ["../hooks/ws_crate/post.rhai"]
 
 [placeholders]
 github_user = { type = "string", prompt = "GitHub user/org for URLs?", default = "MrDwarf7" }

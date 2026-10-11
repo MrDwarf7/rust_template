@@ -1,7 +1,3 @@
-cargo-features = [ "codegen-backend", "trim-paths" ]
-# cargo-features = [ "codegen-backend", "profile-rustflags", "trim-paths" ]
-# cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
-# The aboe also needs the profile.dev to be uncommented to use the cranelift backend
 [package]
 name        = "{{ crate_name }}"
 version     = "0.1.0"
@@ -81,48 +77,8 @@ thiserror = "*"
 ######################################################################################################################################################
 
 
-## See `./.cargo_options.toml` for options & brief details & directions
-
-[profile.dev]
-opt-level        = 1
-codegen-units    = 256
-incremental      = true
-codegen-backend  = "cranelift"
-debug            = "line-tables-only"
-debug-assertions = true
-overflow-checks  = true
-strip            = "none"             # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
-panic            = "abort"            # "unwind" | "abort"
-lto              = "off"              # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths       = "none"
-# rustflags        = ["-Zthreads=16"]
-# tune-cpu         = "native"
-
-######################################################################################################################################################
-
-[profile.release]
-opt-level        = 3
-codegen-units    = 1
-incremental      = false
-codegen-backend  = "cranelift"                 # May break deps.
-debug            = "none"
-debug-assertions = false
-overflow-checks  = false                       # debatable
-strip            = "symbols"                   # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
-panic            = "unwind"
-lto              = "off"                       # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths       = [ "diagnostics", "object" ]
-# rustflags        = ["-Zthreads=16"]
-# tune-cpu         = "native"
-
-
-[profile.dev.package."*"]
-inherits        = "release"
-codegen-backend = "cranelift" #### May break deps. for external crates
-
-[profile.release.package."*"]
-inherits        = "release"
-codegen-backend = "cranelift" #### May break deps. for external crates??????
+## Profiles and cargo-features belong in the workspace root Cargo.toml;
+## Cargo ignores them in member manifests.
 
 ######################################################################################################################################################
 ######################################################################################################################################################

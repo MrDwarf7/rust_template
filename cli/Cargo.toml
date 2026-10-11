@@ -1,7 +1,9 @@
-cargo-features = [ "codegen-backend", "trim-paths" ]
-# cargo-features = [ "codegen-backend", "profile-rustflags", "trim-paths" ]
-# cargo-features = ["profile-rustflags", "trim-paths"] # required for both trimming paths and setting rustflags
-# The aboe also needs the profile.dev to be uncommented to use the cranelift backend
+{% if use_cranelift -%}
+# Cranelift is nightly-only (needs the rustc-codegen-cranelift component).
+# Add "profile-rustflags" here to use `rustflags` in the profiles below.
+cargo-features = [ "codegen-backend" ]
+
+{% endif -%}
 [package]
 name        = "{{ crate_name }}"
 version     = "0.1.0"
@@ -86,14 +88,18 @@ thiserror = "*"
 opt-level        = 1
 codegen-units    = 256
 incremental      = true
+{% if use_cranelift -%}
 codegen-backend  = "cranelift"
+{% endif -%}
 debug            = "line-tables-only"
 debug-assertions = true
 overflow-checks  = true
 strip            = "none"             # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
 panic            = "abort"            # "unwind" | "abort"
 lto              = "off"              # "false" ### # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths       = "none"
+{% if use_trim_paths -%}
+trim-paths       = "none"             # "none" | "object" | "all" -- keep local paths while developing
+{% endif -%}
 # rustflags        = ["-Zthreads=16"]
 # tune-cpu         = "native"
 
@@ -103,25 +109,32 @@ trim-paths       = "none"
 opt-level        = 3
 codegen-units    = 1
 incremental      = false
+{% if use_cranelift -%}
 codegen-backend  = "cranelift"                 # May break deps.
+{% endif -%}
 debug            = "none"
 debug-assertions = false
 overflow-checks  = false                       # debatable
 strip            = "symbols"                   # true | false | "none" | "symbols" | "debuginfo" ## Leave off @ w. THIS IS NOT OBFUSCATION.
 panic            = "unwind"
 lto              = "off"                       # true | false | "off" | "thin" | "fat" ## Can't use with cranelift yet
-trim-paths       = [ "diagnostics", "object" ]
+{% if use_trim_paths -%}
+trim-paths       = "object"                    # "none" | "object" | "all" -- sanitize paths in shipped binaries
+{% endif -%}
 # rustflags        = ["-Zthreads=16"]
 # tune-cpu         = "native"
 
 
 [profile.dev.package."*"]
 inherits        = "release"
+{% if use_cranelift -%}
 codegen-backend = "cranelift" #### May break deps. for external crates
-
+{% endif %}
 [profile.release.package."*"]
 inherits        = "release"
+{% if use_cranelift -%}
 codegen-backend = "cranelift" #### May break deps. for external crates??????
+{% endif %}
 
 ######################################################################################################################################################
 ######################################################################################################################################################

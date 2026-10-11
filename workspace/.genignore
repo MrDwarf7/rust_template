@@ -1,0 +1,5 @@
+# Template's own logos/icons. Generated projects make their own with
+# assets/generate-assets.sh.
+crates/*/assets/*.png
+crates/*/assets/*.ico
+crates/*/assets/*.svg
