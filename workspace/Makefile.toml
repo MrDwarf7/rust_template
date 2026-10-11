@@ -17,7 +17,7 @@ PROJECT_NAME = "{{ crate_name }}" # "cargo_output_binary_name_for_PROJECT_NAME"
 # Default profile to use for builds during dist related tasks
 SLEEP_TIME = "15"
 
-# GitHub / repo metadata (set by setup.sh during template init)
+# GitHub / repo metadata (filled in by cargo-generate)
 GITHUB_USER = "{{ github_user }}"
 REPO_NAME = "{{ repo_name }}"                              # GitHub repo name (optional .rs suffix)
 GITHUB_URL = "https://github.com/{{ github_user }}/{{ repo_name }}"

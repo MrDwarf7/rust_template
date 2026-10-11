@@ -1,0 +1,32 @@
+# cargo-generate favorites for rust_template (replaces setup.sh / setup.ps1).
+#
+# Merge into $CARGO_HOME/cargo-generate.toml (usually ~/.cargo/cargo-generate.toml)
+# or pass `--config /abs/path/to/favorites.toml`. Then:
+#
+#   cargo generate rt-cli --name my_app
+#   cargo generate rt-workspace --name my_ws
+#   cargo generate rt-crate --name extra --destination crates   # from a workspace root
+#
+# Any favorite key can be overridden on the CLI (--branch, --subfolder, ...),
+# and placeholders preset with `-d key=value` or a `[values]` table here.
+#
+# `git` assumes this layout ends up on the rust_template repo; set `branch`
+# if it ships on a branch, or swap `git` for `path = "/abs/checkout"`.
+
+# [values]
+# github_user = "MrDwarf7"
+
+[favorites.rt-cli]
+description = "rust_template: single-crate CLI / app"
+git = "https://github.com/MrDwarf7/rust_template"
+subfolder = "cli"
+
+[favorites.rt-workspace]
+description = "rust_template: virtual workspace, crates/<name> (+ extra members)"
+git = "https://github.com/MrDwarf7/rust_template"
+subfolder = "workspace"
+
+[favorites.rt-crate]
+description = "rust_template: one member crate for an existing workspace"
+git = "https://github.com/MrDwarf7/rust_template"
+subfolder = "ws_crate"
