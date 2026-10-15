@@ -3,7 +3,6 @@ extend = [
   { path = "./build/dist-tasks.toml" },
   { path = "./build/docker-tasks.toml", optional = true },
   { path = "./build/watch-tasks.toml", optional = true },
-  { path = "./build/typst-tasks.toml", optional = true },
   { path = "./build/release-tasks.toml", optional = true },
 ]
 
@@ -151,26 +150,3 @@ run_task = { name = ["changelog"], parallel = false }
 run_task = { name = ["changelog_check"], parallel = false }
 
 ## END release tasks
-
-
-## START typst tasks
-
-[tasks.typb]
-run_task = { name = ["typst_build"], parallel = false }
-
-# [tasks.typcl]
-# run_task = { name = ["typst_compile"], parallel = false }
-
-[tasks.typw]
-run_task = { name = ["typst_watch"], parallel = false }
-
-[tasks.typnw]
-run_task = { name = ["typst_watch_no_follow"], parallel = false }
-
-[tasks.typc]
-run_task = { name = ["typst_clean"], parallel = false }
-
-[tasks.typcl]
-run_task = { name = ["typst_clean"], parallel = false }
-
-## END typst tasks
