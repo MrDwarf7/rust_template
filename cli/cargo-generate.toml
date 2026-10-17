@@ -22,20 +22,40 @@ keep_data = { type = "bool", prompt = "Keep data/?", default = false }
 keep_scratch = { type = "bool", prompt = "Keep scratch/?", default = false }
 use_cranelift = { type = "bool", prompt = "Use the Cranelift codegen backend? (nightly; faster builds, can break some deps)", default = false }
 use_trim_paths = { type = "bool", prompt = 'Strip local paths from release binaries? (trim-paths = "object")', default = false }
-vcs_kind = { type = "string", prompt = "Initialize VCS?", choices = ["jj", "git", "none"], default = "jj" }
+vcs_kind = { type = "string", prompt = "Initialize VCS?", choices = [
+  "jj",
+  "git",
+  "none",
+], default = "jj" }
 
 # is_linux / has_* are set by ../hooks/init.rhai before prompting.
 [conditional.'is_linux'.placeholders]
-linker = { type = "string", prompt = "Linker for Linux targets? (default = rustc's own choice)", choices = ["default", "lld", "bfd", "mold", "gold"], default = "default" }
+linker = { type = "string", prompt = "Linker for Linux targets? (default = rustc's own choice)", choices = [
+  "default",
+  "lld",
+  "bfd",
+  "mold",
+  "gold",
+], default = "default" }
 
 [conditional.'!has_cargo_make && !has_taplo'.placeholders]
-install_tools = { type = "array", prompt = "cargo-make and taplo run this project's build system (see Makefile.toml) but are not installed. Tick any to install now", choices = ["cargo-make", "taplo"], default = [] }
+install_tools = { type = "array", prompt = "cargo-make and taplo run this project's build system (see Makefile.toml) but are not installed. Tick any to install now", choices = [
+  "cargo-make",
+  "taplo",
+], default = [
+] }
 
 [conditional.'!has_cargo_make && has_taplo'.placeholders]
-install_tools = { type = "array", prompt = "cargo-make runs this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = ["cargo-make"], default = [] }
+install_tools = { type = "array", prompt = "cargo-make runs this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = [
+  "cargo-make",
+], default = [
+] }
 
 [conditional.'has_cargo_make && !has_taplo'.placeholders]
-install_tools = { type = "array", prompt = "taplo (TOML formatter) is part of this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = ["taplo"], default = [] }
+install_tools = { type = "array", prompt = "taplo (TOML formatter) is part of this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = [
+  "taplo",
+], default = [
+] }
 
 [conditional.'!keep_bacon']
 ignore = ["bacon.toml"]
