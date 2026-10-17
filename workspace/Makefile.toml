@@ -37,7 +37,7 @@ SLEEP_TIME = "15"
 
 # GitHub / repo metadata (filled in by cargo-generate)
 GITHUB_USER = "{{ github_user }}"
-REPO_NAME = "{{ repo_name }}"                             # GitHub repo name (optional .rs suffix)
+REPO_NAME = "{{ repo_name }}"                                       # GitHub repo name (optional .rs suffix)
 GITHUB_URL = "https://github.com/{{ github_user }}/{{ repo_name }}"
 
 # Changelog tool configuration

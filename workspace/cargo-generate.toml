@@ -51,7 +51,21 @@ ignore = ["data"]
 ignore = ["scratch"]
 
 [conditional.'!perf_testing']
-ignore = ["crates/{{crate_name}}/perf", ".agents/skills/hotpath-init", ".agents/skills/hotpath-cloud", ".agents/skills/hotpath-init-ci", ".agents/skills/hotpath-init-ci-forks"]
+ignore = [
+  "crates/{{crate_name}}/perf",
+  ".agents/skills/hotpath-init",
+  ".agents/skills/hotpath-cloud",
+  ".agents/skills/hotpath-init-ci",
+  ".agents/skills/hotpath-init-ci-forks",
+]
 
 [conditional.'!agent_support']
-ignore = ["AGENTS.md", "CLAUDE.md", ".agents", "docs/00_AGENT_DOCS_SETUP.md", "crates/{{crate_name}}/AGENTS.md", "crates/{{crate_name}}/CLAUDE.md", "crates/{{crate_name}}/.agents"]
+ignore = [
+  "AGENTS.md",
+  "CLAUDE.md",
+  ".agents",
+  "docs/00_AGENT_DOCS_SETUP.md",
+  "crates/{{crate_name}}/AGENTS.md",
+  "crates/{{crate_name}}/CLAUDE.md",
+  "crates/{{crate_name}}/.agents",
+]

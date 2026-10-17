@@ -17,4 +17,3 @@ ignore = ["perf"]
 
 [conditional.'!agent_support']
 ignore = ["AGENTS.md", "CLAUDE.md", ".agents"]
-

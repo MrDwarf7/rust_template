@@ -49,7 +49,13 @@ ignore = ["data"]
 ignore = ["scratch"]
 
 [conditional.'!perf_testing']
-ignore = ["perf", ".agents/skills/hotpath-init", ".agents/skills/hotpath-cloud", ".agents/skills/hotpath-init-ci", ".agents/skills/hotpath-init-ci-forks"]
+ignore = [
+  "perf",
+  ".agents/skills/hotpath-init",
+  ".agents/skills/hotpath-cloud",
+  ".agents/skills/hotpath-init-ci",
+  ".agents/skills/hotpath-init-ci-forks",
+]
 
 [conditional.'!agent_support']
 ignore = ["AGENTS.md", "CLAUDE.md", ".agents", "docs/00_AGENT_DOCS_SETUP.md"]

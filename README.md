@@ -12,7 +12,8 @@ workspace + ws_crate, from `rpa_lite` / `agent_axum.rs`.
 Install Rust/Cargo and **cargo-generate 0.24+** before using the commands
 below. cargo-generate is separate from Cargo.
 
-With Cargo, follow the [official cargo-generate installation instructions](https://cargo-generate.github.io/cargo-generate/installation.html):
+With Cargo, follow the
+[official cargo-generate installation instructions](https://cargo-generate.github.io/cargo-generate/installation.html):
 
 ```bash
 cargo install cargo-generate --locked
@@ -134,11 +135,11 @@ chosen toolchain supports it.
 
 ## Sub-templates
 
-| folder | what you get |
-|---|---|
-| `cli` | single-crate app (bin) |
+| folder      | what you get                                                                                                                                     |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `cli`       | single-crate app (bin)                                                                                                                           |
 | `workspace` | virtual workspace (`resolver = "3"`, profiles + `[workspace.package/dependencies/lints]` at the root) + `crates/<name>/`; optional extra members |
-| `ws_crate` | library-only workspace member; keeps `error` private and exposes namespaced error aliases |
+| `ws_crate`  | library-only workspace member; keeps `error` private and exposes namespaced error aliases                                                        |
 
 Workspace extra members: prompt `extra_crates` as `foo, bar, baz` (blank =
 just the named crate). With `crate_prefix`, extras get a hyphenated prefix
@@ -163,20 +164,20 @@ With an empty prefix, the whole crate name is used.
 Defaults live in each `cargo-generate.toml`; Enter (or `--silent`) takes
 them. No Liquid `| default:` pipes or Rhai fallbacks on top.
 
-| placeholder | default | notes |
-|---|---|---|
-| `github_user` | `MrDwarf7` | cli/workspace only |
-| `use_rs_suffix` | `true` | repo name `crate.rs` vs `crate-name` |
-| `tagline`, `short_description`, `long_description` | per sub-template | |
-| `keep_bacon` / `keep_data` / `keep_scratch` | `true` / `false` / `false` | |
-| Cranelift | automatic on rustup-supported hosts | Dev-only backend; dev dependencies use LLVM at opt-level 3. Release builds use LLVM. Adds `rustc-codegen-cranelift-preview` where available ([supported hosts](https://github.com/rust-lang/rustc_codegen_cranelift#platform-support)); intended to speed compilation, not runtime ([published benchmark](https://lwn.net/Articles/964735/)) |
-| `use_trim_paths` | `false` | `trim-paths = "object"` on release (`"none"` on dev). Stable since Rust 1.101, no cargo-feature (nightly cargo from ~2026-10-07; `rustup update nightly` if cargo asks for the `trim-paths` feature) |
-| `vcs_kind` | `jj` | `jj` / `git` / `none` |
-| `linker` | `default` | Linux hosts only. `default` / `lld` / `mold` / `wild` select mbx profiles in `.mbx.toml`; mbx pins mold and Wild releases. |
-| `extra_crates` | blank | workspace only; each extra gets the prefix when set |
-| `crate_prefix` | blank | workspace and ws_crate; wsa uses it for new members. The first workspace crate keeps the project name. |
-| `perf_testing` | `false` | Adds Criterion benchmarks and hotpath tooling. |
-| `agent_support` | `false` | Adds `AGENTS.md`, `CLAUDE.md`, and `.agents/skills`; hotpath skills also require `perf_testing`. |
+| placeholder                                        | default                             | notes                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------- | ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `github_user`                                      | `MrDwarf7`                          | cli/workspace only                                                                                                                                                                                                                                                                                                                           |
+| `use_rs_suffix`                                    | `true`                              | repo name `crate.rs` vs `crate-name`                                                                                                                                                                                                                                                                                                         |
+| `tagline`, `short_description`, `long_description` | per sub-template                    |                                                                                                                                                                                                                                                                                                                                              |
+| `keep_bacon` / `keep_data` / `keep_scratch`        | `true` / `false` / `false`          |                                                                                                                                                                                                                                                                                                                                              |
+| Cranelift                                          | automatic on rustup-supported hosts | Dev-only backend; dev dependencies use LLVM at opt-level 3. Release builds use LLVM. Adds `rustc-codegen-cranelift-preview` where available ([supported hosts](https://github.com/rust-lang/rustc_codegen_cranelift#platform-support)); intended to speed compilation, not runtime ([published benchmark](https://lwn.net/Articles/964735/)) |
+| `use_trim_paths`                                   | `false`                             | `trim-paths = "object"` on release (`"none"` on dev). Stable since Rust 1.101, no cargo-feature (nightly cargo from ~2026-10-07; `rustup update nightly` if cargo asks for the `trim-paths` feature)                                                                                                                                         |
+| `vcs_kind`                                         | `jj`                                | `jj` / `git` / `none`                                                                                                                                                                                                                                                                                                                        |
+| `linker`                                           | `default`                           | Linux hosts only. `default` / `lld` / `mold` / `wild` select mbx profiles in `.mbx.toml`; mbx pins mold and Wild releases.                                                                                                                                                                                                                   |
+| `extra_crates`                                     | blank                               | workspace only; each extra gets the prefix when set                                                                                                                                                                                                                                                                                          |
+| `crate_prefix`                                     | blank                               | workspace and ws_crate; wsa uses it for new members. The first workspace crate keeps the project name.                                                                                                                                                                                                                                       |
+| `perf_testing`                                     | `false`                             | Adds Criterion benchmarks and hotpath tooling.                                                                                                                                                                                                                                                                                               |
+| `agent_support`                                    | `false`                             | Adds `AGENTS.md`, `CLAUDE.md`, and `.agents/skills`; hotpath skills also require `perf_testing`.                                                                                                                                                                                                                                             |
 
 ### Coding agents
 
@@ -194,7 +195,6 @@ docs and regenerates/checks the index.
 The generated `mise.toml` includes `uv` for its PEP 723 PyYAML dependency.
 Hotpath skills are included only when both `perf_testing` and `agent_support`
 are enabled.
-
 
 Descriptions and author text are escaped for TOML strings, including quotes,
 backslashes, control characters, and Unicode. The original values remain
@@ -256,15 +256,15 @@ the root `mise.toml` lists hotpath.
 All Rhai lives in `hooks/` at the repo root (a `hooks/` dir inside a
 sub-template would be left behind, empty, in the output):
 
-| file | stage | used by |
-|---|---|---|
-| `hooks/init.rhai` | init | cli, workspace (Linux linker prompt condition) |
-| `hooks/pre.rhai` | pre | cli, workspace |
-| `hooks/toml.rhai` | pre | cli, workspace, ws_crate (TOML string escaping) |
-| `hooks/finish.rhai` | post | cli, workspace (VCS init and build-system notes) |
-| `hooks/workspace/{pre,post}.rhai` | pre/post | workspace |
-| `hooks/ws_crate/pre.rhai` | pre | ws_crate |
-| `hooks/ws_crate/post.rhai` | post | ws_crate |
+| file                              | stage    | used by                                          |
+| --------------------------------- | -------- | ------------------------------------------------ |
+| `hooks/init.rhai`                 | init     | cli, workspace (Linux linker prompt condition)   |
+| `hooks/pre.rhai`                  | pre      | cli, workspace                                   |
+| `hooks/toml.rhai`                 | pre      | cli, workspace, ws_crate (TOML string escaping)  |
+| `hooks/finish.rhai`               | post     | cli, workspace (VCS init and build-system notes) |
+| `hooks/workspace/{pre,post}.rhai` | pre/post | workspace                                        |
+| `hooks/ws_crate/pre.rhai`         | pre      | ws_crate                                         |
+| `hooks/ws_crate/post.rhai`        | post     | ws_crate                                         |
 
 Preference order: `cargo-generate.toml` builtins (placeholders,
 conditionals, `.genignore`) -> Rhai builtins (`variable::`, `file::`) ->
@@ -273,7 +273,6 @@ extra workspace crates (`file::` has no read or copy).
 
 `--allow-commands` skips the per-command approval prompt. A silent one-crate
 generate with `vcs_kind=none` runs no commands that matter.
-
 
 Template logos/icons are dropped by the cli and workspace `.genignore` files;
 `assets/generate-assets.sh` stays so projects can make their own.
@@ -315,7 +314,6 @@ gates, docs-index generation, and Liquid rendering. It does not compile or run
 the generated applications.
 Each generated crate includes one integration smoke test. Run `cargo test` and
 `cargo clippy --all-targets` from the generated project to exercise it.
-
 
 ## Silent smoke (no prompts)
 

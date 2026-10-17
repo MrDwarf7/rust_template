@@ -10,7 +10,7 @@ from pathlib import Path
 
 REPOSITORY = Path(__file__).resolve().parents[1]
 DESCRIPTION = (
-    'Quotes: " and backslash: \\; Unicode: café 🧪; controls: '
+    'Quotes: " and backslash: \\; Unicode: caf\u00e9 \U0001f9ea; controls: '
     + "".join(chr(code) for code in range(32))
     + chr(127)
     + "; end"
