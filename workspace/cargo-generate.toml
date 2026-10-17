@@ -21,44 +21,26 @@ long_description = { type = "string", prompt = "Longer README description?", def
 keep_bacon = { type = "bool", prompt = "Keep bacon.toml?", default = true }
 keep_data = { type = "bool", prompt = "Keep data/?", default = false }
 keep_scratch = { type = "bool", prompt = "Keep scratch/?", default = false }
-use_cranelift = { type = "bool", prompt = "Use the Cranelift codegen backend? (nightly; faster builds, can break some deps)", default = false }
 use_trim_paths = { type = "bool", prompt = 'Strip local paths from release binaries? (trim-paths = "object")', default = false }
+perf_testing = { type = "bool", prompt = "Set up performance testing (criterion benches in perf/, hotpath via mise)?", default = false }
+agent_support = { type = "bool", prompt = "Will you use a coding agent (Claude Code, oh-my-pi, opencode)? Adds AGENTS.md and .agents/ skills.", default = false }
+
 vcs_kind = { type = "string", prompt = "Initialize VCS?", choices = [
   "jj",
   "git",
   "none",
 ], default = "jj" }
 extra_crates = { type = "string", prompt = "Extra member crate names (comma-separated, blank for just one)?", default = "" }
+crate_prefix = { type = "string", prompt = "Crate name prefix for member crates (e.g. acme -> acme-auth; blank for none)", default = "" }
 
-# is_linux / has_* are set by ../hooks/init.rhai before prompting.
+# is_linux is set by ../hooks/init.rhai before prompting.
 [conditional.'is_linux'.placeholders]
-linker = { type = "string", prompt = "Linker for Linux targets? (default = rustc's own choice)", choices = [
+linker = { type = "string", prompt = "Linker for Linux builds via mbx? (default keeps rustc's choice)", choices = [
   "default",
   "lld",
-  "bfd",
   "mold",
-  "gold",
+  "wild",
 ], default = "default" }
-
-[conditional.'!has_cargo_make && !has_taplo'.placeholders]
-install_tools = { type = "array", prompt = "cargo-make and taplo run this project's build system (see Makefile.toml) but are not installed. Tick any to install now", choices = [
-  "cargo-make",
-  "taplo",
-], default = [
-] }
-
-[conditional.'!has_cargo_make && has_taplo'.placeholders]
-install_tools = { type = "array", prompt = "cargo-make runs this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = [
-  "cargo-make",
-], default = [
-] }
-
-[conditional.'has_cargo_make && !has_taplo'.placeholders]
-install_tools = { type = "array", prompt = "taplo (TOML formatter) is part of this project's build system (see Makefile.toml) but is not installed. Tick to install now", choices = [
-  "taplo",
-], default = [
-] }
-
 [conditional.'!keep_bacon']
 ignore = ["bacon.toml"]
 
@@ -67,3 +49,9 @@ ignore = ["data"]
 
 [conditional.'!keep_scratch']
 ignore = ["scratch"]
+
+[conditional.'!perf_testing']
+ignore = ["crates/{{crate_name}}/perf", ".agents/skills/hotpath-init", ".agents/skills/hotpath-cloud", ".agents/skills/hotpath-init-ci", ".agents/skills/hotpath-init-ci-forks"]
+
+[conditional.'!agent_support']
+ignore = ["AGENTS.md", "CLAUDE.md", ".agents", "docs/00_AGENT_DOCS_SETUP.md", "crates/{{crate_name}}/AGENTS.md", "crates/{{crate_name}}/CLAUDE.md", "crates/{{crate_name}}/.agents"]

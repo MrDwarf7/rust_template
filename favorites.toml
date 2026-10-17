@@ -29,7 +29,7 @@ branch = "cargo-generate"
 subfolder = "workspace"
 
 [favorites.rt-crate]
-description = "rust_template: one member crate for an existing workspace"
+description = "rust_template: one library member crate with namespaced errors and optional prefix"
 git = "https://github.com/MrDwarf7/rust_template"
 branch = "cargo-generate"
 subfolder = "ws_crate"

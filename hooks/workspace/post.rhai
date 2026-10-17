@@ -11,6 +11,19 @@
 fn member_manifest(name) {
     let description = variable::get("short_description_toml");
     let github_user = variable::get("github_user_toml");
+    let perf_testing = variable::get("perf_testing");
+    let perf_manifest = if perf_testing {
+        `[dev-dependencies]
+criterion.workspace = true
+
+[[bench]]
+name    = "example"
+path    = "perf/example.rs"
+harness = false
+`
+    } else {
+        ""
+    };
     `[package]
 name              = "${name}"
 description       = "${description}"
@@ -38,6 +51,8 @@ LegalCopyright   = "Copyright (c) ${github_user}"
 winresource.workspace = true
 
 # Add deps to [workspace.dependencies] in the root Cargo.toml, then opt in here.
+${perf_manifest}
+
 [dependencies]
 thiserror.workspace = true
 
@@ -45,6 +60,21 @@ thiserror.workspace = true
 workspace = true
 `
 }
+
+fn member_test(name) {
+    `use std::process::Command;
+
+#[test]
+fn binary_runs_successfully() {
+    let output = Command::new(env!("CARGO_BIN_EXE_${name}"))
+        .output()
+        .expect("run generated binary");
+
+    assert!(output.status.success());
+}
+`
+}
+
 
 fn copy_crate(from, to) {
     if variable::get("os-arch").starts_with("windows") {
@@ -56,9 +86,11 @@ fn copy_crate(from, to) {
 
 let first = variable::get("crate_name");
 file::write(`crates/${first}/Cargo.toml`, member_manifest(first));
+file::write(`crates/${first}/tests/cli.rs`, member_test(first));
 
 for name in variable::get("extra_crate_list") {
     copy_crate(first, name);
     file::write(`crates/${name}/Cargo.toml`, member_manifest(name));
+    file::write(`crates/${name}/tests/cli.rs`, member_test(name));
     print(`Added member crate: crates/${name}`);
 }
