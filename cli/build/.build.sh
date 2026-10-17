@@ -11,8 +11,7 @@ set -euo pipefail
 export ARTIFACT_NAME="REPLACE_NAME_HERE-$1"
 
 # Build for the target
-cargo_cmd="${CARGO_CMD:-$(command -v mbx >/dev/null 2>&1 && echo mbx || echo cargo)}"
-"$cargo_cmd" build --release --locked --target "$1"
+"${CARGO_CMD:-mbx}" build --release --locked --target "$1"
 
 mkdir -p "$ARTIFACT_NAME"
 # Create the artifact

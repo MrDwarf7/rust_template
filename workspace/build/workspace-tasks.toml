@@ -1,170 +1,34 @@
+[env]
+# Template source for `wsa`, split on spaces into cargo-generate args.
+# Local template checkout: RT_TEMPLATE="--path /abs/path/to/rust_template"
+RT_TEMPLATE = { value = "--git https://github.com/MrDwarf7/rust_template --branch cargo-generate", condition = { env_not_set = [
+  "RT_TEMPLATE",
+] } }
+# "<prefix>-" when CRATE_PREFIX is non-empty, else "".
+WSA_NAME_PREFIX = { source = "${CRATE_PREFIX}", default_value = "${CRATE_PREFIX}-", mapping = { "" = "" } }
+
+# WorkSpace Add: cargo make wsa <name>  ->  crates/<prefix>-<name>
+# Pass the bare name; the prefix is added from CRATE_PREFIX (Makefile.toml).
 [tasks.wsa]
-description = "Add a prefixed library crate to this workspace."
+description = "Add a library member crate: cargo make wsa <name>"
 workspace = false
-script_runner = "@duckscript"
-script = '''
-exit_on_error true
-
-if not is_file Cargo.toml
-    echo "wsa must be run from a workspace root (Cargo.toml with [workspace])."
-    trigger_error "wsa requires a workspace root"
-end
-
-manifest = readfile Cargo.toml
-has_workspace = contains "${manifest}" "[workspace]"
-if not ${has_workspace}
-    echo "wsa must be run from a workspace root (Cargo.toml with [workspace])."
-    trigger_error "wsa requires a workspace root"
-end
-
-task_args_text = get_env CARGO_MAKE_TASK_ARGS
-if is_empty ${task_args_text}
-    echo "Usage: cargo make wsa <name>"
-    trigger_error "wsa requires one crate name"
-end
-task_args = split ${task_args_text} ";"
-task_args_count = array_length ${task_args}
-if not equals ${task_args_count} 1
-    echo "Usage: cargo make wsa <name>"
-    trigger_error "wsa requires one crate name"
-end
-crate_name = array_get ${task_args} 0
-if is_empty ${crate_name}
-    echo "Usage: cargo make wsa <name>"
-    trigger_error "wsa requires one crate name"
-end
-
-environment = env_to_map
-prefix_is_defined = map_contains_key ${environment} CRATE_PREFIX
-release ${environment}
-crate_prefix = get_env CRATE_PREFIX
-if is_empty ${crate_prefix}
-    crate_prefix = set ""
-else
-    crate_prefix = trim ${crate_prefix}
-end
-
-if not ${prefix_is_defined}
-    member_dirs = glob_array "crates/*"
-    root_crate = get_env PROJECT_NAME
-    inferred_prefix = set ""
-    prefixes_match = set true
-    for candidate_dir in ${member_dirs}
-        if is_directory ${candidate_dir}
-            candidate_name = basename ${candidate_dir}
-            is_root_member = equals ${candidate_name} ${root_crate}
-            if not ${is_root_member}
-                candidate_prefix = set ""
-                candidate_parts = split ${candidate_name} "-"
-                candidate_part_count = array_length ${candidate_parts}
-                if greater_than ${candidate_part_count} 1
-                    candidate_part_index = set 0
-                    for candidate_part in ${candidate_parts}
-                        candidate_part_index = calc ${candidate_part_index} + 1
-                        if not equals ${candidate_part_index} ${candidate_part_count}
-                            if is_empty ${candidate_prefix}
-                                candidate_prefix = set ${candidate_part}
-                            else
-                                candidate_prefix = set "${candidate_prefix}-${candidate_part}"
-                            end
-                        end
-                    end
-                end
-                release ${candidate_parts}
-                if not is_empty ${candidate_prefix}
-                    prefix_count = set 0
-                    for member_dir in ${member_dirs}
-                        if is_directory ${member_dir}
-                            member_name = basename ${member_dir}
-                            member_is_root = equals ${member_name} ${root_crate}
-                            if not ${member_is_root}
-                                member_parts = split ${member_name} "-"
-                                member_part_count = array_length ${member_parts}
-                                if greater_than ${member_part_count} 1
-                                    member_prefix = set ""
-                                    member_part_index = set 0
-                                    for member_part in ${member_parts}
-                                        member_part_index = calc ${member_part_index} + 1
-                                        if not equals ${member_part_index} ${member_part_count}
-                                            if is_empty ${member_prefix}
-                                                member_prefix = set ${member_part}
-                                            else
-                                                member_prefix = set "${member_prefix}-${member_part}"
-                                            end
-                                        end
-                                    end
-                                    same_prefix = equals ${member_prefix} ${candidate_prefix}
-                                    if ${same_prefix}
-                                        prefix_count = calc ${prefix_count} + 1
-                                    end
-                                end
-                                release ${member_parts}
-                            end
-                        end
-                    end
-                    if greater_than ${prefix_count} 1
-                        if is_empty ${inferred_prefix}
-                            inferred_prefix = set ${candidate_prefix}
-                        else
-                            same_inferred_prefix = equals ${candidate_prefix} ${inferred_prefix}
-                            if not ${same_inferred_prefix}
-                                prefixes_match = set false
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    release ${member_dirs}
-    if ${prefixes_match}
-        crate_prefix = set ${inferred_prefix}
-    end
-end
-
-
-if not is_empty ${crate_prefix}
-    starts_with_hyphen_prefix = starts_with ${crate_name} "${crate_prefix}-"
-    starts_with_underscore_prefix = starts_with ${crate_name} "${crate_prefix}_"
-    if not ${starts_with_hyphen_prefix}
-        if ${starts_with_underscore_prefix}
-            crate_name = replace ${crate_name} "${crate_prefix}_" "${crate_prefix}-"
-        else
-            crate_name = set "${crate_prefix}-${crate_name}"
-        end
-    end
-end
-
-perf_testing = set false
-perf_dirs = glob_array "crates/*/perf"
-for perf_dir in ${perf_dirs}
-    if is_directory ${perf_dir}
-        perf_testing = set true
-    end
-end
-release ${perf_dirs}
-if is_file mise.toml
-    root_mise = readfile mise.toml
-    if contains "${root_mise}" "cargo:hotpath"
-        perf_testing = set true
-    end
-end
-
-agent_support = set false
-if is_file AGENTS.md
-    agent_support = set true
-end
-
-template_source = get_env RT_TEMPLATE
-if is_empty ${template_source}
-    template_source = set "--git https://github.com/MrDwarf7/rust_template --branch cargo-generate"
-end
-
-cargo_cmd = get_env CARGO_CMD
-if is_empty ${cargo_cmd}
-    cargo_cmd = set cargo
-end
-exec --fail-on-error ${cargo_cmd} generate %{template_source} ws_crate --name ${crate_name} --destination crates -d "crate_prefix=${crate_prefix}" -d "perf_testing=${perf_testing}" -d "agent_support=${agent_support}" --silent
-
-
-'''
+condition = { env_true = [
+  "CARGO_MAKE_CRATE_IS_WORKSPACE",
+], env_not = { CARGO_MAKE_TASK_ARGS = "" }, fail_message = "usage: cargo make wsa <name> (from the workspace root)" }
+command = "cargo"
+args = [
+  "generate",
+  "@@split(RT_TEMPLATE, )",
+  "ws_crate",
+  "--name",
+  "${WSA_NAME_PREFIX}${CARGO_MAKE_TASK_ARGS}",
+  "--destination",
+  "crates",
+  "--define",
+  "crate_prefix=${CRATE_PREFIX}",
+  "--define",
+  "perf_testing=${PERF_TESTING}",
+  "--define",
+  "agent_support=${AGENT_SUPPORT}",
+  "--silent",
+]
