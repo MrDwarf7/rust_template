@@ -5,7 +5,7 @@ components = [
   "clippy",
   # "llvm-tools",
   # "miri",
-  "rust-analyzer",{% if use_cranelift %}
-  "rustc-codegen-cranelift",{% endif %}
+  "rust-analyzer",{% if has_cranelift %}
+  "rustc-codegen-cranelift-preview",{% endif %}
   "rustfmt",
 ]
