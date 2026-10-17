@@ -10,8 +10,8 @@
 # Any favorite key can be overridden on the CLI (--branch, --subfolder, ...),
 # and placeholders preset with `-d key=value` or a `[values]` table here.
 #
-# `git` assumes this layout ends up on the rust_template repo; set `branch`
-# if it ships on a branch, or swap `git` for `path = "/abs/checkout"`.
+# All favorites use the cargo-generate trial branch; main stays unchanged.
+# For a local checkout, replace git with path and remove branch.
 
 # [values]
 # github_user = "MrDwarf7"
@@ -19,14 +19,17 @@
 [favorites.rt-cli]
 description = "rust_template: single-crate CLI / app"
 git = "https://github.com/MrDwarf7/rust_template"
+branch = "cargo-generate"
 subfolder = "cli"
 
 [favorites.rt-workspace]
 description = "rust_template: virtual workspace, crates/<name> (+ extra members)"
 git = "https://github.com/MrDwarf7/rust_template"
+branch = "cargo-generate"
 subfolder = "workspace"
 
 [favorites.rt-crate]
 description = "rust_template: one member crate for an existing workspace"
 git = "https://github.com/MrDwarf7/rust_template"
+branch = "cargo-generate"
 subfolder = "ws_crate"

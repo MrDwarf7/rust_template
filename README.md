@@ -1,8 +1,8 @@
 # rust_template (cargo-generate experiment)
 
-Throwaway sibling of `rust_template`. The original repo is untouched.
-Decide later whether the public template is this subfolder layout, or
-branches (`cargo generate --branch ...`).
+Trial version of `rust_template`, published on the `cargo-generate` branch
+of the same repository. The existing `main` template stays unchanged while
+this subfolder layout is tested before deciding whether to replace it.
 
 Server flavor is **not** in this experiment. That comes after cli +
 workspace + ws_crate, from `rpa_lite` / `agent_axum.rs`.
@@ -10,6 +10,24 @@ workspace + ws_crate, from `rpa_lite` / `agent_axum.rs`.
 Requires `cargo-generate` 0.24+ (`cargo generate --version`).
 
 ## Generate
+
+Test the published branch without changing the default template:
+
+```bash
+cargo generate --git https://github.com/MrDwarf7/rust_template \
+  --branch cargo-generate cli --name my_app
+cargo generate --git https://github.com/MrDwarf7/rust_template \
+  --branch cargo-generate workspace --name my_ws
+```
+
+To add a member from that branch, run from an existing workspace root:
+
+```bash
+cargo generate --git https://github.com/MrDwarf7/rust_template \
+  --branch cargo-generate ws_crate --name extra_crate --destination crates
+```
+
+The favorites below also select `cargo-generate`, not `main`.
 
 From this directory:
 
@@ -48,6 +66,12 @@ walks up to `[workspace]`:
 `--no-workspace` skips that. Auto-add pretty-prints the root `Cargo.toml`
 (key order may change; comments on that table can disappear).
 
+Generated workspaces use `members = ["crates/*"]`, so adding a crate does
+not rewrite the root manifest. cargo-generate 0.25 can otherwise rewrite
+stabilized `trim-paths` strings into arrays that Cargo rejects. For an
+existing explicit-member workspace with `trim-paths`, use `--no-workspace`
+and add the member to `Cargo.toml` manually.
+
 ## Sub-templates
 
 | folder | what you get |
@@ -79,7 +103,12 @@ them. No Liquid `| default:` pipes or Rhai fallbacks on top.
 | `extra_crates` | blank | workspace only |
 
 Derived in Rhai (not prompted): `crate_name` (builtin), `project_name_upper`,
-`repo_name`, `extra_crate_list`, `is_linux`, `has_cargo_make`, `has_taplo`.
+`repo_name`, `extra_crate_list`, `is_linux`, `has_cargo_make`, `has_taplo`,
+`short_description_toml`, `github_user_toml`.
+
+Descriptions and author text are escaped for TOML strings, including quotes,
+backslashes, control characters, and Unicode. The original values remain
+unchanged for README text and URLs.
 
 ### Linker
 
@@ -113,6 +142,7 @@ sub-template would be left behind, empty, in the output):
 |---|---|---|
 | `hooks/init.rhai` | init | cli, workspace |
 | `hooks/pre.rhai` | pre | cli, workspace |
+| `hooks/toml.rhai` | pre | cli, workspace, ws_crate (TOML string escaping) |
 | `hooks/finish.rhai` | post | cli, workspace (linker config cleanup, tool installs, VCS init, notes) |
 | `hooks/workspace/{pre,post}.rhai` | pre/post | workspace |
 | `hooks/ws_crate/post.rhai` | post | ws_crate |
@@ -152,6 +182,18 @@ never touched. Extra `cargo generate` args go after `--`.
 - `server` sub-template (later, from rpa_lite)
 - Shipping as the GitHub "Use this template" default
 - Precompiled Rhai bytecode: cargo-generate only loads `.rhai` source.
+
+## Generator regression test
+
+Requires Python 3.11+ and cargo-generate. Run from this checkout:
+
+```bash
+python3 -B -m unittest discover -s tests -v
+```
+
+Generates disposable CLI, workspace, bin-member, and lib-member projects.
+Checks exact TOML string round-trips and preserves workspace trim-paths
+when adding members. It does not compile or run the generated applications.
 
 ## Silent smoke (no prompts)
 
