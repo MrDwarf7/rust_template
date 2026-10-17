@@ -65,11 +65,11 @@ jobs:
         uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
         with:
           tool: "cargo-make"
-      - name: "Install taplo"
+      - name: "Install formatting tools"
         if: {% raw %}${{ matrix.recipe == 'ci-format' }}{% endraw %}
         uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
         with:
-          tool: "taplo"
+          tool: "taplo,rumdl"
       - name: "Run formatting recipe"
         if: {% raw %}${{ matrix.recipe == 'ci-format' }}{% endraw %}
         run: "cargo make ci-format"
@@ -112,10 +112,10 @@ jobs:
         uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
         with:
           tool: "cargo-make"
-      - name: "Install taplo"
+      - name: "Install formatting tools"
         uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
         with:
-          tool: "taplo"
+          tool: "taplo,rumdl"
       - name: "Run CI formatting check"
         run: "cargo make ci-format"
       - name: "Run Clippy with pedantic"

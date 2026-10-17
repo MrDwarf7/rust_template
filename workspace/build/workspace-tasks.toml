@@ -1,7 +1,7 @@
 [env]
 # Template source for `wsa`, split on spaces into cargo-generate args.
 # Local template checkout: RT_TEMPLATE="--path /abs/path/to/rust_template"
-RT_TEMPLATE = { value = "--git https://github.com/MrDwarf7/rust_template --branch cargo-generate", condition = { env_not_set = [
+RT_TEMPLATE = { value = "--git https://github.com/MrDwarf7/rust_template", condition = { env_not_set = [
   "RT_TEMPLATE",
 ] } }
 # "<prefix>-" when CRATE_PREFIX is non-empty, else "".

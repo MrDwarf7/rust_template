@@ -80,7 +80,8 @@ echo "BREAKER: ${BREAKER}"
 env.RUSTUP_TOOLCHAIN = "nightly"
 command = "${CARGO_CMD}"
 args = ["fmt", "--all", "--", "--emit=files"]
-dependencies = ["_taplo_format"]
+workspace = false
+dependencies = ["_taplo_format", "_rumdl_format"]
 
 [tasks.clean]
 command = "${CARGO_CMD}"
@@ -122,12 +123,23 @@ workspace = false
 env.RUSTUP_TOOLCHAIN = "nightly"
 command = "${CARGO_CMD}"
 args = ["fmt", "--all", "--check"]
-dependencies = ["ci-taplo-format"]
+dependencies = ["ci-taplo-format", "ci-rumdl-format"]
 
 [tasks.ci-taplo-format]
 workspace = false
 command = "taplo"
 args = ["format", "--check"]
+
+[tasks._rumdl_format]
+workspace = false
+private = true
+command = "rumdl"
+args = ["fmt", "README.md"]
+
+[tasks.ci-rumdl-format]
+workspace = false
+command = "rumdl"
+args = ["check", "README.md"]
 
 [tasks.ci-check]
 workspace = false

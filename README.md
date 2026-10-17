@@ -11,9 +11,8 @@
 </div>
 <!-- rumdl-enable MD033 -->
 
-The templates live on the `cargo-generate` branch. Use the commands below to
-select it explicitly; they do not depend on the repository's default branch.
-`cargo-generate` renders the templates and runs their hooks.
+Templates are maintained on the repository's default `main` branch. `cargo-generate` renders
+them and runs their hooks.
 
 [Quick start](#quick-start) | [Templates](#templates) | [Prompts and options](#prompt-order-and-choices) | [Toolchain](#toolchain-and-development) | [Update existing](#update-an-existing-project)
 
@@ -39,10 +38,8 @@ without changing the global mise configuration, use
 Generate a CLI app or virtual workspace:
 
 ```sh
-cargo generate --git https://github.com/MrDwarf7/rust_template \
-  --branch cargo-generate cli --name my_app
-cargo generate --git https://github.com/MrDwarf7/rust_template \
-  --branch cargo-generate workspace --name my_workspace
+cargo generate --git https://github.com/MrDwarf7/rust_template cli --name my_app
+cargo generate --git https://github.com/MrDwarf7/rust_template workspace --name my_workspace
 ```
 
 From a local checkout, choose the template explicitly:
@@ -53,7 +50,7 @@ cargo generate --path . --name my_workspace workspace
 ```
 
 The [`favorites.toml`](favorites.toml) entries `rt-cli`, `rt-workspace`, and
-`rt-crate` also select the `cargo-generate` branch. Merge them into
+`rt-crate` use the repository's default branch. Merge them into
 `~/.cargo/cargo-generate.toml` or pass the file with `--config`.
 
 From a workspace root, add a library member with `wsa`:
@@ -122,8 +119,7 @@ environment variable. For example:
 
 ```sh
 cargo generate --git https://github.com/MrDwarf7/rust_template \
-  --branch cargo-generate cli --name my_app \
-  -d vcs_kind=none -d agent_support=false
+  cli --name my_app -d vcs_kind=none -d agent_support=false
 ```
 
 The optional `.rs` repository suffix is not prompted and defaults to `false`.
@@ -131,8 +127,7 @@ Enable it with `-d use_rs_suffix=true` or:
 
 ```sh
 CARGO_GENERATE_VALUE_USE_RS_SUFFIX=true cargo generate \
-  --git https://github.com/MrDwarf7/rust_template \
-  --branch cargo-generate cli --name my_app
+  --git https://github.com/MrDwarf7/rust_template cli --name my_app
 ```
 
 `tagline`, `short_description`, and `long_description` are derived from the
@@ -215,8 +210,7 @@ usage message and skips generation. The values `CRATE_PREFIX`, `PERF_TESTING`,
 and `AGENT_SUPPORT` are stored in the workspace `Makefile.toml` `[env]` and
 forwarded to new members. Edit them there to change later additions.
 
-`wsa` uses the template source
-`--git https://github.com/MrDwarf7/rust_template --branch cargo-generate`.
+`wsa` uses the repository's default branch for its template source.
 Set `RT_TEMPLATE` to override those cargo-generate arguments, for example:
 
 ```sh
@@ -229,8 +223,7 @@ For a direct `ws_crate` command, pass the fully prefixed name because
 cargo-generate hooks cannot rename the output directory:
 
 ```sh
-cargo generate --git https://github.com/MrDwarf7/rust_template \
-  --branch cargo-generate ws_crate \
+cargo generate --git https://github.com/MrDwarf7/rust_template ws_crate \
   --name acme-authentication --destination crates -d crate_prefix=acme
 ```
 
@@ -288,6 +281,11 @@ Useful local tasks include:
 | `cargo make A`        | Format, check, lint, build debug and release, and run tests. |
 | `cargo make ci-check` | Run the non-mutating CI check recipe.                        |
 | `cargo make ci-test`  | Run the non-mutating CI test recipe.                         |
+
+`cargo make format` (alias `f`) formats Rust with nightly Rustfmt, TOML with
+Taplo, and `README.md` with rumdl. `cargo make ci-format` checks the same files
+without changing them. Markdown tasks target the README explicitly, so formatting
+does not rewrite agent instructions or copied third-party documentation.
 
 CI uses separate format, check, clippy, test, release-build, and documentation
 recipes: `ci-format`, `ci-check`, `ci-clippy`, `ci-clippy-pedantic`,
