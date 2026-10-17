@@ -1,25 +1,23 @@
-// pre (workspace): normalize extra_crates and prefix extras; first stays unchanged.
-// for the members loop in Cargo.toml. Runs after hooks/pre.rhai.
-let first = variable::get("crate_name");
-// Rhai's String::replace mutates in place and returns (), so never chain it.
-let crate_prefix = to_snake_case(variable::get("crate_prefix"));
-crate_prefix.replace("_", "-");
-variable::set("crate_prefix", crate_prefix);
-let first_hyphen = first;
-first_hyphen.replace("_", "-");
+// Keep crate names verbatim; compare snake forms only for duplicate detection.
+let first = variable::get("project-name");
+let first_snake = to_snake_case(first);
+let crate_prefix = variable::get("crate_prefix");
+crate_prefix.trim();
 let extras = [];
 
 for raw in variable::get("extra_crates").split(",") {
-    let name = to_snake_case(raw);
-    name.replace("_", "-");
+    let name = raw;
+    name.trim();
     if name != "" {
-        let member_name = if crate_prefix != "" && !name.starts_with(crate_prefix + "-") {
+        let member_name = if crate_prefix != ""
+            && !name.starts_with(crate_prefix + "-")
+            && !name.starts_with(crate_prefix + "_") {
             crate_prefix + "-" + name
         } else {
             name
         };
-        // acme-core and acme_core share the lib target name; treat as the same crate.
-        if member_name != first_hyphen && !extras.contains(member_name) {
+        // Hyphenated and underscored spellings can share a Rust lib target.
+        if to_snake_case(member_name) != first_snake && !extras.contains(member_name) {
             extras.push(member_name);
         }
     }

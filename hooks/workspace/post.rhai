@@ -84,7 +84,7 @@ fn copy_crate(from, to) {
     }
 }
 
-let first = variable::get("crate_name");
+let first = variable::get("project-name");
 file::write(`crates/${first}/Cargo.toml`, member_manifest(first));
 file::write(`crates/${first}/tests/cli.rs`, member_test(first));
 

@@ -222,6 +222,41 @@ class GenerationDescriptionTest(unittest.TestCase):
                 (cli / "tests" / "cli.rs").read_text(encoding="utf-8"),
             )
 
+    def test_names_are_preserved_verbatim(self):
+        with tempfile.TemporaryDirectory(prefix="cargo-generate-names-") as directory:
+            temporary = Path(directory)
+            cli = generate(self, temporary, "my-app", "cli", temporary / "cli")
+            with (cli / "Cargo.toml").open("rb") as manifest_file:
+                self.assertEqual(tomllib.load(manifest_file)["package"]["name"], "my-app")
+            self.assertIn(
+                'env!("CARGO_BIN_EXE_my-app")',
+                (cli / "tests" / "cli.rs").read_text(encoding="utf-8"),
+            )
+
+            workspace = generate(
+                self,
+                temporary,
+                "acme-core",
+                "workspace",
+                temporary / "workspace",
+                crate_prefix="acme",
+                extra_crates="api, acme_db",
+            )
+            for crate_name in ("acme-core", "acme-api", "acme_db"):
+                crate = workspace / "crates" / crate_name
+                with (crate / "Cargo.toml").open("rb") as manifest_file:
+                    self.assertEqual(tomllib.load(manifest_file)["package"]["name"], crate_name)
+                self.assertIn(
+                    f'env!("CARGO_BIN_EXE_{crate_name}")',
+                    (crate / "tests" / "cli.rs").read_text(encoding="utf-8"),
+                )
+
+            underscored = generate(
+                self, temporary, "my_ws", "workspace", temporary / "workspace-underscore"
+            )
+            with (underscored / "crates" / "my_ws" / "Cargo.toml").open("rb") as manifest_file:
+                self.assertEqual(tomllib.load(manifest_file)["package"]["name"], "my_ws")
+
     def test_workspace_and_library_description_round_trip(self):
         with tempfile.TemporaryDirectory(prefix="cargo-generate-description-") as directory:
             temporary = Path(directory)
@@ -237,8 +272,8 @@ class GenerationDescriptionTest(unittest.TestCase):
             )
             assert_project_tooling(self, workspace, includes_generator=True, crate_prefix="acme")
             self.assertNotIn("criterion", (workspace / "Cargo.toml").read_text(encoding="utf-8"))
-            assert_manifest(self, workspace / "crates" / "description_workspace" / "Cargo.toml")
-            assert_manifest(self, workspace / "crates" / "acme-extra-member" / "Cargo.toml")
+            assert_manifest(self, workspace / "crates" / "description-workspace" / "Cargo.toml")
+            assert_manifest(self, workspace / "crates" / "acme-extra_member" / "Cargo.toml")
 
             lib_crate = generate(
                 self, temporary, "description-lib", "ws_crate", workspace / "crates"
@@ -309,7 +344,7 @@ class PerformanceTestingGenerationTest(unittest.TestCase):
                 self, temporary, "perf-workspace-off", "workspace", temporary / "workspace-off",
                 extra_crates="extra_member", perf_testing=False,
             )
-            for member in ("perf_workspace_off", "extra-member"):
+            for member in ("perf-workspace-off", "extra_member"):
                 assert_perf_crate(self, workspace_off / "crates" / member, enabled=False)
             self.assertNotIn("criterion", (workspace_off / "Cargo.toml").read_text(encoding="utf-8"))
             generate(
@@ -326,11 +361,11 @@ class PerformanceTestingGenerationTest(unittest.TestCase):
             with (workspace_on / "Cargo.toml").open("rb") as manifest_file:
                 manifest = tomllib.load(manifest_file)
             self.assertIn("criterion", manifest["workspace"]["dependencies"])
-            for member in ("perf_workspace_on", "extra-member"):
+            for member in ("perf-workspace-on", "extra_member"):
                 assert_perf_crate(self, workspace_on / "crates" / member, enabled=True)
             self.assertIn(
                 "binary_runs_successfully",
-                (workspace_on / "crates" / "extra-member" / "tests" / "cli.rs").read_text(encoding="utf-8"),
+                (workspace_on / "crates" / "extra_member" / "tests" / "cli.rs").read_text(encoding="utf-8"),
             )
             lib_on = generate(
                 self, temporary, "perf-lib-on", "ws_crate", workspace_on / "crates",
@@ -379,8 +414,8 @@ class AgentSupportGenerationTest(unittest.TestCase):
                 extra_crates="extra_member", agent_support=False, perf_testing=False,
             )
             assert_agent_files(self, workspace_off, enabled=False)
-            assert_member_agent_files(self, workspace_off / "crates" / "agent_workspace_off", enabled=False)
-            assert_member_agent_files(self, workspace_off / "crates" / "extra-member", enabled=False)
+            assert_member_agent_files(self, workspace_off / "crates" / "agent-workspace-off", enabled=False)
+            assert_member_agent_files(self, workspace_off / "crates" / "extra_member", enabled=False)
             assert_no_liquid(self, workspace_off)
             lib_off = generate(
                 self, temporary, "agent-lib-off", "ws_crate", workspace_off / "crates",
@@ -395,7 +430,7 @@ class AgentSupportGenerationTest(unittest.TestCase):
             assert_agent_files(self, workspace_on, enabled=True, perf_testing=True)
             assert_docs_script(self, workspace_on)
             assert_no_liquid(self, workspace_on)
-            for member in ("agent_workspace_on", "extra-member"):
+            for member in ("agent-workspace-on", "extra_member"):
                 assert_member_agent_files(self, workspace_on / "crates" / member, enabled=True)
             lib_on = generate(
                 self, temporary, "agent-lib-on", "ws_crate", workspace_on / "crates",

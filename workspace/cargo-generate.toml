@@ -52,7 +52,7 @@ ignore = ["scratch"]
 
 [conditional.'!perf_testing']
 ignore = [
-  "crates/{{crate_name}}/perf",
+  "crates/{{project-name}}/perf",
   ".agents/skills/hotpath-init",
   ".agents/skills/hotpath-cloud",
   ".agents/skills/hotpath-init-ci",
@@ -65,7 +65,7 @@ ignore = [
   "CLAUDE.md",
   ".agents",
   "docs/00_AGENT_DOCS_SETUP.md",
-  "crates/{{crate_name}}/AGENTS.md",
-  "crates/{{crate_name}}/CLAUDE.md",
-  "crates/{{crate_name}}/.agents",
+  "crates/{{project-name}}/AGENTS.md",
+  "crates/{{project-name}}/CLAUDE.md",
+  "crates/{{project-name}}/.agents",
 ]

@@ -5,7 +5,7 @@ cargo-features = [ "codegen-backend" ]
 
 {% endif -%}
 [package]
-name        = "{{ crate_name }}"
+name        = "{{ project-name }}"
 version     = "0.1.0"
 authors     = [ "{{ authors }}" ]
 edition     = "2024"
