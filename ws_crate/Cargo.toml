@@ -1,15 +1,10 @@
 [package]
-name        = "{{ crate_name }}"
+name        = "{{ project-name }}"
 version     = "0.1.0"
 authors     = [ "{{ authors }}" ]
 edition     = "2024"
 description = "{{ short_description_toml }}"
-license      = "MIT"
-{% if crate_type == "bin" %}
-build        = "build.rs"
-{% endif %}
-# For running the main server as a watch, call
-# cargo watch -q -c -w src/ -x run
+license     = "MIT"
 
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -19,16 +14,6 @@ default = [ "macros" ]
 macros  = [  ]
 # debug   = [  ]
 
-{% if crate_type == "bin" %}
-# Windows exe icon + version info (release builds). Assets under assets/icon.ico.
-[package.metadata.winresource]
-OriginalFilename = "{{ crate_name }}.exe"
-FileDescription  = "{{ short_description_toml }}"
-LegalCopyright   = "Copyright (c) {{ github_user_toml }}"
-
-[target.'cfg(windows)'.build-dependencies]
-winresource = "0.1.19"
-{% endif %}
 
 ######################################################################################################################################################
 ######################################################################################################################################################
@@ -72,10 +57,19 @@ thiserror = "*"
 # walkdir = "*"
 # chrono = "*"
 # itertools = "*"
+{% if perf_testing %}
+
+[dev-dependencies]
+criterion = "0.8.2"
+
+[[bench]]
+name    = "example"
+path    = "perf/example.rs"
+harness = false
+{% endif %}
 
 ######################################################################################################################################################
 ######################################################################################################################################################
-
 
 ## Profiles and cargo-features belong in the workspace root Cargo.toml;
 ## Cargo ignores them in member manifests.

@@ -1,6 +1,6 @@
 //! {{ crate_name }} library root.
 
-pub mod error;
-pub mod prelude;
+mod error;
+mod prelude;
 
-pub use crate::error::{Error, Result};
+pub use crate::error::{Error as {{ crate_namespace }}Error, Result as {{ crate_namespace }}Result};

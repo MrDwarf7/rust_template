@@ -3,15 +3,18 @@ cargo_generate_version = ">=0.24.0"
 vcs = "None"
 
 [hooks]
-pre = ["../hooks/toml.rhai"]
+pre = ["../hooks/toml.rhai", "../hooks/ws_crate/pre.rhai"]
 post = ["../hooks/ws_crate/post.rhai"]
 
 [placeholders]
-github_user = { type = "string", prompt = "GitHub user/org for URLs?", default = "MrDwarf7" }
 short_description = { type = "string", prompt = "Short description (Cargo.toml / crates.io)?", default = "A workspace member crate" }
+crate_prefix = { type = "string", prompt = "Crate name prefix (e.g. acme -> acme-auth; blank for none)", default = "" }
+perf_testing = { type = "bool", prompt = "Set up performance testing (criterion benches in perf/, hotpath via mise)?", default = false }
+agent_support = { type = "bool", prompt = "Will you use a coding agent (Claude Code, oh-my-pi, opencode)? Adds AGENTS.md and .agents/ skills.", default = false }
 
-[conditional.'crate_type == "lib"']
-ignore = ["src/main.rs", "build.rs", "assets"]
+[conditional.'!perf_testing']
+ignore = ["perf"]
 
-[conditional.'crate_type == "bin"']
-ignore = ["src/lib.rs"]
+[conditional.'!agent_support']
+ignore = ["AGENTS.md", "CLAUDE.md", ".agents"]
+

@@ -19,5 +19,7 @@ fn toml_string_contents(value) {
 }
 
 for name in ["short_description", "github_user"] {
-    variable::set(name + "_toml", toml_string_contents(variable::get(name)));
+    if variable::is_set(name) {
+        variable::set(name + "_toml", toml_string_contents(variable::get(name)));
+    }
 }

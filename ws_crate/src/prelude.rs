@@ -1,5 +1,5 @@
 // in-crate Error type
-pub use crate::error::{Error, Result};
+use crate::error::{Error, Result};
 
 // #[allow(unused_imports)]
 // pub use tracing::{debug, error, info, warn, trace};
