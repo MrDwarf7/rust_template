@@ -17,7 +17,6 @@ cargo generate --path /home/dwarf/Documents/GitHub_Projects/Rust/rust_template_c
   -d keep_bacon=true \
   -d keep_data=false \
   -d keep_scratch=false \
-  -d use_cranelift=false \
   -d use_trim_paths=false \
   -d vcs_kind=jj \
   -d linker=default
@@ -27,7 +26,7 @@ cargo-generate 0.25.0. Package name came out `tm`, repo name `tm.rs`. That part 
 
 ## 1. jj repo symlink is skipped
 
-```
+```text
 [Skipping] Symbolic links not supported
 `.../rust_template_cargo_generate/.jj/repo/config.toml`
 ```
@@ -81,7 +80,7 @@ template and is not generated.
 args = ["run", " --bin", "${PROJECT_NAME}", "${@}"]
 ```
 
-The argument is ` --bin` (space included), so `cargo run_as_project` would fail.
+The argument is `--bin` (space included), so `cargo run_as_project` would fail.
 The normal `run` task (`["run", "${@}"]`) is fine. Same string is in the
 `cli` and `workspace` copies.
 
@@ -90,8 +89,7 @@ The normal `run` task (`["run", "${@}"]`) is fine. Same string is in the
 - `--init` does not init VCS itself, but `hooks/finish.rhai` still ran
   `jj git init --colocate` against the destination. Colocated jj came up.
 - `--silent` needs every prompted placeholder via `-d`, including `linker` on
-  Linux. `install_tools` was not required because `makers` and `taplo` were
-  already installed.
+  Linux.
 - `linker=default` correctly omitted `.cargo/`.
 - GitHub Actions `${{ }}` survived Liquid (`{% raw %}`).
 - `cliff.toml` kept its Tera body. The `<REPO>` postprocessor was filled in
