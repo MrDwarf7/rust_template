@@ -7,6 +7,9 @@ on:
     tags: ["v[0-9]+.[0-9]+.[0-9]?"]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: "{% raw %}${{ github.workflow }}{% endraw %}-{% raw %}${{ github.ref }}{% endraw %}"
   cancel-in-progress: {% raw %}${{ github.ref != 'refs/heads/main' }}{% endraw %}
@@ -17,10 +20,7 @@ env:
   LICENSE_FILES_WINDOWS: "LICENSE*"
   GITHUB_BRANCH_TAG_NAME: "{% raw %}${{ github.ref_name }}{% endraw %}"
   CARGO_TERM_COLOR: "always"
-  CARGO_INCREMENTAL: "0"
   RUST_BACKTRACE: "1"
-  SCCACHE_GHA_ENABLED: "true"
-  RUSTC_WRAPPER: "sccache"
   PROJECT_NAME: "{{ crate_name }}"
 
 jobs:
@@ -40,13 +40,17 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup mbx"
+        uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
+        with:
+          backend: "local"
 
       - name: "Build"
         shell: "bash"
         run: |
           export ARTIFACT_NAME="{% raw %}${{ env.PROJECT_NAME }}{% endraw %}-{% raw %}${{ matrix.target }}{% endraw %}-{% raw %}${{ env.GITHUB_BRANCH_TAG_NAME }}{% endraw %}"
           export LICENSE_FILE="{% raw %}${{ env.LICENSE_FILE_REG }}{% endraw %}"
-          cargo build --release --locked --target "{% raw %}${{ matrix.target }}{% endraw %}"
+          mbx build --release --locked --target "{% raw %}${{ matrix.target }}{% endraw %}"
           mkdir -p "${ARTIFACT_NAME}"
           cp "target/{% raw %}${{ matrix.target }}{% endraw %}/release/{% raw %}${{ env.PROJECT_NAME }}{% endraw %}" "${ARTIFACT_NAME}"
           find . -maxdepth 1 -type f -regex ".*\(${LICENSE_FILE}\)" -exec sh -c 'cp README.md "$@" "${ARTIFACT_NAME}"' _ {} +
@@ -78,9 +82,13 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup mbx"
+        uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
+        with:
+          backend: "local"
 
       - name: "Build"
-        run: "cargo build --release --locked --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "mbx build --release --locked --target {% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Pack artifact"
         shell: "powershell"

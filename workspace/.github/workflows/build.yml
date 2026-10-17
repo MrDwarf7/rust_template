@@ -6,16 +6,16 @@ on:
       - "main"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: "{% raw %}${{ github.workflow }}{% endraw %}-{% raw %}${{ github.ref }}{% endraw %}"
   cancel-in-progress: {% raw %}${{ github.ref != 'refs/heads/main' }}{% endraw %}
 
 env:
   CARGO_TERM_COLOR: "always"
-  CARGO_INCREMENTAL: "0"
   RUST_BACKTRACE: "1"
-  SCCACHE_GHA_ENABLED: "true"
-  RUSTC_WRAPPER: "sccache"
   PROJECT_NAME: "{{ crate_name }}"
 
 jobs:
@@ -32,19 +32,19 @@ jobs:
           - os: "ubuntu-latest"
             target: "x86_64-unknown-linux-gnu"
             task: "check"
-            run: "cargo check --all --locked"
+            run: "mbx check --all --locked"
           - os: "ubuntu-latest"
             target: "x86_64-unknown-linux-gnu"
             task: "clippy"
-            run: "cargo clippy --all-targets --all-features --locked -- -D warnings"
+            run: "mbx clippy --all-targets --all-features --locked -- -D warnings"
           - os: "windows-latest"
             target: "x86_64-pc-windows-msvc"
             task: "check"
-            run: "cargo check --all --locked"
+            run: "mbx check --all --locked"
           - os: "windows-latest"
             target: "x86_64-pc-windows-msvc"
             task: "clippy"
-            run: "cargo clippy --all-targets --all-features --locked -- -D warnings"
+            run: "mbx clippy --all-targets --all-features --locked -- -D warnings"
     runs-on: "{% raw %}${{ matrix.os }}{% endraw %}"
     if: {% raw %}${{ !contains(github.event.head_commit.message, 'skip ci') }}{% endraw %}
     steps:
@@ -55,6 +55,11 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup mbx cache"
+        if: {% raw %}${{ matrix.task != 'format' }}{% endraw %}
+        uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
+        with:
+          cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "{% raw %}${{ matrix.task }}{% endraw %}"
         run: "{% raw %}${{ matrix.run }}{% endraw %}"
@@ -79,12 +84,16 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup mbx cache"
+        uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
+        with:
+          cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Run Cargo fmt"
         run: "cargo fmt --all --check"
 
       - name: "Run Clippy with pedantic"
-        run: "cargo clippy --all-targets --all-features --locked -- -W clippy::pedantic"
+        run: "mbx clippy --all-targets --all-features --locked -- -W clippy::pedantic"
 
       - name: "Build project"
-        run: "cargo build --release --locked --all"
+        run: "mbx build --release --locked --all"

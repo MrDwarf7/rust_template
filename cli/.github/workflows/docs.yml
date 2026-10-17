@@ -6,16 +6,16 @@ on:
       - "main"
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 concurrency:
   group: "{% raw %}${{ github.workflow }}{% endraw %}-{% raw %}${{ github.ref }}{% endraw %}"
   cancel-in-progress: {% raw %}${{ github.ref != 'refs/heads/main' }}{% endraw %}
 
 env:
   CARGO_TERM_COLOR: "always"
-  CARGO_INCREMENTAL: "0"
   RUST_BACKTRACE: "1"
-  SCCACHE_GHA_ENABLED: "true"
-  RUSTC_WRAPPER: "sccache"
   PROJECT_NAME: "{{ crate_name }}"
 
 jobs:
@@ -38,11 +38,15 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup mbx cache"
+        uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
+        with:
+          cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Run Cargo Doc checks"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "cargo doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
+        run: "mbx doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
 
   package-docs-unix:
     name: "Docs - package-docs-unix"
@@ -61,11 +65,15 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup mbx cache"
+        uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
+        with:
+          cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "cargo doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
+        run: "mbx doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
 
       - name: "Ensure Zip Installed on Unix"
         run: |
@@ -100,11 +108,15 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup mbx cache"
+        uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
+        with:
+          cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "cargo doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
+        run: "mbx doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
 
       - name: "Upload artifact"
         uses: "actions/upload-artifact@v7"
