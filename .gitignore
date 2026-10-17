@@ -2,3 +2,5 @@ target/
 /tmp/
 smoke_*/
 .idea/
+**/_archive/
+_archive/
