@@ -4,7 +4,6 @@ title: CI
 
 ## CI
 
-
 ### Workflows and tools
 
 CI uses separate, parallel workflows for formatting, build/check and clippy, tests, documentation,
@@ -20,15 +19,15 @@ Generated Makefiles default `CARGO_CMD=mbx`; CI installs mbx with
 `jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240` (`v1`) so cargo-make commands
 use the wrapper and its target cache. Set `CARGO_CMD=cargo` to opt out.
 
-| Concern | Recipe |
-| --- | --- |
-| Rustfmt and Taplo format checks | `ci-format` |
-| Cargo check | `ci-check` |
-| Clippy with warnings denied | `ci-clippy` |
-| Pedantic Clippy | `ci-clippy-pedantic` |
-| Tests | `ci-test` |
-| Release build | `ci-build-release` |
-| Documentation build | `ci-doc` |
+| Concern                         | Recipe               |
+| ------------------------------- | -------------------- |
+| Rustfmt and Taplo format checks | `ci-format`          |
+| Cargo check                     | `ci-check`           |
+| Clippy with warnings denied     | `ci-clippy`          |
+| Pedantic Clippy                 | `ci-clippy-pedantic` |
+| Tests                           | `ci-test`            |
+| Release build                   | `ci-build-release`   |
+| Documentation build             | `ci-doc`             |
 
 The corresponding task definitions live in `build/common-tasks.toml`. CI checks are non-mutating;
 the local `format` task remains a formatter.

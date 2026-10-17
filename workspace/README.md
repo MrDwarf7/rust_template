@@ -66,7 +66,7 @@ Installs to `/usr/local/bin` (or `~/.local/bin` if not writable). Set
 
 ### Release Archives
 
-Download from [Releases](https://github.com/{{ github_user }}/{{ repo_name }}/releases/latest).
+Download from [Releases](<https://github.com/{{ github_user }}/{{ repo_name }}/releases/latest>).
 
 Each archive contains:
 
@@ -150,18 +150,26 @@ Environment variables:
 
 ## Build
 
+For a first build, use a mise-activated shell and install the tools declared in `mise.toml`:
+
 ```bash
-# Release binary
-make build          # or: cargo build --release
+mise trust && mise install && mise reshim
+cargo make b
+cargo make t
+```
+
+The first build installs the Rust toolchain selected in `rust-toolchain.toml`. Without mbx, use
+`CARGO_CMD=cargo cargo make <task>`.
+
+```bash
+# Release build
+cargo make br
 
 # Run tests
-make test           # or: cargo test
+cargo make t
 
 # Run locally
-make run            # or: cargo run -- <args>
-
-# Fetch bundled dependencies (ffmpeg, etc.)
-./build/fetch-deps.sh <target> <out-dir>
+cargo make r
 ```
 
 ## Comparison
@@ -174,7 +182,7 @@ make run            # or: cargo run -- <args>
 
 - [Documentation](https://docs.example.com)
 - [Discord](https://discord.gg/XXX)
-- [Issues](https://github.com/{{ github_user }}/{{ repo_name }}/issues)
+- [Issues](<https://github.com/{{ github_user }}/{{ repo_name }}/issues>)
 
 ## License
 

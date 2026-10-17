@@ -2,15 +2,21 @@
 cargo_generate_version = ">=0.24.0"
 vcs = "None"
 
+# short_description is derived in ../hooks/details.rhai (see README).
 [hooks]
-pre = ["../hooks/toml.rhai", "../hooks/ws_crate/pre.rhai"]
+pre = [
+  "../hooks/details.rhai",
+  "../hooks/toml.rhai",
+  "../hooks/ws_crate/pre.rhai",
+]
 post = ["../hooks/ws_crate/post.rhai"]
 
+# Shared prompts first, in the same order as cli/ and workspace/.
 [placeholders]
-short_description = { type = "string", prompt = "Short description (Cargo.toml / crates.io)?", default = "A workspace member crate" }
-crate_prefix = { type = "string", prompt = "Crate name prefix (e.g. acme -> acme-auth; blank for none)", default = "" }
 perf_testing = { type = "bool", prompt = "Set up performance testing (criterion benches in perf/, hotpath via mise)?", default = false }
-agent_support = { type = "bool", prompt = "Will you use a coding agent (Claude Code, oh-my-pi, opencode)? Adds AGENTS.md and .agents/ skills.", default = false }
+agent_support = { type = "bool", prompt = "Will you use a coding agent (Claude Code, oh-my-pi, opencode)? Adds AGENTS.md and .agents/ skills.", default = true }
+# Crate-only prompts.
+crate_prefix = { type = "string", prompt = "Crate name prefix (e.g. acme -> acme-auth; blank for none)", default = "" }
 
 [conditional.'!perf_testing']
 ignore = ["perf"]

@@ -1,3 +1,4 @@
+import os
 import json
 import re
 import shutil
@@ -22,7 +23,7 @@ def toml_value(value):
     return json.dumps(value, ensure_ascii=False).replace(chr(127), r"\u007f")
 
 
-def generate(case, temporary, name, subtemplate, destination, **options):
+def generate(case, temporary, name, subtemplate, destination, environment=None, **options):
     values = {
         "github_user": GITHUB_USER,
         "short_description": DESCRIPTION,
@@ -30,6 +31,7 @@ def generate(case, temporary, name, subtemplate, destination, **options):
         "linker": "default",
     }
     values.update(options)
+    values = {key: value for key, value in values.items() if value is not None}
     values_file = temporary / "values.txt"
     values_file.write_text(
         "[values]\n" + "".join(f"{key}={toml_value(value)}\n" for key, value in values.items()),
@@ -44,6 +46,7 @@ def generate(case, temporary, name, subtemplate, destination, **options):
             "--values-file", str(values_file),
         ],
         cwd=temporary,
+        env={**os.environ, **(environment or {})},
         capture_output=True,
         text=True,
         timeout=120,
@@ -439,6 +442,78 @@ class AgentSupportGenerationTest(unittest.TestCase):
             assert_member_agent_files(self, lib_on, enabled=True)
             assert_no_liquid(self, lib_on)
 
+
+@unittest.skipUnless(shutil.which("cargo-generate"), "cargo-generate is required")
+class OnboardingGenerationTest(unittest.TestCase):
+    def test_defaults_and_explicit_opt_outs(self):
+        with tempfile.TemporaryDirectory(prefix="cargo-generate-onboarding-") as directory:
+            temporary = Path(directory)
+            for kind in ("cli", "workspace"):
+                project = generate(self, temporary, f"default-{kind}", kind, temporary)
+                self.assertTrue((project / "AGENTS.md").is_file())
+                self.assertFalse((project / "data").exists())
+                self.assertFalse((project / "scratch").exists())
+                with (project / "Cargo.toml").open("rb") as manifest_file:
+                    manifest = tomllib.load(manifest_file)
+                self.assertEqual(manifest["profile"]["release"]["trim-paths"], "object")
+                with (project / ".mbx.toml").open("rb") as mbx_file:
+                    linker = tomllib.load(mbx_file)["linker"]
+                self.assertEqual(linker["profiles"]["dev"]["default"], "system")
+                self.assertEqual(linker["profiles"]["dev"]["x86_64-unknown-linux-gnu"], "system")
+                self.assertEqual(linker["profiles"]["dev"]["aarch64-apple-darwin"], "system")
+                self.assertEqual(linker["profiles"]["release"]["default"], "system")
+                self.assertEqual(linker["profiles"]["release"]["x86_64-unknown-linux-gnu"], "system")
+                self.assertEqual(linker["profiles"]["release"]["aarch64-unknown-linux-gnu"], "system")
+                self.assertEqual(linker["profiles"]["release"]["x86_64-apple-darwin"], "system")
+                self.assertEqual(linker["profiles"]["release"]["aarch64-apple-darwin"], "system")
+
+                opted_out = generate(
+                    self, temporary, f"opt-out-{kind}", kind, temporary,
+                    agent_support=False, use_trim_paths=False, keep_dev_dirs=True,
+                )
+                self.assertFalse((opted_out / "AGENTS.md").exists())
+                self.assertTrue((opted_out / "data").is_dir())
+                self.assertTrue((opted_out / "scratch").is_dir())
+                with (opted_out / "Cargo.toml").open("rb") as manifest_file:
+                    manifest = tomllib.load(manifest_file)
+                self.assertNotIn("trim-paths", manifest["profile"]["release"])
+
+    def test_environment_preferences_and_explicit_metadata(self):
+        with tempfile.TemporaryDirectory(prefix="cargo-generate-preferences-") as directory:
+            temporary = Path(directory)
+            project = generate(
+                self, temporary, "pref-app", "cli", temporary,
+                environment={
+                    "CARGO_GENERATE_VALUE_USE_RS_SUFFIX": "yes",
+                    "CARGO_GENERATE_VALUE_RT_DETAILS": "on",
+                },
+                tagline="Provided tagline",
+                long_description="Provided long description",
+                linker="wild",
+            )
+            readme = (project / "README.md").read_text(encoding="utf-8")
+            self.assertIn("Provided tagline", readme)
+            self.assertIn("Provided long description", readme)
+            self.assertIn("pref_app.rs", readme)
+            with (project / ".mbx.toml").open("rb") as mbx_file:
+                linker = tomllib.load(mbx_file)["linker"]
+            self.assertEqual(linker["profiles"]["dev"]["x86_64-unknown-linux-gnu"], "wild@0.10.0")
+            self.assertEqual(linker["profiles"]["release"]["default"], "system")
+            self.assertEqual(linker["profiles"]["release"]["x86_64-unknown-linux-gnu"], "system")
+            self.assertEqual(linker["profiles"]["dev"]["default"], "system")
+            self.assertEqual(linker["profiles"]["dev"]["x86_64-apple-darwin"], "system")
+
+
+    def test_github_owner_environment_preference(self):
+        with tempfile.TemporaryDirectory(prefix="cargo-generate-owner-") as directory:
+            temporary = Path(directory)
+            project = generate(
+                self, temporary, "env-owner-app", "cli", temporary,
+                environment={"CARGO_GENERATE_VALUE_GITHUB_USER": "environment-owner"},
+                github_user=None,
+            )
+            readme = (project / "README.md").read_text(encoding="utf-8")
+            self.assertIn("https://github.com/environment-owner/env-owner-app/", readme)
 
 if __name__ == "__main__":
     unittest.main()

@@ -50,7 +50,7 @@ jobs:
       - name: "Run Cargo Doc checks"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "cargo make ci-doc -- --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make ci-doc --target {% raw %}${{ matrix.target }}{% endraw %}"
 
   package-docs-unix:
     name: "Docs - package-docs-unix"
@@ -81,7 +81,7 @@ jobs:
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "cargo make ci-doc -- --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make ci-doc --target {% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Ensure Zip Installed on Unix"
         run: |
@@ -128,7 +128,7 @@ jobs:
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "cargo make ci-doc -- --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make ci-doc --target {% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Upload artifact"
         uses: "actions/upload-artifact@v7"

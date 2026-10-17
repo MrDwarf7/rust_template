@@ -50,4 +50,4 @@ jobs:
           tool: "cargo-make"
 
       - name: "Run Cargo test"
-        run: "cargo make ci-test -- --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make ci-test --target {% raw %}${{ matrix.target }}{% endraw %}"

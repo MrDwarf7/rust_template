@@ -133,11 +133,29 @@ args = ["check", "--all", "--locked", "${@}"]
 
 [tasks.ci-clippy]
 command = "${CARGO_CMD}"
-args = ["clippy", "--all-targets", "--all-features", "--locked", "--", "-D", "warnings", "${@}"]
+args = [
+  "clippy",
+  "--all-targets",
+  "--all-features",
+  "--locked",
+  "${@}",
+  "--",
+  "-D",
+  "warnings",
+]
 
 [tasks.ci-clippy-pedantic]
 command = "${CARGO_CMD}"
-args = ["clippy", "--all-targets", "--all-features", "--locked", "--", "-W", "clippy::pedantic", "${@}"]
+args = [
+  "clippy",
+  "--all-targets",
+  "--all-features",
+  "--locked",
+  "${@}",
+  "--",
+  "-W",
+  "clippy::pedantic",
+]
 
 [tasks.ci-test]
 command = "${CARGO_CMD}"
@@ -149,7 +167,15 @@ args = ["build", "--release", "--locked", "${@}"]
 
 [tasks.ci-doc]
 command = "${CARGO_CMD}"
-args = ["doc", "--no-deps", "--all-features", "--all", "--locked", "--document-private-items", "${@}"]
+args = [
+  "doc",
+  "--no-deps",
+  "--all-features",
+  "--all",
+  "--locked",
+  "--document-private-items",
+  "${@}",
+]
 
 # END Core bare. min
 

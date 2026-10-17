@@ -75,7 +75,7 @@ jobs:
         run: "cargo make ci-format"
       - name: "Run build recipe"
         if: {% raw %}${{ matrix.recipe != 'ci-format' }}{% endraw %}
-        run: "cargo make {% raw %}${{ matrix.recipe }}{% endraw %} -- --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make {% raw %}${{ matrix.recipe }}{% endraw %} --target {% raw %}${{ matrix.target }}{% endraw %}"
 
   clippy:
     name: "Build - clippy"
@@ -121,4 +121,4 @@ jobs:
       - name: "Run Clippy with pedantic"
         run: "cargo make ci-clippy-pedantic"
       - name: "Build project"
-        run: "cargo make ci-build-release -- --all --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make ci-build-release --all --target {% raw %}${{ matrix.target }}{% endraw %}"

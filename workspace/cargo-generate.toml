@@ -7,48 +7,38 @@ ignore = ["Cargo.lock", ".extras"]
 
 # Shared hooks live in ../hooks (repo root), resolved from this folder.
 # Member Cargo.toml files are written by ../hooks/workspace/post.rhai.
+# github_user, linker, repo suffix and the README/description text are
+# derived in hooks (see README "Placeholders"), not prompted here.
 [hooks]
-init = ["../hooks/init.rhai"]
-pre = ["../hooks/pre.rhai", "../hooks/toml.rhai", "../hooks/workspace/pre.rhai"]
+pre = [
+  "../hooks/details.rhai",
+  "../hooks/pre.rhai",
+  "../hooks/toml.rhai",
+  "../hooks/workspace/pre.rhai",
+]
 post = ["../hooks/workspace/post.rhai", "../hooks/finish.rhai"]
 
+# Shared prompts come first, in the same order in every sub-template.
 [placeholders]
-github_user = { type = "string", prompt = "GitHub user/org for URLs?", default = "MrDwarf7" }
-use_rs_suffix = { type = "bool", prompt = "Append .rs to the GitHub repo name?", default = true }
-tagline = { type = "string", prompt = "One-line tagline?", default = "Rust workspace" }
-short_description = { type = "string", prompt = "Short description (Cargo.toml / crates.io)?", default = "A Rust workspace" }
-long_description = { type = "string", prompt = "Longer README description?", default = "A Rust workspace scaffolded from rust_template." }
 keep_bacon = { type = "bool", prompt = "Keep bacon.toml?", default = true }
-keep_data = { type = "bool", prompt = "Keep data/?", default = false }
-keep_scratch = { type = "bool", prompt = "Keep scratch/?", default = false }
-use_trim_paths = { type = "bool", prompt = 'Strip local paths from release binaries? (trim-paths = "object")', default = false }
+keep_dev_dirs = { type = "bool", prompt = "Keep the data/ and scratch/ folders? (useful for dev work)", default = false }
 perf_testing = { type = "bool", prompt = "Set up performance testing (criterion benches in perf/, hotpath via mise)?", default = false }
-agent_support = { type = "bool", prompt = "Will you use a coding agent (Claude Code, oh-my-pi, opencode)? Adds AGENTS.md and .agents/ skills.", default = false }
-
+agent_support = { type = "bool", prompt = "Will you use a coding agent (Claude Code, oh-my-pi, opencode)? Adds AGENTS.md and .agents/ skills.", default = true }
+use_trim_paths = { type = "bool", prompt = 'Strip local paths from release binaries? (trim-paths = "object")', default = true }
 vcs_kind = { type = "string", prompt = "Initialize VCS?", choices = [
   "jj",
   "git",
   "none",
 ], default = "jj" }
-extra_crates = { type = "string", prompt = "Extra member crate names (comma-separated, blank for just one)?", default = "" }
+# Workspace-only prompts.
 crate_prefix = { type = "string", prompt = "Crate name prefix for member crates (e.g. acme -> acme-auth; blank for none)", default = "" }
+extra_crates = { type = "string", prompt = "Extra member crate names (comma-separated, blank for just one)?", default = "" }
 
-# is_linux is set by ../hooks/init.rhai before prompting.
-[conditional.'is_linux'.placeholders]
-linker = { type = "string", prompt = "Linker for Linux builds via mbx? (default keeps rustc's choice)", choices = [
-  "default",
-  "lld",
-  "mold",
-  "wild",
-], default = "default" }
 [conditional.'!keep_bacon']
 ignore = ["bacon.toml"]
 
-[conditional.'!keep_data']
-ignore = ["data"]
-
-[conditional.'!keep_scratch']
-ignore = ["scratch"]
+[conditional.'!keep_dev_dirs']
+ignore = ["data", "scratch"]
 
 [conditional.'!perf_testing']
 ignore = [

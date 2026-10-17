@@ -63,4 +63,4 @@ jobs:
       - name: "Run Cargo fmt and Taplo checks"
         run: "cargo make ci-format"
       - name: "Build project"
-        run: "cargo make ci-build-release -- --all --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make ci-build-release --all --target {% raw %}${{ matrix.target }}{% endraw %}"
