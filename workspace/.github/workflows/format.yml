@@ -51,11 +51,16 @@ jobs:
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
+      - name: "Install taplo"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "taplo"
 
-      - name: "Run Cargo fmt"
-        env:
-          RUSTUP_TOOLCHAIN: "nightly"
-        run: "cargo fmt --all --check"
-
+      - name: "Run Cargo fmt and Taplo checks"
+        run: "cargo make ci-format"
       - name: "Build project"
-        run: "mbx build --release --locked --all"
+        run: "cargo make ci-build-release -- --all --target {% raw %}${{ matrix.target }}{% endraw %}"

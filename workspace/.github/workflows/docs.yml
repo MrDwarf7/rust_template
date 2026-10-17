@@ -42,11 +42,15 @@ jobs:
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
 
       - name: "Run Cargo Doc checks"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "mbx doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
+        run: "cargo make ci-doc -- --target {% raw %}${{ matrix.target }}{% endraw %}"
 
   package-docs-unix:
     name: "Docs - package-docs-unix"
@@ -69,11 +73,15 @@ jobs:
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
 
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "mbx doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
+        run: "cargo make ci-doc -- --target {% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Ensure Zip Installed on Unix"
         run: |
@@ -112,11 +120,15 @@ jobs:
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
 
       - name: "Run Cargo Doc generation"
         env:
           RUSTDOCFLAGS: "-D warnings"
-        run: "mbx doc --no-deps --all-features --all --locked --target {% raw %}${{ matrix.target }}{% endraw %} --document-private-items"
+        run: "cargo make ci-doc -- --target {% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Upload artifact"
         uses: "actions/upload-artifact@v7"

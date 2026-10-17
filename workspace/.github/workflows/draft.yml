@@ -44,13 +44,16 @@ jobs:
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           backend: "local"
-
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
       - name: "Build"
         shell: "bash"
         run: |
           export ARTIFACT_NAME="{% raw %}${{ env.PROJECT_NAME }}{% endraw %}-{% raw %}${{ matrix.target }}{% endraw %}-{% raw %}${{ env.GITHUB_BRANCH_TAG_NAME }}{% endraw %}"
           export LICENSE_FILE="{% raw %}${{ env.LICENSE_FILE_REG }}{% endraw %}"
-          mbx build --release --locked --target "{% raw %}${{ matrix.target }}{% endraw %}"
+          cargo make ci-build-release -- --target "{% raw %}${{ matrix.target }}{% endraw %}"
           mkdir -p "${ARTIFACT_NAME}"
           cp "target/{% raw %}${{ matrix.target }}{% endraw %}/release/{% raw %}${{ env.PROJECT_NAME }}{% endraw %}" "${ARTIFACT_NAME}"
           find . -maxdepth 1 -type f -regex ".*\(${LICENSE_FILE}\)" -exec sh -c 'cp README.md "$@" "${ARTIFACT_NAME}"' _ {} +
@@ -86,9 +89,13 @@ jobs:
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           backend: "local"
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
 
       - name: "Build"
-        run: "mbx build --release --locked --target {% raw %}${{ matrix.target }}{% endraw %}"
+        run: "cargo make ci-build-release -- --target {% raw %}${{ matrix.target }}{% endraw %}"
 
       - name: "Pack artifact"
         shell: "powershell"

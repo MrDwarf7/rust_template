@@ -27,24 +27,19 @@ jobs:
         include:
           - os: "ubuntu-latest"
             target: "x86_64-unknown-linux-gnu"
-            task: "format"
-            run: "cargo fmt --all --check"
+            recipe: "ci-format"
           - os: "ubuntu-latest"
             target: "x86_64-unknown-linux-gnu"
-            task: "check"
-            run: "mbx check --all --locked"
+            recipe: "ci-check"
           - os: "ubuntu-latest"
             target: "x86_64-unknown-linux-gnu"
-            task: "clippy"
-            run: "mbx clippy --all-targets --all-features --locked -- -D warnings"
+            recipe: "ci-clippy"
           - os: "windows-latest"
             target: "x86_64-pc-windows-msvc"
-            task: "check"
-            run: "mbx check --all --locked"
+            recipe: "ci-check"
           - os: "windows-latest"
             target: "x86_64-pc-windows-msvc"
-            task: "clippy"
-            run: "mbx clippy --all-targets --all-features --locked -- -D warnings"
+            recipe: "ci-clippy"
     runs-on: "{% raw %}${{ matrix.os }}{% endraw %}"
     if: {% raw %}${{ !contains(github.event.head_commit.message, 'skip ci') }}{% endraw %}
     steps:
@@ -55,14 +50,32 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup nightly rustfmt"
+        if: {% raw %}${{ matrix.recipe == 'ci-format' }}{% endraw %}
+        uses: "./.github/actions/setup-rust"
+        with:
+          toolchain: "nightly"
+          components: "rustfmt"
+          set-default: "false"
       - name: "Setup mbx cache"
-        if: {% raw %}${{ matrix.task != 'format' }}{% endraw %}
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
-
-      - name: "{% raw %}${{ matrix.task }}{% endraw %}"
-        run: "{% raw %}${{ matrix.run }}{% endraw %}"
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
+      - name: "Install taplo"
+        if: {% raw %}${{ matrix.recipe == 'ci-format' }}{% endraw %}
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "taplo"
+      - name: "Run formatting recipe"
+        if: {% raw %}${{ matrix.recipe == 'ci-format' }}{% endraw %}
+        run: "cargo make ci-format"
+      - name: "Run build recipe"
+        if: {% raw %}${{ matrix.recipe != 'ci-format' }}{% endraw %}
+        run: "cargo make {% raw %}${{ matrix.recipe }}{% endraw %} -- --target {% raw %}${{ matrix.target }}{% endraw %}"
 
   clippy:
     name: "Build - clippy"
@@ -84,16 +97,28 @@ jobs:
         uses: "./.github/actions/setup-rust"
         with:
           target: "{% raw %}${{ matrix.target }}{% endraw %}"
+      - name: "Setup nightly rustfmt"
+        uses: "./.github/actions/setup-rust"
+        with:
+          toolchain: "nightly"
+          components: "rustfmt"
+          set-default: "false"
       - name: "Setup mbx cache"
         uses: "jdx/mr-boxington-action@47ce49b32025d93a7a2f4570815afaa2b7092240" # v1
         with:
           cache-key-suffix: "-{% raw %}${{ matrix.target }}{% endraw %}"
 
-      - name: "Run Cargo fmt"
-        run: "cargo fmt --all --check"
-
+      - name: "Install cargo-make"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "cargo-make"
+      - name: "Install taplo"
+        uses: "taiki-e/install-action@8cca0918f8471c33515202b73f56ab27f2bed283" # v2.87.29
+        with:
+          tool: "taplo"
+      - name: "Run CI formatting check"
+        run: "cargo make ci-format"
       - name: "Run Clippy with pedantic"
-        run: "mbx clippy --all-targets --all-features --locked -- -W clippy::pedantic"
-
+        run: "cargo make ci-clippy-pedantic"
       - name: "Build project"
-        run: "mbx build --release --locked --all"
+        run: "cargo make ci-build-release -- --all --target {% raw %}${{ matrix.target }}{% endraw %}"

@@ -115,6 +115,49 @@ args = [
   "-W",
   "clippy::pedantic",
 ]
+
+# CI checks are intentionally non-mutating and run once from the generated root.
+[tasks.ci-format]
+workspace = false
+env.RUSTUP_TOOLCHAIN = "nightly"
+command = "${CARGO_CMD}"
+args = ["fmt", "--all", "--check"]
+dependencies = ["ci-taplo-format"]
+
+[tasks.ci-taplo-format]
+workspace = false
+command = "taplo"
+args = ["format", "--check"]
+
+[tasks.ci-check]
+workspace = false
+command = "${CARGO_CMD}"
+args = ["check", "--all", "--locked", "${@}"]
+
+[tasks.ci-clippy]
+workspace = false
+command = "${CARGO_CMD}"
+args = ["clippy", "--all-targets", "--all-features", "--locked", "--", "-D", "warnings", "${@}"]
+
+[tasks.ci-clippy-pedantic]
+workspace = false
+command = "${CARGO_CMD}"
+args = ["clippy", "--all-targets", "--all-features", "--locked", "--", "-W", "clippy::pedantic", "${@}"]
+
+[tasks.ci-test]
+workspace = false
+command = "${CARGO_CMD}"
+args = ["test", "--all", "--locked", "${@}"]
+
+[tasks.ci-build-release]
+workspace = false
+command = "${CARGO_CMD}"
+args = ["build", "--release", "--locked", "${@}"]
+
+[tasks.ci-doc]
+workspace = false
+command = "${CARGO_CMD}"
+args = ["doc", "--no-deps", "--all-features", "--all", "--locked", "--document-private-items", "${@}"]
 # END Core bare. min
 
 # START Tests
