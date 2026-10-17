@@ -12,7 +12,7 @@
   <br>
   <a href="https://crates.io/crates/{{ crate_name }}"><img src="https://img.shields.io/crates/v/{{ crate_name }}" alt="crates.io"></a>
   <a href="https://github.com/{{ github_user }}/{{ repo_name }}/actions/workflows/build.yml"><img src="https://github.com/{{ github_user }}/{{ repo_name }}/actions/workflows/build.yml/badge.svg" alt="build"></a>
-  <a href="LICENSE-MIT"><img src="https://img.shields.io/badge/license-MIT-blue" alt="license"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="license"></a>
   <a href="https://github.com/{{ github_user }}/{{ repo_name }}/releases"><img src="https://img.shields.io/github/v/release/{{ github_user }}/{{ repo_name }}" alt="release"></a>
 </p>
 
@@ -28,11 +28,11 @@
 
 ## Features
 
-- **Feature 1** — Description
-- **Feature 2** — Description
-- **Feature 3** — Description
-- **Cross-platform** — Linux, macOS, Windows
-- **Zero dependencies** — Single binary, no runtime
+- **Feature 1** -- Description
+- **Feature 2** -- Description
+- **Feature 3** -- Description
+- **Cross-platform** -- Linux, macOS, Windows
+- **Zero dependencies** -- Single binary, no runtime
 
 ## Screenshots
 
@@ -53,17 +53,16 @@ cargo install {{ crate_name }}
 curl -fsSL https://github.com/{{ github_user }}/{{ repo_name }}/raw/main/build/install.sh | sh
 ```
 
-Installs to `/usr/local/bin` (or `~/.local/bin` if not writable). Set `{{ project_name_upper }}_VERSION=vX.Y.Z` to pin a version.
+Installs to `/usr/local/bin` (or `~/.local/bin` if not writable). Set
+`{{ project_name_upper }}_VERSION=vX.Y.Z` to pin a version.
 
 ### System Packages
 
-| OS | Command |
-|----|---------|
-| Arch | `pacman -S {{ crate_name }}` |
-| macOS | `brew install {{ crate_name }}` |
-| Fedora | `dnf copr enable {{ github_user }}/{{ crate_name }} && dnf install {{ crate_name }}` |
-| NixOS | `nix-shell -p {{ crate_name }}` |
-| Windows | `winget install {{ crate_name }}` |
+- **Arch**: `pacman -S {{ crate_name }}`
+- **macOS**: `brew install {{ crate_name }}`
+- **Fedora**: `dnf copr enable {{ github_user }}/{{ crate_name }} && dnf install {{ crate_name }}`
+- **NixOS**: `nix-shell -p {{ crate_name }}`
+- **Windows**: `winget install {{ crate_name }}`
 
 ### Release Archives
 
@@ -71,24 +70,23 @@ Download from [Releases](https://github.com/{{ github_user }}/{{ repo_name }}/re
 
 Each archive contains:
 
-```
+```text
 {{ crate_name }}-<target>-<tag>.zip
   {{ crate_name }}[.exe]
   README.md
-  LICENSE-MIT
-  LICENSE-APACHE
+  LICENSE
   THIRD_PARTY_NOTICES.md
 ```
 
 ### Supported Targets
 
-| OS | Arch | Triple |
-|----|------|--------|
-| Linux | x86_64 | `x86_64-unknown-linux-gnu` |
-| Linux | arm64 | `aarch64-unknown-linux-gnu` |
-| macOS | Intel | `x86_64-apple-darwin` |
-| macOS | Apple Silicon | `aarch64-apple-darwin` |
-| Windows | x86_64 | `x86_64-pc-windows-msvc` |
+| OS      | Arch          | Triple                      |
+| ------- | ------------- | --------------------------- |
+| Linux   | x86_64        | `x86_64-unknown-linux-gnu`  |
+| Linux   | arm64         | `aarch64-unknown-linux-gnu` |
+| macOS   | Intel         | `x86_64-apple-darwin`       |
+| macOS   | Apple Silicon | `aarch64-apple-darwin`      |
+| Windows | x86_64        | `x86_64-pc-windows-msvc`    |
 
 ## Usage
 
@@ -114,23 +112,23 @@ RUST_LOG=debug {{ crate_name }} input.txt
 
 ### Flags
 
-| Flag | Short | Description |
-|------|-------|-------------|
-| `--help` | `-h` | Show help |
-| `--version` | `-V` | Print version |
-| `--output` | `-o` | Output file path |
-| `--dry-run` | | Show actions without executing |
-| `--quiet` | `-q` | Suppress non-error output |
-| `--verbose` | `-v` | Verbose output (repeat for more) |
+| Flag        | Short | Description                      |
+| ----------- | ----- | -------------------------------- |
+| `--help`    | `-h`  | Show help                        |
+| `--version` | `-V`  | Print version                    |
+| `--output`  | `-o`  | Output file path                 |
+| `--dry-run` |       | Show actions without executing   |
+| `--quiet`   | `-q`  | Suppress non-error output        |
+| `--verbose` | `-v`  | Verbose output (repeat for more) |
 
 Logging: `RUST_LOG=debug {{ crate_name }} ...` (default: `info`)
 
 ## Dependencies
 
-| Tool | Minimum Version | Install |
-|------|-----------------|---------|
-| ffmpeg | 4.0+ | `pacman -S ffmpeg` / `brew install ffmpeg` |
-| libpcap | 1.9+ | `pacman -S libpcap` / `apt install libpcap-dev` |
+| Tool    | Minimum Version | Install                                         |
+| ------- | --------------- | ----------------------------------------------- |
+| ffmpeg  | 4.0+            | `pacman -S ffmpeg` / `brew install ffmpeg`      |
+| libpcap | 1.9+            | `pacman -S libpcap` / `apt install libpcap-dev` |
 
 ## Configuration
 
@@ -141,13 +139,14 @@ option = "value"
 ```
 
 Environment variables:
-- `{{ project_name_upper }}_LOG=debug` — Enable debug logging
+
+- `{{ project_name_upper }}_LOG=debug` -- Enable debug logging
 
 ## How It Works
 
-1. **Step 1** — Description
-2. **Step 2** — Description
-3. **Step 3** — Description
+1. **Step 1** -- Description
+2. **Step 2** -- Description
+3. **Step 3** -- Description
 
 ## Build
 
@@ -167,19 +166,16 @@ make run            # or: cargo run -- <args>
 
 ## Comparison
 
-| Feature | {{ crate_name }} | Competitor A | Competitor B |
-|---------|-----------------|--------------|--------------|
-| Feature 1 | ✅ | ✅ | ❌ |
-| Feature 2 | ✅ | ❌ | ✅ |
-| Feature 3 | ✅ | ✅ | ✅ |
+- **Feature 1**: supported by {{ crate_name }} and Competitor A; not supported by Competitor B.
+- **Feature 2**: supported by {{ crate_name }} and Competitor B; not supported by Competitor A.
+- **Feature 3**: supported by {{ crate_name }}, Competitor A, and Competitor B.
 
 ## Links
 
 - [Documentation](https://docs.example.com)
-- [Changelog](CHANGELOG.md)
 - [Discord](https://discord.gg/XXX)
 - [Issues](https://github.com/{{ github_user }}/{{ repo_name }}/issues)
 
 ## License
 
-MIT OR Apache-2.0 — see [LICENSE-MIT](LICENSE-MIT) and [LICENSE-APACHE](LICENSE-APACHE).
+MIT License -- see [LICENSE](LICENSE).
