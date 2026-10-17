@@ -3,6 +3,7 @@ cargo_generate_version = ">=0.24.0"
 vcs = "None"
 
 [hooks]
+pre = ["../hooks/toml.rhai"]
 post = ["../hooks/ws_crate/post.rhai"]
 
 [placeholders]

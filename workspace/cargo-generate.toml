@@ -9,7 +9,7 @@ ignore = ["Cargo.lock", ".extras"]
 # Member Cargo.toml files are written by ../hooks/workspace/post.rhai.
 [hooks]
 init = ["../hooks/init.rhai"]
-pre = ["../hooks/pre.rhai", "../hooks/workspace/pre.rhai"]
+pre = ["../hooks/pre.rhai", "../hooks/toml.rhai", "../hooks/workspace/pre.rhai"]
 post = ["../hooks/workspace/post.rhai", "../hooks/finish.rhai"]
 
 [placeholders]

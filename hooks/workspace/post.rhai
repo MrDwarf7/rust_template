@@ -9,8 +9,8 @@
 // read/copy builtin, so that one step shells out (cp / xcopy).
 
 fn member_manifest(name) {
-    let description = variable::get("short_description");
-    let github_user = variable::get("github_user");
+    let description = variable::get("short_description_toml");
+    let github_user = variable::get("github_user_toml");
     `[package]
 name              = "${name}"
 description       = "${description}"

@@ -8,7 +8,7 @@ ignore = ["Cargo.lock", ".extras"]
 # Shared hooks live in ../hooks (repo root), resolved from this folder.
 [hooks]
 init = ["../hooks/init.rhai"]
-pre = ["../hooks/pre.rhai"]
+pre = ["../hooks/pre.rhai", "../hooks/toml.rhai"]
 post = ["../hooks/finish.rhai"]
 
 [placeholders]

@@ -9,7 +9,7 @@ name        = "{{ crate_name }}"
 version     = "0.1.0"
 authors     = [ "{{ authors }}" ]
 edition     = "2024"
-description = "{{ short_description }}"
+description = "{{ short_description_toml }}"
 # license = "MIT"
 license-file = "LICENSE"
 readme       = "README.md"
@@ -28,9 +28,9 @@ macros  = [  ]
 # Windows exe icon + version info (release builds). Assets under assets/icon.ico.
 [package.metadata.winresource]
 OriginalFilename = "{{ crate_name }}.exe"
-FileDescription  = "{{ short_description }}"
-LegalCopyright   = "Copyright (c) {{ github_user }}"
-#CompanyName = "https://github.com/{{ github_user }}"
+FileDescription  = "{{ short_description_toml }}"
+LegalCopyright   = "Copyright (c) {{ github_user_toml }}"
+#CompanyName = "https://github.com/{{ github_user_toml }}"
 
 [target.'cfg(windows)'.build-dependencies]
 winresource = "0.1.19"
