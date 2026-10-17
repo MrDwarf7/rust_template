@@ -1,0 +1,21 @@
+#:schema https://raw.githubusercontent.com/rvben/rumdl/main/rumdl.schema.json
+
+# Project markdown lint rules.
+# Keep copied third-party Hotpath skills in their original format.
+[global]
+exclude = ["**/.agents/skills/hotpath-*/**"]
+
+# These files intentionally use inline HTML for layout and disclosures.
+[per-file-ignores]
+"README.md" = ["MD033"]
+".github/PULL_REQUEST_TEMPLATE.md" = ["MD033"]
+[MD013]
+line-length = 100
+reflow = true
+
+[MD041]
+enabled = false
+
+[MD060]
+enabled = true
+style = "aligned"

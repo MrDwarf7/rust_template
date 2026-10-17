@@ -1,0 +1,27 @@
+[tools]
+"cargo:cargo-make" = "latest"                      # Makefile.toml task runner.
+"cargo:taplo-cli" = "latest"                       # TOML linting and formatting tasks.
+"git-cliff" = "latest"                             # Changelog and release tasks.
+"cargo:bacon" = "latest"                           # Interactive jobs from bacon.toml.
+"cargo-deny" = "latest"                            # Dependency policy checks.
+"aqua:nextest-rs/nextest/cargo-nextest" = "latest" # Rust test runner.
+"mr-boxington" = "latest"                          # Cargo build cache and wrapper.
+"cargo:cargo-watch" = "latest"                     # Build watch tasks.
+"cargo:cargo-edit" = "latest"                      # Release version bumps via cargo set-version.
+typst = "latest"                                   # Optional documentation build tasks.
+"cargo:rumdl" = "latest"                           # Markdown linting and formatting.
+uv = "latest"                                      # Runs the PEP 723 docs scripts.
+{% if perf_testing %}
+"cargo:samply" = "latest" # hotpath-cpu runtime dependency.
+[tools."cargo:hotpath"]
+version = "latest"
+features = ["tui", "cloud", "utils"]
+{% endif %}
+
+[settings]
+minimum_release_age = "24h"
+cargo.binstall = true
+cargo.binstall_quickinstall = true
+
+[wrappers]
+cargo = { command = "mbx", env = { MBX_CARGO_SHIM_MODE = "1" } }

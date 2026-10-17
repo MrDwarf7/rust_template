@@ -7,6 +7,21 @@ extend = [
   { path = "./build/release-tasks.toml", optional = true },
 ]
 
+# cargo-make removes the mise Cargo wrapper from PATH; select mbx by availability.
+# Set CARGO_CMD=cargo to force the plain Cargo fallback.
+env_scripts = ['''
+#!@duckscript
+cargo_cmd = get_env CARGO_CMD
+if is_empty ${cargo_cmd}
+    mbx_path = which mbx
+    if is_empty ${mbx_path}
+        set_env CARGO_CMD cargo
+    else
+        set_env CARGO_CMD mbx
+    end
+end
+''']
+
 [env]
 ROOT = "${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}"
 SCRIPT_DIR = "${ROOT}/scripts"
@@ -19,7 +34,7 @@ SLEEP_TIME = "15"
 
 # GitHub / repo metadata (filled in by cargo-generate)
 GITHUB_USER = "{{ github_user }}"
-REPO_NAME = "{{ repo_name }}"                                       # GitHub repo name (optional .rs suffix)
+REPO_NAME = "{{ repo_name }}"                             # GitHub repo name (optional .rs suffix)
 GITHUB_URL = "https://github.com/{{ github_user }}/{{ repo_name }}"
 
 # Changelog tool configuration

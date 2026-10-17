@@ -1,0 +1,56 @@
+# Project-shared mbx policy. Linker binaries are downloaded by mbx, not mise.
+incremental = false
+eager_incremental = false
+share_out_dir = true
+share_workspace_root = false
+build_script_execution = true
+cc = true
+
+[linker]
+default = "system"
+
+{% if is_linux and linker == "lld" %}
+[linker.profiles.dev]
+x86_64-unknown-linux-gnu = "rust-lld"
+aarch64-unknown-linux-gnu = "rust-lld"
+aarch64-unknown-apple-darwin = "system"
+
+[linker.profiles.release]
+x86_64-unknown-linux-gnu = "rust-lld"
+aarch64-unknown-linux-gnu = "rust-lld"
+aarch64-unknown-apple-darwin = "system"
+{% elsif is_linux and linker == "mold" %}
+[linker.profiles.dev]
+x86_64-unknown-linux-gnu = "mold@3.0.0"
+aarch64-unknown-linux-gnu = "mold@3.0.0"
+aarch64-unknown-apple-darwin = "system"
+
+[linker.profiles.release]
+x86_64-unknown-linux-gnu = "mold@3.0.0"
+aarch64-unknown-linux-gnu = "mold@3.0.0"
+aarch64-unknown-apple-darwin = "system"
+{% elsif is_linux and linker == "wild" %}
+[linker.profiles.dev]
+x86_64-unknown-linux-gnu = "wild@0.10.0"
+aarch64-unknown-linux-gnu = "wild@0.10.0"
+aarch64-unknown-apple-darwin = "system"
+
+[linker.profiles.release]
+x86_64-unknown-linux-gnu = "wild@0.10.0"
+aarch64-unknown-linux-gnu = "wild@0.10.0"
+aarch64-unknown-apple-darwin = "system"
+{% else %}
+[linker.profiles.dev]
+{% if is_linux -%}
+x86_64-unknown-linux-gnu = "system"
+aarch64-unknown-linux-gnu = "system"
+{% endif -%}
+aarch64-unknown-apple-darwin = "system"
+
+[linker.profiles.release]
+{% if is_linux -%}
+x86_64-unknown-linux-gnu = "system"
+aarch64-unknown-linux-gnu = "system"
+{% endif -%}
+aarch64-unknown-apple-darwin = "system"
+{% endif -%}
