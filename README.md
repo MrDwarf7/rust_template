@@ -7,7 +7,33 @@ this subfolder layout is tested before deciding whether to replace it.
 Server flavor is **not** in this experiment. That comes after cli +
 workspace + ws_crate, from `rpa_lite` / `agent_axum.rs`.
 
-Requires `cargo-generate` 0.24+ (`cargo generate --version`).
+## Prerequisites
+
+Install Rust/Cargo and **cargo-generate 0.24+** before using the commands
+below. cargo-generate is a separate tool; it is not bundled with Cargo.
+
+With Cargo, follow the [official cargo-generate installation instructions](https://cargo-generate.github.io/cargo-generate/installation.html):
+
+```bash
+cargo install cargo-generate --locked
+```
+
+Or use [mise's Cargo backend](https://mise.jdx.dev/dev-tools/backends/cargo.html):
+
+```bash
+mise use --global cargo:cargo-generate@latest
+```
+
+This installs the tool and adds it to your global mise configuration. Use a
+mise-activated shell so the installed command is on `PATH`. For installation
+only, without adding it to configuration, use
+`mise install cargo:cargo-generate@latest` instead.
+
+Check that the tool is available before generating a project:
+
+```bash
+cargo generate --version
+```
 
 ## Generate
 
