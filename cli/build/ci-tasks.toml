@@ -1,0 +1,64 @@
+# CI checks are intentionally non-mutating and run directly in the generated root.
+[tasks.ci-format]
+env.RUSTUP_TOOLCHAIN = "nightly"
+command = "${CARGO_CMD}"
+args = ["fmt", "--all", "--check"]
+dependencies = ["ci-taplo-format", "ci-rumdl-format"]
+
+[tasks.ci-taplo-format]
+command = "taplo"
+args = ["format", "--check"]
+
+[tasks.ci-rumdl-format]
+command = "rumdl"
+args = ["check", "README.md"]
+
+[tasks.ci-check]
+command = "${CARGO_CMD}"
+args = ["check", "--all", "--locked", "${@}"]
+
+[tasks.ci-clippy]
+command = "${CARGO_CMD}"
+args = [
+  "clippy",
+  "--all-targets",
+  "--all-features",
+  "--locked",
+  "${@}",
+  "--",
+  "-D",
+  "warnings",
+]
+
+[tasks.ci-clippy-pedantic]
+command = "${CARGO_CMD}"
+args = [
+  "clippy",
+  "--all-targets",
+  "--all-features",
+  "--locked",
+  "${@}",
+  "--",
+  "-W",
+  "clippy::pedantic",
+]
+
+[tasks.ci-test]
+command = "${CARGO_CMD}"
+args = ["test", "--all", "--locked", "${@}"]
+
+[tasks.ci-build-release]
+command = "${CARGO_CMD}"
+args = ["build", "--release", "--locked", "${@}"]
+
+[tasks.ci-doc]
+command = "${CARGO_CMD}"
+args = [
+  "doc",
+  "--no-deps",
+  "--all-features",
+  "--all",
+  "--locked",
+  "--document-private-items",
+  "${@}",
+]

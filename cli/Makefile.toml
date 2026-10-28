@@ -1,5 +1,6 @@
 extend = [
   { path = "./build/common-tasks.toml" },
+  { path = "./build/ci-tasks.toml" },
   { path = "./build/dist-tasks.toml" },
   { path = "./build/docker-tasks.toml", optional = true },
   { path = "./build/watch-tasks.toml", optional = true },
@@ -66,6 +67,18 @@ run_task = { name = [
 [tasks.A]
 description = "Full verification sweep for the repository."
 run_task = { name = ["format", "check", "clippy", "a"], parallel = false }
+
+[tasks.ci]
+description = "Non-mutating CI verification and release build."
+workspace = false
+run_task = { name = [
+  "ci-format",
+  "ci-check",
+  "ci-clippy",
+  "ci-test",
+  "ci-build-release",
+  "ci-doc",
+], parallel = false }
 
 [tasks.r]
 run_task = { name = ["run"], parallel = false }
