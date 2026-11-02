@@ -131,6 +131,7 @@ command = "${CARGO_CMD}"
 args = ["test", "${@}"]
 
 [tasks.test_all]
+workspace = false
 command = "${CARGO_CMD}"
 args = ["test", "--all", "${@}"]
 
@@ -139,6 +140,7 @@ command = "${CARGO_CMD}"
 args = ["test", "${@}", "--", "--nocapture"]
 
 [tasks.test_all_no_capture]
+workspace = false
 command = "${CARGO_CMD}"
 args = ["test", "--all", "${@}", "--", "--nocapture"]
 # END Tests
@@ -148,37 +150,35 @@ args = ["test", "--all", "${@}", "--", "--nocapture"]
 command = "${CARGO_CMD}"
 # We also capture anything after the main command
 args = ["run", "${@}"]
-dependencies = ["build_workspace", "build"]
+dependencies = ["build_workspace"]
 
 [tasks.run_release]
 command = "${CARGO_CMD}"
 args = ["run", "--release", "${@}"]
-dependencies = ["build_release_workspace", "build_release"]
+dependencies = ["build_release_workspace"]
 
 [tasks.run_as_project]
 command = "${CARGO_CMD}"
 args = ["run", " --bin", "${PROJECT_NAME}", "${@}"]
-dependencies = [
-  "build_workspace",
-  "build",
-  "build_release_workspace",
-  "build_release",
-]
+dependencies = ["build_workspace","build_release_workspace"]
 
 # END Function outputs
 
 # START Workspaces
 [tasks.build_workspace]
+workspace = false
 command = "${CARGO_CMD}"
 args = ["${BUILD_ARG}", "--workspace", "${@}"]
 dependencies = ["format"]
 
 [tasks.build_release_workspace]
+workspace = false
 command = "${CARGO_CMD}"
 args = ["${BUILD_ARG}", "--release", "--workspace", "${@}"]
 dependencies = ["format"]
 
 [tasks.test_workspace]
+workspace = false
 command = "${CARGO_CMD}"
 args = ["test", "--workspace", "${@}"]
 # END Workspaces

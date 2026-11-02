@@ -47,24 +47,15 @@ env.PROFILE = "release"
 run_task = { name = ["build_release"], parallel = false }
 
 [tasks.ba]
-run_task = { name = [
-  "build_workspace",
-  "build",
-  "build_release_workspace",
-  "build_release",
-], parallel = false }
+workspace = false
+run_task = { name = ["build_workspace","build_release_workspace"], parallel = false }
 
 [tasks.a]
-run_task = { name = [
-  "build_workspace",
-  "build",
-  "test",
-  "build_release_workspace",
-  "build_release",
-  "test_all",
-], parallel = false }
+workspace = false
+run_task = { name = ["build_workspace","test_all","build_release_workspace"], parallel = false }
 
 [tasks.A]
+workspace = false
 description = "Full verification sweep for the repository."
 run_task = { name = ["format", "check", "clippy", "a"], parallel = false }
 
@@ -87,9 +78,11 @@ env.PROFILE = "release"
 run_task = { name = ["run_release"], parallel = false }
 
 [tasks.bw]
+workspace = false
 run_task = { name = ["build_workspace"], parallel = false }
 
 [tasks.brw]
+workspace = false
 env.PROFILE = "release"
 run_task = { name = ["build_release_workspace"], parallel = false }
 
@@ -97,15 +90,18 @@ run_task = { name = ["build_release_workspace"], parallel = false }
 run_task = { name = ["test"], parallel = false }
 
 [tasks.ta]
+workspace = false
 run_task = { name = ["test_all"], parallel = false }
 
 [tasks.tnc]
 run_task = { name = ["test_no_capture"], parallel = false }
 
 [tasks.tanc]
+workspace = false
 run_task = { name = ["test_all_no_capture"], parallel = false }
 
 [tasks.f]
+workspace = false
 run_task = { name = ["format"], parallel = false }
 
 [tasks.c]
@@ -124,6 +120,7 @@ run_task = { name = ["clean", "a"], parallel = false }
 run_task = { name = "print_all", parallel = false }
 
 [tasks.up]
+workspace = false
 run_task = { name = [
   "a",
   "docker_start",

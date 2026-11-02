@@ -1,7 +1,6 @@
 include = ["**/*.toml"]
 exclude = [".rustfmt.toml"]
 
-#[formatting]
 
 [[rule]]
 include = ["**/Cargo.toml", ".taplo.toml", "Cargo.toml"]
