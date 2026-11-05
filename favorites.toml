@@ -17,15 +17,15 @@
 
 [favorites.rt-cli]
 description = "rust_template: single-crate CLI / app"
-git = "https://github.com/MrDwarf7/rust_template"
-subfolder = "cli"
+git         = "https://github.com/MrDwarf7/rust_template"
+subfolder   = "cli"
 
 [favorites.rt-workspace]
 description = "rust_template: virtual workspace, crates/<name> (+ extra members)"
-git = "https://github.com/MrDwarf7/rust_template"
-subfolder = "workspace"
+git         = "https://github.com/MrDwarf7/rust_template"
+subfolder   = "workspace"
 
 [favorites.rt-crate]
 description = "rust_template: one library member crate with namespaced errors and optional prefix"
-git = "https://github.com/MrDwarf7/rust_template"
-subfolder = "ws_crate"
+git         = "https://github.com/MrDwarf7/rust_template"
+subfolder   = "ws_crate"

@@ -1,9 +1,9 @@
 [env]
-ROOT = "."
+ROOT        = "."
 DOCS_FOLDER = "${ROOT}/docs"
 
-INPUT_TYPE = "typ"
-INPUT_NAME = "gdd.${INPUT_TYPE}"
+INPUT_TYPE  = "typ"
+INPUT_NAME  = "gdd.${INPUT_TYPE}"
 SOURCE_FILE = "${DOCS_FOLDER}/${INPUT_NAME}"
 
 OUTPUT_TYPE = "pdf"

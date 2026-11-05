@@ -21,58 +21,61 @@ has_cmd() { command -v "$1" >/dev/null 2>&1; }
 cleanup() { [ -n "${tmpdir:-}" ] && rm -rf "$tmpdir"; }
 trap cleanup EXIT
 
-die() { echo "install: $*" >&2; exit 1; }
+die() {
+  echo "install: $*" >&2
+  exit 1
+}
 log() { echo "install: $*"; }
 
 # ---- platform detection ----
 detect_os() {
-    os=$(uname -s)
-    case "$os" in
-        Linux)  echo linux ;;
-        Darwin) echo macos ;;
-        MINGW*|MSYS*|CYGWIN*) echo windows ;;
-        *) die "unsupported OS: $os (expected Linux, macOS, or Windows)" ;;
-    esac
+  os=$(uname -s)
+  case "$os" in
+  Linux) echo linux ;;
+  Darwin) echo macos ;;
+  MINGW* | MSYS* | CYGWIN*) echo windows ;;
+  *) die "unsupported OS: $os (expected Linux, macOS, or Windows)" ;;
+  esac
 }
 
 detect_arch() {
-    arch=$(uname -m)
-    case "$arch" in
-        x86_64|amd64)   echo x86_64 ;;
-        aarch64|arm64)  echo aarch64 ;;
-        *) die "unsupported arch: $arch" ;;
-    esac
+  arch=$(uname -m)
+  case "$arch" in
+  x86_64 | amd64) echo x86_64 ;;
+  aarch64 | arm64) echo aarch64 ;;
+  *) die "unsupported arch: $arch" ;;
+  esac
 }
 
 os_to_target() {
-    case "$1" in
-        linux)   echo "unknown-linux-gnu" ;;
-        macos)   echo "apple-darwin" ;;
-        windows) echo "pc-windows-msvc" ;;
-    esac
+  case "$1" in
+  linux) echo "unknown-linux-gnu" ;;
+  macos) echo "apple-darwin" ;;
+  windows) echo "pc-windows-msvc" ;;
+  esac
 }
 
 # ---- version resolution ----
 fetch_latest_version() {
-    auth_arg=""
-    [ -n "${GITHUB_TOKEN:-}" ] && auth_arg="-H \"Authorization: Bearer ***\""
+  auth_arg=""
+  [ -n "${GITHUB_TOKEN:-}" ] && auth_arg="-H \"Authorization: Bearer ***\""
 
-    # Try GitHub API first
-    api_url="https://api.github.com/repos/$REPO/releases/latest"
-    tag=$(eval curl -fsSL "$auth_arg" "$api_url" 2>/dev/null |
-        grep '"tag_name"' |
-        sed 's/.*"tag_name": *"\([^"]*\)".*/\1/' 2>/dev/null) || \
-        tag=""
+  # Try GitHub API first
+  api_url="https://api.github.com/repos/$REPO/releases/latest"
+  tag=$(eval curl -fsSL "$auth_arg" "$api_url" 2>/dev/null |
+    grep '"tag_name"' |
+    sed 's/.*"tag_name": *"\([^"]*\)".*/\1/' 2>/dev/null) ||
+    tag=""
 
-    # Fallback: follow release/latest redirect
-    if [ -z "$tag" ]; then
-        tag=$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
-            "$RELEASES_URL/latest" 2>/dev/null |
-            sed -n 's|.*/tag/||p')
-    fi
+  # Fallback: follow release/latest redirect
+  if [ -z "$tag" ]; then
+    tag=$(curl -fsSLI -o /dev/null -w '%{url_effective}' \
+      "$RELEASES_URL/latest" 2>/dev/null |
+      sed -n 's|.*/tag/||p')
+  fi
 
-    [ -n "$tag" ] || die "could not resolve latest release. Install via \`cargo install {{ crate_name }}\` instead."
-    echo "$tag"
+  [ -n "$tag" ] || die "could not resolve latest release. Install via \`cargo install {{ crate_name }}\` instead."
+  echo "$tag"
 }
 
 # ---- main ----
@@ -98,11 +101,11 @@ checksum_url="$download_url.sha256"
 
 # Install dir
 if [ -z "$INSTALL_DIR" ]; then
-    if [ -w "/usr/local/bin" ]; then
-        INSTALL_DIR="/usr/local/bin"
-    else
-        INSTALL_DIR="$HOME/.local/bin"
-    fi
+  if [ -w "/usr/local/bin" ]; then
+    INSTALL_DIR="/usr/local/bin"
+  else
+    INSTALL_DIR="$HOME/.local/bin"
+  fi
 fi
 mkdir -p "$INSTALL_DIR"
 
@@ -113,24 +116,24 @@ curl -fsSL "$download_url" -o "$tmpdir/$artifact"
 
 # Checksum verification (best-effort)
 if has_cmd sha256sum; then
-    expected=$(curl -fsSL "$checksum_url" 2>/dev/null | awk '{print $1}') || expected=""
-    if [ -n "$expected" ]; then
-        actual=$(sha256sum "$tmpdir/$artifact" | awk '{print $1}')
-        [ "$expected" = "$actual" ] || die "checksum mismatch for $artifact"
-        log "checksum verified"
-    fi
+  expected=$(curl -fsSL "$checksum_url" 2>/dev/null | awk '{print $1}') || expected=""
+  if [ -n "$expected" ]; then
+    actual=$(sha256sum "$tmpdir/$artifact" | awk '{print $1}')
+    [ "$expected" = "$actual" ] || die "checksum mismatch for $artifact"
+    log "checksum verified"
+  fi
 elif has_cmd shasum; then
-    expected=$(curl -fsSL "$checksum_url" 2>/dev/null | awk '{print $1}') || expected=""
-    if [ -n "$expected" ]; then
-        actual=$(shasum -a 256 "$tmpdir/$artifact" | awk '{print $1}')
-        [ "$expected" = "$actual" ] || die "checksum mismatch for $artifact"
-        log "checksum verified"
-    fi
+  expected=$(curl -fsSL "$checksum_url" 2>/dev/null | awk '{print $1}') || expected=""
+  if [ -n "$expected" ]; then
+    actual=$(shasum -a 256 "$tmpdir/$artifact" | awk '{print $1}')
+    [ "$expected" = "$actual" ] || die "checksum mismatch for $artifact"
+    log "checksum verified"
+  fi
 fi
 
 # Unzip
-has_cmd unzip && unzip -qo "$tmpdir/$artifact" -d "$tmpdir/extracted" || \
-    die "unzip is required. Install it with your package manager."
+has_cmd unzip && unzip -qo "$tmpdir/$artifact" -d "$tmpdir/extracted" ||
+  die "unzip is required. Install it with your package manager."
 
 # Install binary
 src=$(find "$tmpdir/extracted" -type f -name "${BIN}${exe}" 2>/dev/null | head -1)
@@ -142,7 +145,7 @@ log "installed to $INSTALL_DIR/$BIN${exe}"
 
 # PATH hint
 case ":$PATH:" in
-    *":$INSTALL_DIR:"*) ;;
+*":$INSTALL_DIR:"*) ;;
 *) echo "  note: add $INSTALL_DIR to your PATH if not already" ;;
 esac
 

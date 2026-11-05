@@ -1,21 +1,21 @@
 # CI checks are intentionally non-mutating and run directly in the generated root.
 [tasks.ci-format]
 env.RUSTUP_TOOLCHAIN = "nightly"
-command = "${CARGO_CMD}"
-args = ["fmt", "--all", "--check"]
-dependencies = ["ci-taplo-format", "ci-rumdl-format"]
+command              = "${CARGO_CMD}"
+args                 = [ "fmt", "--all", "--check" ]
+dependencies         = [ "ci-taplo-format", "ci-rumdl-format" ]
 
 [tasks.ci-taplo-format]
 command = "taplo"
-args = ["format", "--check"]
+args    = [ "format", "--check" ]
 
 [tasks.ci-rumdl-format]
 command = "rumdl"
-args = ["check", "README.md"]
+args    = [ "check", "README.md" ]
 
 [tasks.ci-check]
 command = "${CARGO_CMD}"
-args = ["check", "--all", "--locked", "${@}"]
+args    = [ "check", "--all", "--locked", "${@}" ]
 
 [tasks.ci-clippy]
 command = "${CARGO_CMD}"
@@ -45,11 +45,11 @@ args = [
 
 [tasks.ci-test]
 command = "${CARGO_CMD}"
-args = ["test", "--all", "--locked", "${@}"]
+args    = [ "test", "--all", "--locked", "${@}" ]
 
 [tasks.ci-build-release]
 command = "${CARGO_CMD}"
-args = ["build", "--release", "--locked", "${@}"]
+args    = [ "build", "--release", "--locked", "${@}" ]
 
 [tasks.ci-doc]
 command = "${CARGO_CMD}"

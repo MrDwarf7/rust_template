@@ -1,24 +1,24 @@
 # Project-shared mbx policy. Linker binaries are downloaded by mbx, not mise.
-incremental = false
-eager_incremental = false
-share_out_dir = true
-share_workspace_root = false
+incremental            = false
+eager_incremental      = false
+share_out_dir          = true
+share_workspace_root   = false
 build_script_execution = true
-cc = true
+cc                     = true
 
 # Release builds and non-Linux targets keep the system linker.
 [linker]
 default = "system"
 [linker.profiles.dev]
-default = "system"
-x86_64-apple-darwin = "system"
-aarch64-apple-darwin = "system"
-x86_64-unknown-linux-gnu = "{{ linker_selector }}"
+default                   = "system"
+x86_64-apple-darwin       = "system"
+aarch64-apple-darwin      = "system"
+x86_64-unknown-linux-gnu  = "{{ linker_selector }}"
 aarch64-unknown-linux-gnu = "{{ linker_selector }}"
 
 [linker.profiles.release]
-default = "system"
-x86_64-unknown-linux-gnu = "system"
+default                   = "system"
+x86_64-unknown-linux-gnu  = "system"
 aarch64-unknown-linux-gnu = "system"
-x86_64-apple-darwin = "system"
-aarch64-apple-darwin = "system"
+x86_64-apple-darwin       = "system"
+aarch64-apple-darwin      = "system"

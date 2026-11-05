@@ -3,7 +3,7 @@ cargo_generate_version = ">=0.24.0"
 # Do not auto git-init; the post hook honors vcs_kind (jj | git | none).
 vcs = "None"
 # Template-only files. Template logos/icons are dropped via .genignore.
-ignore = ["Cargo.lock", ".extras"]
+ignore = [ "Cargo.lock", ".extras" ]
 
 # Shared hooks live in ../hooks (repo root), resolved from this folder.
 # Member Cargo.toml files are written by ../hooks/workspace/post.rhai.
@@ -16,7 +16,7 @@ pre = [
   "../hooks/toml.rhai",
   "../hooks/workspace/pre.rhai",
 ]
-post = ["../hooks/workspace/post.rhai", "../hooks/finish.rhai"]
+post = [ "../hooks/workspace/post.rhai", "../hooks/finish.rhai" ]
 
 # Shared prompts come first, in the same order in every sub-template.
 [placeholders]
@@ -35,10 +35,10 @@ crate_prefix = { type = "string", prompt = "Crate name prefix for member crates 
 extra_crates = { type = "string", prompt = "Extra member crate names (comma-separated, blank for just one)?", default = "" }
 
 [conditional.'!keep_bacon']
-ignore = ["bacon.toml"]
+ignore = [ "bacon.toml" ]
 
 [conditional.'!keep_dev_dirs']
-ignore = ["data", "scratch"]
+ignore = [ "data", "scratch" ]
 
 [conditional.'!perf_testing']
 ignore = [

@@ -53,7 +53,7 @@ write_svg() {
   local bg="$3"
   local accent="$4"
   # Pure ASCII SVG monogram -- rounded square + centered letter
-  cat > "${path}" <<SVG
+  cat >"${path}" <<SVG
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <rect width="512" height="512" rx="96" fill="${bg}"/>
   <text x="256" y="340" font-family="DejaVu Sans, Liberation Sans, Noto Sans, Arial, sans-serif"
@@ -74,8 +74,7 @@ resolve_font() {
     /usr/share/fonts/TTF/DejaVuSans-Bold.ttf \
     /usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf \
     /usr/share/fonts/liberation/LiberationSans-Bold.ttf \
-    /usr/share/fonts/noto/NotoSans-Regular.ttf
-  do
+    /usr/share/fonts/noto/NotoSans-Regular.ttf; do
     if [ -f "${candidate}" ]; then
       printf '%s\n' "${candidate}"
       return 0
@@ -149,8 +148,8 @@ run() {
   # Canvas + left accent bar + monogram + name/tagline
   mark_sz=280
   mark_x=80
-  mark_y=$(( (640 - mark_sz) / 2 ))
-  text_x=$(( mark_x + mark_sz + 48 ))
+  mark_y=$(((640 - mark_sz) / 2))
+  text_x=$((mark_x + mark_sz + 48))
 
   magick -size 1280x640 "xc:${bg}" \
     -fill "${accent}" -draw "rectangle 0,0 16,640" \
@@ -183,16 +182,47 @@ main() {
 
   while [ $# -gt 0 ]; do
     case "$1" in
-      -l|--letter) letter="${2:?}"; shift 2 ;;
-      -n|--name) name="${2:?}"; shift 2 ;;
-      -t|--tagline) tagline="${2:?}"; shift 2 ;;
-      -a|--accent) accent="${2:?}"; shift 2 ;;
-      -b|--bg) bg="${2:?}"; shift 2 ;;
-      -o|--out) out="${2:?}"; shift 2 ;;
-      -f|--font) font="${2:?}"; shift 2 ;;
-      --source-png) source_png="${2:?}"; shift 2 ;;
-      -h|--help) usage; exit 0 ;;
-      *) echo "unknown arg: $1" >&2; usage >&2; exit 2 ;;
+    -l | --letter)
+      letter="${2:?}"
+      shift 2
+      ;;
+    -n | --name)
+      name="${2:?}"
+      shift 2
+      ;;
+    -t | --tagline)
+      tagline="${2:?}"
+      shift 2
+      ;;
+    -a | --accent)
+      accent="${2:?}"
+      shift 2
+      ;;
+    -b | --bg)
+      bg="${2:?}"
+      shift 2
+      ;;
+    -o | --out)
+      out="${2:?}"
+      shift 2
+      ;;
+    -f | --font)
+      font="${2:?}"
+      shift 2
+      ;;
+    --source-png)
+      source_png="${2:?}"
+      shift 2
+      ;;
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "unknown arg: $1" >&2
+      usage >&2
+      exit 2
+      ;;
     esac
   done
 

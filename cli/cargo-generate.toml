@@ -3,15 +3,15 @@ cargo_generate_version = ">=0.24.0"
 # Do not auto git-init; the post hook honors vcs_kind (jj | git | none).
 vcs = "None"
 # Template-only files. Template logos/icons are dropped via .genignore.
-ignore = ["Cargo.lock", ".extras"]
+ignore = [ "Cargo.lock", ".extras" ]
 
 
 # Shared hooks live in ../hooks (repo root), resolved from this folder.
 # github_user, linker, repo suffix and the README/description text are
 # derived in hooks (see README "Placeholders"), not prompted here.
 [hooks]
-pre = ["../hooks/details.rhai", "../hooks/pre.rhai", "../hooks/toml.rhai"]
-post = ["../hooks/finish.rhai"]
+pre  = [ "../hooks/details.rhai", "../hooks/pre.rhai", "../hooks/toml.rhai" ]
+post = [ "../hooks/finish.rhai" ]
 
 # Shared prompts come first, in the same order in every sub-template.
 [placeholders]
@@ -27,10 +27,10 @@ vcs_kind = { type = "string", prompt = "Initialize VCS?", choices = [
 ], default = "jj" }
 
 [conditional.'!keep_bacon']
-ignore = ["bacon.toml"]
+ignore = [ "bacon.toml" ]
 
 [conditional.'!keep_dev_dirs']
-ignore = ["data", "scratch"]
+ignore = [ "data", "scratch" ]
 
 [conditional.'!perf_testing']
 ignore = [
@@ -42,4 +42,4 @@ ignore = [
 ]
 
 [conditional.'!agent_support']
-ignore = ["AGENTS.md", "CLAUDE.md", ".agents", "docs/00_AGENT_DOCS_SETUP.md"]
+ignore = [ "AGENTS.md", "CLAUDE.md", ".agents", "docs/00_AGENT_DOCS_SETUP.md" ]
