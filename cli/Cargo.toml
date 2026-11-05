@@ -1,3 +1,4 @@
+#:schema https://raw.githubusercontent.com/rust-lang/cargo/refs/heads/master/crates/cargo-util-schemas/manifest.schema.json
 {% if has_cranelift -%}
 # Cranelift is nightly-only (needs the rustc-codegen-cranelift-preview component).
 # Add "profile-rustflags" here to use `rustflags` in the profiles below.

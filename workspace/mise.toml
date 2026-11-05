@@ -1,3 +1,4 @@
+#:schema https://raw.githubusercontent.com/jdx/mise/refs/heads/main/schema/mise.json
 [tools]
 "cargo:cargo-make" = "latest"                      # Makefile.toml task runner.
 "cargo:taplo-cli" = "latest"                       # TOML linting and formatting tasks.
