@@ -34,15 +34,15 @@ fn current_path() -> Result<std::path::PathBuf> {
         .map_err(Error::Generic)
 }
 
-// #[derive(Clone)]
-// pub struct LevelWrapper<L, E>
-// where
-//     L: Into<tracing::Level>,
-//     E: Into<tracing_subscriber::filter::EnvFilter>,
-// {
-//     pub level:      L,
-//     pub env_filter: E,
-// }
+#[derive(Clone)]
+pub struct LevelWrapper<L, E>
+where
+    L: Into<tracing::Level>,
+    E: Into<tracing_subscriber::filter::EnvFilter>,
+{
+    pub level:      L,
+    pub env_filter: E,
+}
 
 // pub type TracingSubscriber = tracing_subscriber::fmt::SubscriberBuilder<
 //     tracing_subscriber::fmt::format::DefaultFields,

@@ -2,6 +2,14 @@
 
 This project is a Rust CLI application.
 
+## Template preservation
+
+- Keep dependency versions as `"*"`. Do not pin or constrain them without explicit approval.
+- Preserve dependency feature lists, including commented examples. Do not remove features when
+  enabling or restoring a dependency.
+- Recover existing code faithfully. Do not silently replace constructors, custom flag parsing,
+  version handling, or CLI structure with a different implementation. Ask before changing behavior.
+
 ## Commits
 
 Use Conventional Commits. Keep the header at most 50 characters, including type and scope. Wrap the

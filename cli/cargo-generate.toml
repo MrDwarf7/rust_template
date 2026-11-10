@@ -4,6 +4,8 @@ cargo_generate_version = ">=0.24.0"
 vcs = "None"
 # Template-only files. Template logos/icons are dropped via .genignore.
 ignore = [ "Cargo.lock", ".extras" ]
+# Rust macro braces must be copied literally, not parsed as Liquid.
+exclude = [ "src/macros.rs" ]
 
 
 # Shared hooks live in ../hooks (repo root), resolved from this folder.

@@ -45,8 +45,8 @@ winresource = "0.1.19"
 # dotenvy = "*"
 # futures = "*"
 #
-# clap = { version = "*", features = [ "derive" ] } # Optionall: "env"
-# anstyle = "*"
+clap = { version = "*", features = [ "derive" ] } # Optionall: "env"
+anstyle = "*"
 
 # Base dependencies/Commons
 # reqwest = { version = "*", features = ["cookies", "json", "multipart", "stream"] }
@@ -57,14 +57,14 @@ thiserror = "*"
 # tokio = { version = "*", features = ["full", "tracing"] }
 
 # Logging and tracing
-# tracing = "*"
-# tracing-subscriber = { version = "*", features = [
-#     "ansi",
-#     "chrono",
-#     "env-filter",
-#     "serde",
-#     "std",
-# ] }
+tracing = "*"
+tracing-subscriber = { version = "*", features = [
+    "ansi",
+    "chrono",
+    "env-filter",
+    "serde",
+    "std",
+] }
 
 
 # Extra stuff
